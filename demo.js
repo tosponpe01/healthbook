@@ -54,7 +54,7 @@ var DemoSHA = (function () {
  * ข้อมูลทั้งหมดอยู่ในเครื่องนี้เท่านั้น ไม่ส่งไปไหน ใช้สาธิตและทดลองก่อนเชื่อมระบบจริง */
 (function () {
   'use strict';
-  var STORE = 'healthbook.demo.data', FSTORE = 'healthbook.demo.files', VERSION = 10;
+  var STORE = 'healthbook.demo.data', FSTORE = 'healthbook.demo.files', VERSION = 12;
   var sheets = {}, props = {}, files = {}, folders = {}, nId = 0;
 
   /* ---------- ชีต ---------- */
@@ -305,6 +305,7 @@ var FQ = (function () {
     xpEvent: 50,
     /* โหมดครู */
     missingDays: 7,
+    sidLen: 4,
     termNow: ''
   };
 
@@ -556,6 +557,7 @@ var FQ = (function () {
       xpQuizWrong: intOr(raw.xpQuizWrong, DEFAULTS.xpQuizWrong, 0, 1000),
       xpEvent: intOr(raw.xpEvent, DEFAULTS.xpEvent, 0, 5000),
       missingDays: intOr(raw.missingDays, DEFAULTS.missingDays, 2, 60),
+      sidLen: intOr(raw.sidLen, DEFAULTS.sidLen, 0, 10),
       termNow: /^[12]\/\d{4}$/.test(String(raw.termNow || '').trim()) ? String(raw.termNow).trim() : DEFAULTS.termNow
     };
     if (s.maxMinutesPerDay < s.maxMinutesPerLog) s.maxMinutesPerDay = s.maxMinutesPerLog;
@@ -1888,6 +1890,18 @@ var FQ = (function () {
     return { ok: true, layout: L, result: res };
   }
 
+  /* ศูนย์ฝึกต้นแบบของครู (เก็บใน Script Properties ชื่อ TCENTER): ลาน 5×5 เหรียญไม่จำกัด ปลดล็อกทุกอย่าง
+   * ฉาก 1–4 = กลางวัน / ยามเย็น / กลางคืนอวกาศ / ตำนานสีทอง  show = ให้นักเรียนเห็นในหน้าเยี่ยมชม */
+  var MODEL_LV = [1, 4, 7, 10];
+  function modelCenter(raw) {
+    var x = raw;
+    if (typeof raw === 'string') { try { x = JSON.parse(raw || '{}'); } catch (e) { x = {}; } }
+    x = x && typeof x === 'object' ? x : {};
+    var L = gameParse(Array.isArray(x.cells) ? x.cells : []), sc = Math.round(Number(x.scene)) || 1;
+    if (sc < 1 || sc > 4) sc = 1;
+    return { cells: L, scene: sc, lv: MODEL_LV[sc - 1], show: x.show === true, size: 5, stars: gameStars(L), n: L.length, at: String(x.at || '') };
+  }
+
   /* ถูกใจศูนย์ฝึกเพื่อน: วันละ 3 ครั้ง เพื่อนคนเดิมวันละครั้ง ของตัวเองไม่ได้ (ถูกใจไม่ได้เหรียญ)
    * given = ช่อง กดถูกใจวันนี้ ในชีต {"d": วันที่, "to": [เลขประจำตัว...]} */
   function likesGiven(raw, today) {
@@ -2120,7 +2134,7 @@ var FQ = (function () {
     GAME: GAME, gameItem: gameItem, gameSize: gameSize, gameParse: gameParse, gameSpent: gameSpent, gameStars: gameStars, gameExtent: gameExtent,
     DUST: DUST, DUST_TASKS: DUST_TASKS, dustLevel: dustLevel, dustPick: dustPick, dustMerge: dustMerge, dustView: dustView, dustTaskFor: dustTaskFor, dustBlock: dustBlock, planDust: planDust,
     PETS: PETS, petPick: petPick, petChance: petChance, petParse: petParse, petData: petData, petView: petView, petStage: petStage, planPet: planPet, checkPetName: checkPetName, petCatalog: petCatalog,
-    gameView: gameView, planGame: planGame, planLike: planLike, likesGiven: likesGiven, gameBoard: gameBoard, xpOf: xpOf,
+    gameView: gameView, planGame: planGame, modelCenter: modelCenter, planLike: planLike, likesGiven: likesGiven, gameBoard: gameBoard, xpOf: xpOf,
     ACTIVITIES: ACTIVITIES, FEELINGS: FEELINGS, DEFAULTS: DEFAULTS, MINUTE_CHOICES: MINUTE_CHOICES,
     toKey: toKey, addDays: addDays, dayNum: dayNum, weekdayIdx: weekdayIdx, weekOf: weekOf,
     thaiDate: thaiDate, dayLetter: dayLetter, dayName: dayName, allowedDates: allowedDates,
@@ -2215,6 +2229,7 @@ var SETTING_ROWS = [
   ['คำถามสุขภาพ: ตอบผิดได้แต้ม', 'xpQuizWrong', 1, 'ตอบผิดก็ได้อ่านเฉลย'],
   ['อีเวนต์: ทำครบได้แต้ม', 'xpEvent', 50, 'ทำภารกิจอีเวนต์ครบทุกข้อ ได้แต้มนี้ + สติกเกอร์รุ่นพิเศษ อีเวนต์อยู่ในแท็บอีเวนต์'],
   ['โหมดครู: เด็กหายไปกี่วันจึงแจ้ง', 'missingDays', 7, 'ไม่ได้บันทึกติดกันตั้งแต่กี่วัน (คนที่สมัครแล้วยังไม่เคยบันทึก นับจากวันสมัคร)'],
+  ['เลขประจำตัวนักเรียนมีกี่หลัก', 'sidLen', 4, 'สมัครใหม่ต้องใส่ให้ครบเท่านี้ กันพิมพ์ผิด (0 = ไม่จำกัด) เด็กที่สมัครไว้แล้วยังเข้าได้ ครูแก้เลขได้ที่ โหมดครู > ค้นหานักเรียน'],
   ['ภาคเรียนปัจจุบัน (ผลสมรรถภาพ)', 'termNow', '2/2569', 'รูปแบบ ภาคเรียน/ปี พ.ศ. เช่น 2/2569 ใช้ตอนครูกรอกผลสมรรถภาพในแอป']
 ];
 var TEXT_SETTINGS = ['programStart', 'levelXp', 'xpMissionDiff', 'diffUnlock', 'dayBadges', 'termNow', 'dustOn', 'dustFrom', 'dustPlace', 'dustStation'];
@@ -2404,7 +2419,8 @@ function doPost(e) {
 function route_(req) {
   switch (req.action) {
     case 'ping': return safe_(function () {
-      return { ok: true, app: 'healthbook', version: APP_VERSION, schoolName: readSettings_().schoolName, today: todayKey_() };
+      var st = readSettings_();
+      return { ok: true, app: 'healthbook', version: APP_VERSION, schoolName: st.schoolName, sidLen: st.sidLen, today: todayKey_() };
     });
     case 'register': return signIn_(register_, req);
     case 'login': return signIn_(login_, req);
@@ -2439,6 +2455,10 @@ function route_(req) {
     case 'tdash': return teacherApi_(req, teacherDash_);
     case 'tfit': return teacherApi_(req, teacherFitness_);
     case 'tfitsave': return teacherApi_(req, teacherFitnessSave_);
+    case 'tstudents': return teacherApi_(req, teacherStudents_);
+    case 'tsid': return teacherApi_(req, teacherSid_);
+    case 'tcenter': return teacherApi_(req, teacherCenter_);
+    case 'tcentersave': return teacherApi_(req, teacherCenterSave_);
     default: return FQ.fail('ไม่รู้จักคำสั่งนี้', 'BAD');
   }
 }
@@ -3006,7 +3026,7 @@ function apiGameBoard_(req) {
     if (grade < 1 || grade > 6) grade = a.student.grade;
     var mine = gameRowOf_(gameSheet_(false), a.student.sid), liked = FQ.likesGiven(mine ? mine.given : '', todayKey_());
     var list = FQ.gameBoard(gamePeople_(), { view: view, sid: a.student.sid, classId: a.student.classId, grade: grade, liked: liked });
-    return { ok: true, view: view, grade: grade, myGrade: a.student.grade, room: a.student.classId, list: list, likesLeft: Math.max(0, FQ.GAME.likesPerDay - liked.length) };
+    return { ok: true, view: view, grade: grade, myGrade: a.student.grade, room: a.student.classId, list: list, likesLeft: Math.max(0, FQ.GAME.likesPerDay - liked.length), model: view === 'rank' ? null : modelBrief_() };
   });
 }
 
@@ -3017,6 +3037,7 @@ function apiGameVisit_(req, like) {
     var a = auth_(c, req);
     if (!a.ok) return a;
     var key = String((req && req.k) || ''), hit = null;
+    if (key === 'model') return visitModel_(a, like);
     if (/^[0-9a-f]{12}$/.test(key)) gamePeople_().forEach(function (p) { if (p.k === key) hit = p; });
     if (!hit) return FQ.fail('ไม่พบศูนย์ฝึกนี้ ลองเปิดรายชื่อใหม่', 'NOT_FOUND');
     var sid = a.student.sid, me = hit.c === sid, today = todayKey_(), r, mineR;
@@ -3255,6 +3276,94 @@ function cleanupPhotos_() {
   return n;
 }
 
+/* ---------- ศูนย์ฝึกต้นแบบของครู ---------- */
+function readModel_() { return FQ.modelCenter(PropertiesService.getScriptProperties().getProperty('TCENTER') || ''); }
+function modelBrief_() {
+  var m = readModel_();
+  return m.show && m.n ? { k: 'model', s: m.stars, b: m.n, lv: m.lv } : null;
+}
+function visitModel_(a, like) {
+  if (like) return FQ.fail('ศูนย์ฝึกต้นแบบกดถูกใจไม่ได้ ไปกดให้เพื่อนแทนนะ', 'MODEL');
+  var m = readModel_();
+  if (!m.show || !m.n) return FQ.fail('ตอนนี้ครูปิดศูนย์ฝึกต้นแบบอยู่', 'NOT_FOUND');
+  var mr = gameRowOf_(gameSheet_(false), a.student.sid), given = FQ.likesGiven(mr ? mr.given : '', todayKey_());
+  return {
+    ok: true,
+    center: { k: 'model', model: true, n: 'ศูนย์ฝึกต้นแบบ', r: 'จากคุณครู', me: false, lv: m.lv, pet: null, size: 5, cells: m.cells, stars: m.stars, likes: 0, liked: false },
+    likesLeft: Math.max(0, FQ.GAME.likesPerDay - given.length), result: null
+  };
+}
+function teacherCenter_(req) {
+  return { center: readModel_(), items: FQ.GAME.items.map(function (it) { return { id: it.id, icon: it.icon, label: it.label, kind: it.kind, cost: it.cost.slice(), lv: it.lv, tile: it.tile }; }) };
+}
+function teacherCenterSave_(req) {
+  var cells = Array.isArray(req.cells) ? req.cells : [];
+  if (cells.length > 25) return FQ.fail('ของบนลานมากเกินไป', 'BAD');
+  var m = FQ.modelCenter({ cells: cells, scene: req.scene, show: req.show === true || req.show === 'true' });
+  var at = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm');
+  return withLock_(function () {
+    PropertiesService.getScriptProperties().setProperty('TCENTER', JSON.stringify({ cells: m.cells, scene: m.scene, show: m.show, at: at }));
+    m.at = at;
+    return { center: m };
+  });
+}
+
+/* ---------- ค้นหานักเรียน + แก้เลขประจำตัว (โหมดครู) ---------- */
+function teacherStudents_(req, s) {
+  var t = table_(TAB.roster, H.roster, H.rosterOpt), I = t.idx, out = [];
+  t.data.forEach(function (r, i) {
+    var st = studentFromRow_(t, r, i + 2);
+    if (!st.sid) return;
+    var last = r[I[SC.last]];
+    out.push({
+      sid: st.sid, name: st.name, grade: st.grade, room: st.room, no: st.no, classId: st.classId,
+      active: st.active, hasPin: !!st.pinHash, created: st.created || '',
+      last: Object.prototype.toString.call(last) === '[object Date]' ? Utilities.formatDate(last, TZ, 'yyyy-MM-dd HH:mm') : String(last || '').replace(/^'/, '').slice(0, 16)
+    });
+  });
+  return { students: out, sidLen: s.sidLen };
+}
+
+/* เปลี่ยนเลขประจำตัวของนักเรียน 1 คน: แก้ในแท็บนักเรียน ล้าง PIN (PIN ผูกกับเลข)
+ * แล้วย้ายเลขในทุกแท็บที่มีคอลัมน์ เลขประจำตัว ให้บันทึกเดิมตามมาครบ */
+function teacherSid_(req, s) {
+  var from = normSid_(req.sid), to = normSid_(req.newSid);
+  if (!from) return FQ.fail('ไม่พบนักเรียนคนนี้ ลองโหลดใหม่', 'INPUT');
+  if (!to) return FQ.fail('ใส่เลขประจำตัวใหม่เป็นตัวเลข', 'INPUT');
+  if (s.sidLen && to.length !== s.sidLen) return FQ.fail('เลขประจำตัวใหม่ต้องมี ' + s.sidLen + ' หลัก', 'SID_LEN');
+  if (from === to) return FQ.fail('เลขใหม่เหมือนเลขเดิม', 'SAME');
+  return withLock_(function () {
+    var t = table_(TAB.roster, H.roster, H.rosterOpt), st = findStudentRow_(t, from);
+    if (!st) return FQ.fail('ไม่พบนักเรียนคนนี้ (อาจถูกแก้ไปแล้ว) ลองโหลดใหม่', 'NOT_FOUND');
+    if (req.name !== undefined && String(req.name).trim() !== st.name) return FQ.fail('ข้อมูลนักเรียนเพิ่งเปลี่ยน ลองโหลดใหม่', 'CHANGED');
+    var other = findStudentRow_(t, to);
+    if (other) return FQ.fail('เลข ' + to + ' มีนักเรียนใช้อยู่แล้ว: ' + other.name + (other.classId ? ' (ป.' + other.grade + '/' + other.room + ' เลขที่ ' + (other.no || '-') + ')' : ''), 'TAKEN');
+    setCells_(t, st.row, [[SC.sid, "'" + to], [SC.pin, ''], [SC.fails, 0], [SC.lockUntil, '']]);
+    var moved = renameSidAll_(from, to, TAB.roster);
+    try { CacheService.getScriptCache().remove('game_people'); } catch (e) {}
+    return { oldSid: from, sid: to, name: st.name, moved: moved };
+  });
+}
+
+/* แทนเลขประจำตัวเก่าด้วยเลขใหม่ ในทุกแท็บที่หัวคอลัมน์แถวแรกเป็น เลขประจำตัว (เทียบทั้งช่อง) */
+function renameSidAll_(from, to, skip) {
+  var moved = {};
+  SpreadsheetApp.getActive().getSheets().forEach(function (sh) {
+    var name = sh.getName(), last = sh.getLastRow();
+    if (name === skip || last < 2) return;
+    var width = Math.max(1, sh.getLastColumn());
+    var head = sh.getRange(1, 1, 1, width).getValues()[0].map(function (v) { return String(v).trim(); });
+    var col = head.indexOf(SC.sid);
+    if (col < 0) return;
+    var vals = sh.getRange(2, col + 1, last - 1, 1).getValues(), n = 0;
+    for (var i = 0; i < vals.length; i++) {
+      if (normSid_(vals[i][0]) === from) { sh.getRange(i + 2, col + 1).setValue("'" + to); n++; }
+    }
+    if (n) moved[name] = n;
+  });
+  return moved;
+}
+
 /* ---------- ผลสมรรถภาพ ---------- */
 function termOf_(v) {
   if (Object.prototype.toString.call(v) === '[object Date]') return (v.getMonth() + 1) + '/' + v.getFullYear();
@@ -3408,6 +3517,8 @@ function register_(req) {
     return session_(s);
   }
 
+  var need = readSettings_().sidLen;
+  if (need && sid.length !== need) return FQ.fail('เลขประจำตัวต้องมี ' + need + ' หลัก ดูจากบัตรนักเรียนนะ', 'SID_LEN');
   if (!name) return FQ.fail('ใส่ชื่อ-นามสกุลก่อนนะ', 'INPUT');
   if (!grade) return FQ.fail('เลือกชั้น ป.1–ป.6 ก่อนนะ', 'INPUT');
   if (!room) return FQ.fail('ใส่ห้องเป็นตัวเลข เช่น 1', 'INPUT');
@@ -4625,6 +4736,10 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
     var S = sheets['ตั้งค่า'].cells, label = function (k) { return GS.SETTING_ROWS.filter(function (d) { return d[1] === k; })[0][0]; };
     S.filter(function (x) { return x && x[0] === label('programStart'); })[0][1] = F.addDays(monday, -21);
     props.TEACHER_HASH = GS.teacherHash_('demo1234');
+    /* ศูนย์ฝึกต้นแบบของครู (เปิดให้นักเรียนเยี่ยมชม) */
+    props.TCENTER = JSON.stringify({ scene: 4, show: true, at: today + ' 08:00', cells: [[0, 'tree', 1], [1, 'flag', 1], [2, 'light', 1], [3, 'flag', 1], [4, 'tree', 1],
+      [5, 'track', 3], [6, 'football', 3], [7, 'stand', 1], [8, 'basketball', 3], [9, 'track', 3], [10, 'light', 1], [11, 'gym', 3], [12, 'pool', 3], [13, 'boxing', 3], [14, 'light', 1],
+      [15, 'yoga', 3], [16, 'badminton', 3], [17, 'stand', 1], [18, 'football', 2], [19, 'tree', 1], [20, 'tree', 1], [21, 'flag', 1], [22, 'track', 2], [23, 'flag', 1], [24, 'tree', 1]] });
     /* อีเวนต์: งานแรกกำลังจัด งานที่สองอีก 6 วันเริ่ม */
     var E = sheets['อีเวนต์'].cells, ec = headIdx('อีเวนต์');
     if (E[1]) { E[1][ec('เริ่ม')] = thDate(F.addDays(today, -2)); E[1][ec('จบ')] = thDate(F.addDays(today, 4)); }
@@ -4670,22 +4785,22 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
     var n = 0;
     for (var g = 1; g <= 6; g++) {
       for (var k = 1; k <= 5; k++) {
-        var i = n++, sid = String(10000 + g * 1000 + k), boy = i % 2 === 0;
+        var i = n++, sid = String(1000 + g * 100 + k), boy = i % 2 === 0;
         var name = (boy ? 'ด.ช.' : 'ด.ญ.') + FIRST[i] + ' ' + LAST[i % LAST.length];
         var rate = [0.85, 0.7, 0.55, 0.4, 0.15][k - 1], gap = k === 5 ? 9 + g : 1;
         addKid(sid, name, g, 1, k * 3, { nick: k === 4 ? '' : FIRST[i], outfit: i % 4 === 0 ? 'hero' : '', color: COLOR_LB[i % 4] });
         addHistory(sid, 'ป.' + g + '/1', rate, gap, rng(i + 7), k <= 2 && g % 2 === 0);
       }
     }
-    var never = post({ action: 'register', studentId: '16006', name: 'ด.ช.ภูริ ยังไม่เริ่ม', grade: 6, room: 1, no: 18, pin: '1234' });
-    sheets['นักเรียน'].cells.filter(function (x) { return String(x[0]) === '16006'; })[0][rc('สมัครเมื่อ')] = F.addDays(today, -12) + ' 08:00:00';
+    var never = post({ action: 'register', studentId: '1606', name: 'ด.ช.ภูริ ยังไม่เริ่ม', grade: 6, room: 1, no: 18, pin: '1234' });
+    sheets['นักเรียน'].cells.filter(function (x) { return String(x[0]) === '1606'; })[0][rc('สมัครเมื่อ')] = F.addDays(today, -12) + ' 08:00:00';
     void never;
-    /* นักเรียนตัวอย่าง 99999 (มีประวัติแล้ว) */
-    addKid('99999', 'ด.ญ.ทดลอง ใช้งาน', 4, 1, 30, { nick: 'ทดลอง', outfit: 'sport', color: 'ชมพู', sports: 'ฟุตบอล, เต้น', goal: 'วิ่งเร็วขึ้น', motto: 'ไม่ยอมแพ้!', pins: 'first,fire3', joined: 22 });
-    addHistory('99999', 'ป.4/1', 0.8, 1, rng(99), false);
-    for (var q = 14; q >= 1; q -= 2) extra.push({ 'รหัส': 'Q99999' + q, 'เวลาที่ส่ง': F.addDays(today, -q) + ' 19:00:00', 'วันที่ทำ': F.addDays(today, -q), 'ห้อง': 'ป.4/1', 'เลขประจำตัว': '99999', 'ประเภท': 'คำถาม', 'เรื่อง': 'คำถามสุขภาพ', 'คำตอบ': 'ก', 'ผล': q % 4 ? 'ถูก' : 'ผิด' });
-    ['14001', '14002', '13001'].forEach(function (from, j) {
-      extra.push({ 'รหัส': 'C' + from, 'เวลาที่ส่ง': F.addDays(today, -j) + ' 18:30:00', 'วันที่ทำ': F.addDays(today, -j), 'ห้อง': 'ป.4/1', 'เลขประจำตัว': from, 'ประเภท': 'กำลังใจ', 'เรื่อง': 'ให้กำลังใจ 99999', 'คำตอบ': '👏', 'ผล': 'ทำแล้ว' });
+    /* นักเรียนตัวอย่าง 9999 (มีประวัติแล้ว) */
+    addKid('9999', 'ด.ญ.ทดลอง ใช้งาน', 4, 1, 30, { nick: 'ทดลอง', outfit: 'sport', color: 'ชมพู', sports: 'ฟุตบอล, เต้น', goal: 'วิ่งเร็วขึ้น', motto: 'ไม่ยอมแพ้!', pins: 'first,fire3', joined: 22 });
+    addHistory('9999', 'ป.4/1', 0.8, 1, rng(99), false);
+    for (var q = 14; q >= 1; q -= 2) extra.push({ 'รหัส': 'Q9999' + q, 'เวลาที่ส่ง': F.addDays(today, -q) + ' 19:00:00', 'วันที่ทำ': F.addDays(today, -q), 'ห้อง': 'ป.4/1', 'เลขประจำตัว': '9999', 'ประเภท': 'คำถาม', 'เรื่อง': 'คำถามสุขภาพ', 'คำตอบ': 'ก', 'ผล': q % 4 ? 'ถูก' : 'ผิด' });
+    ['1401', '1402', '1301'].forEach(function (from, j) {
+      extra.push({ 'รหัส': 'C' + from, 'เวลาที่ส่ง': F.addDays(today, -j) + ' 18:30:00', 'วันที่ทำ': F.addDays(today, -j), 'ห้อง': 'ป.4/1', 'เลขประจำตัว': from, 'ประเภท': 'กำลังใจ', 'เรื่อง': 'ให้กำลังใจ 9999', 'คำตอบ': '👏', 'ผล': 'ทำแล้ว' });
     });
     var byTime = function (a, b) { return a['เวลาที่ส่ง'] < b['เวลาที่ส่ง'] ? -1 : a['เวลาที่ส่ง'] > b['เวลาที่ส่ง'] ? 1 : 0; };
     logs.sort(byTime).forEach(function (o) { sheets['บันทึก'].appendRow(rowOf('บันทึก', o)); });
@@ -4693,19 +4808,19 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
     extra.sort(byTime).forEach(function (o) { sheets['กิจกรรมเสริม'].appendRow(rowOf('กิจกรรมเสริม', o)); });
     /* ผลสมรรถภาพ 2 ภาคเรียนของนักเรียนตัวอย่าง */
     [['1/2569', 4, 12, 20, 88], ['2/2569', 7, 17, 18, 101]].forEach(function (r) {
-      sheets['สมรรถภาพ'].appendRow(rowOf('สมรรถภาพ', { 'เลขประจำตัว': '99999', 'ห้อง': 'ป.4/1', 'เลขที่': 30, 'ภาคเรียน': r[0], 'นั่งงอตัว (ซม.)': r[1], 'ดันพื้น 30 วิ (ครั้ง)': r[2], 'ลุกนั่ง 60 วิ (ครั้ง)': r[3], 'ยืนยกเข่า 3 นาที (ครั้ง)': r[4], 'บันทึกเมื่อ': today + ' 10:00:00' }));
+      sheets['สมรรถภาพ'].appendRow(rowOf('สมรรถภาพ', { 'เลขประจำตัว': '9999', 'ห้อง': 'ป.4/1', 'เลขที่': 30, 'ภาคเรียน': r[0], 'นั่งงอตัว (ซม.)': r[1], 'ดันพื้น 30 วิ (ครั้ง)': r[2], 'ลุกนั่ง 60 วิ (ครั้ง)': r[3], 'ยืนยกเข่า 3 นาที (ครั้ง)': r[4], 'บันทึกเมื่อ': today + ' 10:00:00' }));
     });
     /* เควสบ้านตัวอย่างมีคลิปให้ดู (ของจริงครูใส่ลิงก์เองในแท็บเควสบ้าน ช่อง คลิป) */
     var Q = sheets['เควสบ้าน'].cells, qc = headIdx('เควสบ้าน')('คลิป');
     if (qc >= 0) for (var r = 1; r < Q.length; r++) if (Q[r] && Q[r][0] !== '') Q[r][qc] = moves[(r * 3) % moves.length].clip;
     /* ดูคลิปครบวันนี้ 3 คน + เควสบ้านสัปดาห์นี้ 2 คน + นักเรียนตัวอย่างดูคลิปเมื่อวาน + รูปโปรไฟล์รออนุมัติ 1 รูป */
-    [['12001', 'move'], ['14002', 'habit'], ['16001', 'move']].forEach(function (x) {
+    [['1201', 'move'], ['1402', 'habit'], ['1601', 'move']].forEach(function (x) {
       var r = post({ action: 'clip', token: tokens[x[0]], entry: { kind: x[1], date: today } });
       if (!r.ok && r.code === 'NO_CLIP') post({ action: 'clip', token: tokens[x[0]], entry: { kind: 'move', date: today } });
     });
-    ['14001', '13001'].forEach(function (sid) { post({ action: 'quest', token: tokens[sid] }); });
-    if (!post({ action: 'clip', token: tokens['99999'], entry: { kind: 'habit', date: F.addDays(today, -1) } }).ok) post({ action: 'clip', token: tokens['99999'], entry: { kind: 'move', date: F.addDays(today, -1) } });
-    post({ action: 'photo', token: tokens['15002'], mime: 'image/jpeg', data: img('face', 5) });
+    ['1401', '1301'].forEach(function (sid) { post({ action: 'quest', token: tokens[sid] }); });
+    if (!post({ action: 'clip', token: tokens['9999'], entry: { kind: 'habit', date: F.addDays(today, -1) } }).ok) post({ action: 'clip', token: tokens['9999'], entry: { kind: 'move', date: F.addDays(today, -1) } });
+    post({ action: 'photo', token: tokens['1502'], mime: 'image/jpeg', data: img('face', 5) });
     /* เกมศูนย์ฝึก: เพื่อนหลายคนสร้างไว้แล้ว (ใช้เหรียญจากแต้มจริงของแต่ละคน ถ้าเหรียญไม่พอระบบไม่ให้สร้าง) + ถูกใจกันบ้าง */
     var gbuild = function (sid, plan) {
       plan.forEach(function (x) {
@@ -4713,24 +4828,24 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
         for (var u = 1; r.ok && u < (x[2] || 1); u++) r = post({ action: 'game', token: tokens[sid], op: 'up', p: x[0] });
       });
     };
-    gbuild('14001', [[6, 'football', 3], [0, 'track', 2], [2, 'basketball', 2], [12, 'badminton', 2], [1, 'track', 1], [5, 'tree', 1], [10, 'flag', 1], [7, 'light', 1], [11, 'stand', 1]]);
-    gbuild('14002', [[6, 'basketball', 2], [7, 'yoga', 1], [0, 'tree', 1], [2, 'light', 1], [12, 'tree', 1]]);
-    gbuild('14003', [[6, 'badminton', 1], [0, 'flag', 1], [8, 'tree', 1]]);
-    gbuild('13001', [[6, 'football', 2], [7, 'track', 2], [11, 'yoga', 1], [0, 'tree', 1], [2, 'tree', 1]]);
-    gbuild('13002', [[6, 'yoga', 2], [1, 'tree', 1]]);
-    gbuild('15001', [[6, 'football', 3], [12, 'boxing', 2], [0, 'track', 3], [2, 'gym', 1], [10, 'tree', 1], [18, 'stand', 1]]);
-    gbuild('15002', [[6, 'badminton', 2], [7, 'basketball', 1], [0, 'flag', 1]]);
-    gbuild('16001', [[6, 'basketball', 3], [7, 'football', 2], [11, 'track', 2], [0, 'light', 1], [2, 'light', 1]]);
-    gbuild('16002', [[6, 'track', 2], [12, 'yoga', 1], [5, 'tree', 1]]);
-    gbuild('12001', [[6, 'football', 2], [0, 'tree', 1], [2, 'flag', 1]]);
-    gbuild('12002', [[6, 'track', 1], [7, 'tree', 1]]);
-    gbuild('11001', [[6, 'badminton', 1], [0, 'tree', 1], [1, 'tree', 1]]);
-    gbuild('11002', [[6, 'yoga', 1]]);
-    gbuild('99999', [[6, 'football', 1], [0, 'track', 1], [2, 'tree', 1]]);
-    /* สัตว์เลี้ยงคู่หูของเพื่อน (เด็กตัวอย่าง 99999 ยังไม่ฟัก จะได้ลองฟักไข่เอง) */
+    gbuild('1401', [[6, 'football', 3], [0, 'track', 2], [2, 'basketball', 2], [12, 'badminton', 2], [1, 'track', 1], [5, 'tree', 1], [10, 'flag', 1], [7, 'light', 1], [11, 'stand', 1]]);
+    gbuild('1402', [[6, 'basketball', 2], [7, 'yoga', 1], [0, 'tree', 1], [2, 'light', 1], [12, 'tree', 1]]);
+    gbuild('1403', [[6, 'badminton', 1], [0, 'flag', 1], [8, 'tree', 1]]);
+    gbuild('1301', [[6, 'football', 2], [7, 'track', 2], [11, 'yoga', 1], [0, 'tree', 1], [2, 'tree', 1]]);
+    gbuild('1302', [[6, 'yoga', 2], [1, 'tree', 1]]);
+    gbuild('1501', [[6, 'football', 3], [12, 'boxing', 2], [0, 'track', 3], [2, 'gym', 1], [10, 'tree', 1], [18, 'stand', 1]]);
+    gbuild('1502', [[6, 'badminton', 2], [7, 'basketball', 1], [0, 'flag', 1]]);
+    gbuild('1601', [[6, 'basketball', 3], [7, 'football', 2], [11, 'track', 2], [0, 'light', 1], [2, 'light', 1]]);
+    gbuild('1602', [[6, 'track', 2], [12, 'yoga', 1], [5, 'tree', 1]]);
+    gbuild('1201', [[6, 'football', 2], [0, 'tree', 1], [2, 'flag', 1]]);
+    gbuild('1202', [[6, 'track', 1], [7, 'tree', 1]]);
+    gbuild('1101', [[6, 'badminton', 1], [0, 'tree', 1], [1, 'tree', 1]]);
+    gbuild('1102', [[6, 'yoga', 1]]);
+    gbuild('9999', [[6, 'football', 1], [0, 'track', 1], [2, 'tree', 1]]);
+    /* สัตว์เลี้ยงคู่หูของเพื่อน (เด็กตัวอย่าง 9999 ยังไม่ฟัก จะได้ลองฟักไข่เอง) */
     /* ตัวเลขท้าย = ค่าสุ่มให้เพื่อนได้น้องใหม่ไว้โชว์ (นาก ฟลามิงโก แฮมสเตอร์ แกะ ฉลาม เสือขาว นกฮูก อุรังอุตัง นกอินทรี) */
-    [['14001', 'โมจิ', ['cap'], 0.78412], ['14002', 'ข้าวปั้น', ['bow'], 0.93857], ['14003', 'ถั่วแดง', [], 0.23021], ['13001', 'ไข่ตุ๋น', ['beanie', 'scarf'], 0.39271], ['15001', 'เจ้าเหมียว', ['sun', 'whistle'], 0.93286],
-     ['16001', 'จัมโบ้', ['flower'], 0.92714], ['12001', 'มะลิ', ['party'], 0.85471], ['11001', 'ปุยฝ้าย', [], 0.94429], ['15002', 'ก้อนเมฆ', ['round'], 0.96143]].forEach(function (x) {
+    [['1401', 'โมจิ', ['cap'], 0.78412], ['1402', 'ข้าวปั้น', ['bow'], 0.93857], ['1403', 'ถั่วแดง', [], 0.23021], ['1301', 'ไข่ตุ๋น', ['beanie', 'scarf'], 0.39271], ['1501', 'เจ้าเหมียว', ['sun', 'whistle'], 0.93286],
+     ['1601', 'จัมโบ้', ['flower'], 0.92714], ['1201', 'มะลิ', ['party'], 0.85471], ['1101', 'ปุยฝ้าย', [], 0.94429], ['1502', 'ก้อนเมฆ', ['round'], 0.96143]].forEach(function (x) {
       var R0 = Math.random;
       if (x[3]) Math.random = function () { return x[3]; };
       var hatched;
@@ -4740,7 +4855,7 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
       x[2].forEach(function (w) { post({ action: 'pet', token: tokens[x[0]], op: 'buy', item: w }); });
       post({ action: 'pet', token: tokens[x[0]], op: 'feed', item: 'apple' });
     });
-    [['14002', '99999'], ['13001', '99999'], ['14003', '14001'], ['14002', '14001'], ['15001', '14001'], ['99999', '14001'], ['16001', '15001'], ['12001', '16001']].forEach(function (x) {
+    [['1402', '9999'], ['1301', '9999'], ['1403', '1401'], ['1402', '1401'], ['1501', '1401'], ['9999', '1401'], ['1601', '1501'], ['1201', '1601']].forEach(function (x) {
       post({ action: 'glike', token: tokens[x[0]], k: GS.cardKey_(x[1]) });
     });
     GS.rebuildSummary_();
@@ -4769,7 +4884,7 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
   window.HBDemo = {
     api: function (body) { return new Promise(function (ok) { setTimeout(function () { ok(api(body)); }, 120); }); },
     reset: function () { wipe(); seed(); },
-    teacherPass: 'demo1234', student: { sid: '99999', pin: '1234' },
+    teacherPass: 'demo1234', student: { sid: '9999', pin: '1234' },
     _sheets: sheets, _gs: GS
   };
 })();

@@ -735,6 +735,26 @@ body.light .okb { color:#3A8C00; }
 .pframe.f4 { background:linear-gradient(135deg,#FFF6C9,#FFD84D 30%,#F5A524 55%,#FFE88A 75%,#C98A1E); }
 .pstage.rar3 { box-shadow:0 6px 22px rgba(155,107,255,.35); }
 .pstage.rar3:before { background:conic-gradient(from 0deg,rgba(255,107,107,.55),rgba(255,176,32,.55),rgba(255,228,92,.55),rgba(94,224,122,.55),rgba(70,214,255,.55),rgba(155,107,255,.55),rgba(255,107,107,.55)); -webkit-mask:radial-gradient(circle,#000 25%,transparent 68%); mask:radial-gradient(circle,#000 25%,transparent 68%); animation:prays 10s linear infinite; }
+.pstage.rar2:after { background:rgba(5,15,60,.28); }
+/* พื้นห้องน้องตามระดับ (ธรรมดา=เขียว หายาก=น้ำเงิน หายากมาก=แดง) เข้มขึ้นตามวัย ร่างสุดมีขอบทอง */
+.pstage.rar1.pst1 { background:radial-gradient(circle at 50% 38%,#E4FFE9,#8EE6A4 45%,#4CC27A 82%,#2E9A5C); }
+.pstage.rar1.pst2 { background:radial-gradient(circle at 50% 38%,#B9F5C8,#4FCB7C 45%,#239A57 82%,#146B3C); }
+.pstage.rar1.pst3 { background:radial-gradient(circle at 50% 38%,#8FE3A8,#22A05A 45%,#116B3C 82%,#083F24); }
+.pstage.rar1.pst4 { background:radial-gradient(circle at 50% 38%,#A8F0BE,#1E9E5A 45%,#0C5E35 82%,#052A18); }
+.pstage.rar2.pst1 { background:radial-gradient(circle at 50% 38%,#E6F2FF,#9CC8FF 45%,#5A9BF0 82%,#3474D6); }
+.pstage.rar2.pst2 { background:radial-gradient(circle at 50% 38%,#B8D8FF,#5A9BF0 45%,#2F6FE0 82%,#1A4CB0); }
+.pstage.rar2.pst3 { background:radial-gradient(circle at 50% 38%,#8EC5FF,#2F6FE0 45%,#173F9E 82%,#0B1F5C); }
+.pstage.rar2.pst4 { background:radial-gradient(circle at 50% 38%,#9ACBFF,#2A62D6 45%,#12307E 82%,#060F38); }
+.pstage.rar3.pst1 { background:radial-gradient(circle at 50% 38%,#FFE6E9,#FF9AA6 45%,#F05468 82%,#D6304A); }
+.pstage.rar3.pst2 { background:radial-gradient(circle at 50% 38%,#FFC2C9,#F0546A 45%,#D82A44 82%,#A3142E); }
+.pstage.rar3.pst3 { background:radial-gradient(circle at 50% 38%,#FF8A94,#E0283A 45%,#9E0F26 82%,#5A0716); }
+.pstage.rar3.pst4 { background:radial-gradient(circle at 50% 38%,#FF9AA2,#D61F33 45%,#7E0A1E 82%,#3A030D); }
+.pstage.rar2 { box-shadow:inset 0 0 0 3px #9B6BFF, 0 6px 20px rgba(47,111,224,.4); }
+.pstage.rar3 { box-shadow:0 6px 22px rgba(224,40,58,.45); }
+.pstage.rar1 { box-shadow:0 6px 18px rgba(30,150,80,.3); }
+.pstage.rar1.pst4, .pstage.rar2.pst4, .pstage.rar3.pst4 { box-shadow:inset 0 0 0 3px #FFD84D, 0 6px 22px rgba(255,190,40,.4); }
+.pstage.rar1:after { background:rgba(0,50,20,.2); }
+.pstage.rar3:after { background:rgba(70,0,10,.28); }
 .pstage.rar4 { background:radial-gradient(circle at 50% 38%,#FFF7C2,#FFD84D 42%,#F5A524 78%,#B86E0E); box-shadow:0 6px 26px rgba(255,190,40,.5); }
 .pstage.rar4:before { content:''; position:absolute; left:50%; top:52%; width:340px; height:340px; transform:translate(-50%,-50%); border-radius:50%; z-index:0; pointer-events:none;
   background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.75) 0 9deg,transparent 9deg 24deg); -webkit-mask:radial-gradient(circle,#000 22%,transparent 70%); mask:radial-gradient(circle,#000 22%,transparent 70%); animation:prays 12s linear infinite; }
@@ -856,19 +876,19 @@ body.light .okb { color:#3A8C00; }
 /* ฉากฟักไข่ */
 #hatch { position:fixed; inset:0; z-index:90; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; overflow:hidden; color:#fff; text-align:center; -webkit-tap-highlight-color:transparent;
   background:radial-gradient(circle at 50% 45%,var(--hc1,#3A2E6E),var(--hc2,#140F2E) 70%); animation:hfade .35s ease-out; touch-action:manipulation; }
-#hatch.t1 { --hc1:#4A3E7E; --hc2:#1A1438; } #hatch.t2 { --hc1:#7A4FE0; --hc2:#1E1046; } #hatch.t3 { --hc1:#E05AB8; --hc2:#1A1046; }
+#hatch.t1 { --hc1:#22A05A; --hc2:#06301A; } #hatch.t2 { --hc1:#2F6FE0; --hc2:#0B1A4A; } #hatch.t3 { --hc1:#E0283A; --hc2:#3A0610; }
 #hatch.t4 { --hc1:#FFB020; --hc2:#3A1A00; }
 #hatch.sp-dragon { --hc1:#FF7A3D; --hc2:#4A0E05; } #hatch.sp-phoenix { --hc1:#FF9A3C; --hc2:#4A0A2A; } #hatch.sp-unicorn { --hc1:#FF9BD8; --hc2:#2E1A66; }
 #hatch.sp-qilin { --hc1:#3FCB9A; --hc2:#0E3A30; } #hatch.sp-griffin { --hc1:#5AB8F0; --hc2:#0E2A5A; } #hatch.sp-pegasus { --hc1:#6B6BFF; --hc2:#0A0828; }
 @keyframes hfade { from { opacity:0; } }
 #hatch .hrays { position:absolute; left:50%; top:46%; width:760px; height:760px; margin:-380px 0 0 -380px; border-radius:50%; opacity:0; pointer-events:none;
   background:repeating-conic-gradient(from 0deg,var(--hr,rgba(255,255,255,.55)) 0 8deg,transparent 8deg 22deg); -webkit-mask:radial-gradient(circle,#000 18%,transparent 66%); mask:radial-gradient(circle,#000 18%,transparent 66%); transition:opacity .5s; animation:prays 7s linear infinite; }
-#hatch.t2 .hrays { --hr:rgba(201,168,255,.7); }
+#hatch.t1 .hrays { --hr:rgba(170,240,190,.6); } #hatch.t2 .hrays { --hr:rgba(156,200,255,.7); }
 #hatch.t3 .hrays { background:conic-gradient(rgba(255,107,107,.7),rgba(255,176,32,.7),rgba(255,228,92,.7),rgba(94,224,122,.7),rgba(70,214,255,.7),rgba(155,107,255,.7),rgba(255,107,107,.7)); }
 #hatch.t4 .hrays { --hr:rgba(255,236,140,.85); }
 #hatch.ph2 .hrays { opacity:.55; } #hatch.ph3 .hrays, #hatch.ph4 .hrays { opacity:1; }
 #hatch .hglow { position:absolute; left:50%; top:46%; width:300px; height:300px; margin:-150px 0 0 -150px; border-radius:50%; background:radial-gradient(circle,var(--hg,#FFF3A6),transparent 68%); opacity:0; transition:opacity .4s, transform .4s; pointer-events:none; }
-#hatch.t2 .hglow { --hg:#C9A8FF; } #hatch.t3 .hglow { --hg:#FFB3E6; } #hatch.t4 .hglow { --hg:#FFE45C; }
+#hatch.t1 .hglow { --hg:#A8F0BE; } #hatch.t2 .hglow { --hg:#9CC8FF; } #hatch.t3 .hglow { --hg:#FF9AA6; } #hatch.t4 .hglow { --hg:#FFE45C; }
 #hatch.ph2 .hglow { opacity:.6; } #hatch.ph3 .hglow { opacity:1; transform:scale(1.25); } #hatch.ph4 .hglow { opacity:.9; transform:scale(1.5); }
 #hatch .hegg, #hatch .hpet { position:relative; z-index:2; line-height:0; }
 #hatch .hegg { transform-origin:50% 90%; }
@@ -919,6 +939,56 @@ body.light .okb { color:#3A8C00; }
 .tlgrid button small { font-size:.62em; font-weight:700; text-align:center; line-height:1.15; }
 .tlgrid button.t2 { box-shadow:inset 0 0 0 1px rgba(155,107,255,.6); } .tlgrid button.t3 { box-shadow:inset 0 0 0 1px rgba(255,107,182,.7); } .tlgrid button.t4 { box-shadow:inset 0 0 0 1px rgba(255,200,40,.9); background:linear-gradient(160deg,rgba(255,216,77,.25),var(--card-2)); }
 .tlgrid button.on { border-color:#FFD84D; }
+/* ===== 6B-19 ความดังเพลง / เอฟเฟกต์ ===== */
+.setvol { gap:10px; }
+.setvol .lbl { flex:0 0 auto; font-weight:700; font-size:.92em; color:var(--ink-2); padding-left:30px; }
+.setvol input[type=range] { flex:1; min-width:0; accent-color:#9B6BFF; height:28px; }
+.setvol input[type=range]:disabled { opacity:.4; }
+.setvol .volv { flex:0 0 3.2em; text-align:right; font-variant-numeric:tabular-nums; }
+
+/* ===== 6B-20: ทวนข้อมูลก่อนสมัคร + ค้นหานักเรียน (โหมดครู) ===== */
+.rcsheet h2 { text-align:center; }
+.rcdig { display:flex; justify-content:center; gap:10px; margin:2px 0 4px; }
+.rcdig b { width:60px; height:72px; border-radius:18px; display:grid; place-items:center; font:800 2.3em var(--display); background:var(--card-2); box-shadow:inset 0 0 0 2px var(--violet); color:var(--ink); }
+.rcdig b.bad { box-shadow:inset 0 0 0 2px var(--red); }
+.rcdig.sm { flex-wrap:wrap; gap:6px; }
+.rcdig.sm b { width:44px; height:54px; font-size:1.6em; border-radius:14px; }
+.rcinfo { display:flex; flex-direction:column; gap:6px; background:var(--card-2); border-radius:18px; padding:12px 14px; }
+.rcinfo div { display:flex; justify-content:space-between; gap:12px; }
+.rcinfo span { color:var(--ink-2); font-weight:600; }
+.rcinfo b { text-align:right; }
+.tstu-go { display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:var(--card); border:1px solid var(--line); border-radius:20px; padding:12px 14px; }
+.tstu-go .ic { font-size:1.6em; }
+.tsw { flex:1; min-width:0; display:flex; flex-direction:column; }
+.tsw small { color:var(--ink-2); font-weight:600; }
+.tstu-go .chev, .tsrow .chev { color:var(--ink-2); font-size:1.4em; }
+.tsrow { display:flex; align-items:center; gap:10px; width:100%; text-align:left; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:10px 12px; }
+.tsrow b { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.tssid { font:700 1.05em var(--display); letter-spacing:1px; background:var(--card-2); border-radius:10px; padding:2px 8px; }
+.tssid.bad { color:#fff; background:var(--red); }
+.tgs { display:flex; flex-wrap:wrap; gap:4px; margin-top:4px; }
+.tg { font-style:normal; font-size:.75em; font-weight:700; padding:1px 8px; border-radius:999px; background:var(--card-2); color:var(--ink-2); }
+.tg.bad { background:color-mix(in srgb,var(--red) 18%,var(--card-2)); color:var(--red); }
+.tg.off { background:color-mix(in srgb,var(--ink-2) 20%,var(--card-2)); }
+.tsswap { display:flex; align-items:center; justify-content:center; gap:12px; font:800 1.6em var(--display); padding:8px 0; }
+.tsswap span { color:var(--ink-2); text-decoration:line-through; text-decoration-thickness:2px; }
+.tsswap i { font-style:normal; color:var(--ink-2); }
+.tsswap b { color:var(--lime); }
+.tsnote { margin:0; padding-left:0; list-style:none; display:flex; flex-direction:column; gap:6px; font-size:.95em; }
+.tstell { background:var(--card-2); border-radius:18px; padding:12px 14px; box-shadow:inset 0 0 0 2px var(--lime); }
+.tstell ol { margin:6px 0 4px; padding-left:22px; }
+.tstell small { color:var(--ink-2); font-weight:600; }
+
+/* ===== 6B-20: สนามทดลองของครู (ศูนย์ฝึกต้นแบบ) ===== */
+.tptabs { margin-top:-4px; }
+.tfshow { display:flex; align-items:center; gap:12px; }
+.tfstars .on { background:var(--grad); color:#fff; border-color:transparent; }
+.gmodel { display:flex; align-items:center; gap:12px; width:100%; text-align:left; border:0; border-radius:20px; padding:12px 14px; color:#3A2200;
+  background:linear-gradient(135deg,#FFF3B0,#FFD84D 55%,#F5A524); box-shadow:0 6px 18px rgba(255,190,40,.35); }
+.gmodel .gmi { font-size:1.8em; line-height:1; }
+.gmodel small { color:#6B4300; }
+.gmodel .chev { color:#6B4300; font-size:1.4em; }
+.gvmodel { box-shadow:inset 0 0 0 2px #FFD84D; }
 
 </style>
 </head>
@@ -947,7 +1017,7 @@ body.light .okb { color:#3A8C00; }
     <div id="here-list" style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
   <form id="f-login" class="card" style="display:flex;flex-direction:column;gap:12px" novalidate>
-    <label class="field"><span>เลขประจำตัวนักเรียน</span><input id="in-sid" inputmode="numeric" pattern="[0-9]*" autocomplete="username" maxlength="10" placeholder="เช่น 12345"></label>
+    <label class="field"><span>เลขประจำตัวนักเรียน</span><input id="in-sid" inputmode="numeric" pattern="[0-9]*" autocomplete="username" maxlength="10" placeholder="เลข 4 หลัก"></label>
     <label class="field"><span>PIN 4–6 หลัก</span><input id="in-pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="current-password" maxlength="6" placeholder="••••"></label>
     <p class="err" id="login-err" role="alert"></p>
     <button class="cta" type="submit" id="btn-login">เข้าสู่ระบบ</button>
@@ -967,7 +1037,7 @@ body.light .okb { color:#3A8C00; }
       <label class="field"><span>ห้อง</span><input id="r-room" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="เช่น 2"></label>
       <label class="field"><span>เลขที่</span><input id="r-no" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="เช่น 5"></label>
     </div>
-    <label class="field"><span>เลขประจำตัวนักเรียน</span><input id="r-sid" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="เลขบนบัตรนักเรียน"></label>
+    <label class="field"><span id="lb-rsid">เลขประจำตัวนักเรียน (4 หลัก)</span><input id="r-sid" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="เลข 4 หลักบนบัตรนักเรียน" autocomplete="off"></label>
     <div class="pair">
       <label class="field"><span>ตั้ง PIN 4–6 หลัก</span><input id="r-pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="new-password" maxlength="6" placeholder="••••"></label>
       <label class="field"><span>ใส่ PIN อีกครั้ง</span><input id="r-pin2" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="new-password" maxlength="6" placeholder="••••"></label>
@@ -1140,7 +1210,10 @@ body.light .okb { color:#3A8C00; }
     <div class="setrow"><span class="lbl" style="white-space:nowrap">🌗 ธีม</span><div class="seg" id="seg-theme"><button type="button" data-v="auto">ตามเครื่อง</button><button type="button" data-v="dark">มืด</button><button type="button" data-v="light">สว่าง</button></div></div>
     <div class="setrow"><span class="lbl">🔠 ตัวหนังสือใหญ่<small>เปิดให้เองสำหรับ ป.1–3</small></span><button class="switch" type="button" role="switch" id="sw-big" aria-label="ตัวหนังสือใหญ่"></button></div>
     <div class="setrow"><span class="lbl">📳 สั่นเมื่อได้แต้ม<small>เฉพาะมือถือ Android</small></span><button class="switch" type="button" role="switch" id="sw-vib" aria-label="สั่น"></button></div>
-    <div class="setrow"><span class="lbl">🔈 เสียงเอฟเฟกต์</span><button class="switch" type="button" role="switch" id="sw-snd" aria-label="เสียง"></button></div>
+    <div class="setrow"><span class="lbl">🎵 เพลงประกอบ<small>เปลี่ยนเพลงตามหน้า หยุดเองตอนดูคลิป</small></span><button class="switch" type="button" role="switch" id="sw-mus" aria-label="เพลงประกอบ"></button></div>
+    <div class="setrow setvol"><label class="lbl" for="vol-mus">ความดังเพลง</label><input type="range" id="vol-mus" min="0" max="100" step="5"><b id="vol-mus-v" class="volv">50%</b></div>
+    <div class="setrow"><span class="lbl">🔈 เสียงเอฟเฟกต์</span><button class="switch" type="button" role="switch" id="sw-snd" aria-label="เสียงเอฟเฟกต์"></button></div>
+    <div class="setrow setvol"><label class="lbl" for="vol-sfx">ความดังเอฟเฟกต์</label><input type="range" id="vol-sfx" min="0" max="100" step="5"><b id="vol-sfx-v" class="volv">80%</b></div>
     <div class="setrow"><span class="lbl">🔊 อ่านออกเสียง<small>ช่วยน้อง ป.1–3 อ่านภารกิจ</small></span><button class="switch" type="button" role="switch" id="sw-say" aria-label="อ่านออกเสียง"></button></div>
     <div class="setrow"><span class="lbl">📲 เพิ่มไปหน้าจอโฮม</span><button class="tag" type="button" id="go-install" style="border:0">วิธีทำ ›</button></div>
     <div class="setrow"><span class="lbl">👋 ดูหน้าแนะนำอีกครั้ง</span><button class="tag" type="button" id="go-onboard" style="border:0">ดู ›</button></div>
@@ -1200,9 +1273,36 @@ body.light .okb { color:#3A8C00; }
 </section>
 
 <section class="screen nonav tscreen" id="s-tpet" aria-labelledby="tp-title">
-  <div class="top"><span class="tbadge">โหมดครู</span><h1 id="tp-title" style="font-size:1.3em;flex:1">🐾 ห้องทดลองน้อง</h1></div>
+  <div class="top"><span class="tbadge">โหมดครู</span><h1 id="tp-title" style="font-size:1.3em;flex:1">🧪 ห้องทดลอง</h1></div>
+  <div class="league tptabs" role="tablist" id="tp-tabs" aria-label="เลือกห้องทดลอง"><button type="button" role="tab" class="on" aria-selected="true" data-tpt="pet">🐾 น้องคู่หู</button><button type="button" role="tab" aria-selected="false" data-tpt="field">🏟️ สนาม (ศูนย์ฝึกต้นแบบ)</button></div>
   <div id="tp-body" class="stack"></div>
+  <div id="tfd-body" class="stack" hidden></div>
 </section>
+
+<!-- โหมดครู: ค้นหานักเรียน + แก้เลขประจำตัว -->
+<section class="screen nonav tscreen" id="s-tstu" aria-labelledby="ts-title">
+  <div class="top"><button class="round" type="button" id="ts-back" aria-label="กลับหน้าภาพรวม">‹</button><div style="flex:1"><span class="tbadge">โหมดครู</span><h1 id="ts-title" style="font-size:1.3em;margin-top:4px">🔎 ค้นหานักเรียน</h1></div></div>
+  <div id="ts-body" class="stack"></div>
+</section>
+
+<!-- แผ่นล่าง: ทวนข้อมูลก่อนสมัคร -->
+<div class="sheet-wrap" id="rc-sheet" role="dialog" aria-modal="true" aria-labelledby="rc-title">
+  <div class="sheet rcsheet">
+    <div class="grab"></div>
+    <h2 id="rc-title">ตรวจให้แน่ใจก่อนนะ 👀</h2>
+    <p class="muted" style="text-align:center">เลขประจำตัวนักเรียนของเรา</p>
+    <div class="rcdig" id="rc-sid" aria-live="polite"></div>
+    <div class="rcinfo" id="rc-info"></div>
+    <p class="hint" style="text-align:center">ดูเลขจากบัตรนักเรียนหรือถามครู ถ้าใส่ผิด ต้องให้ครูช่วยแก้ทีหลัง</p>
+    <button class="cta" type="button" id="rc-ok">✅ ถูกต้อง สมัครเลย</button>
+    <button class="ghost" type="button" id="rc-back">✏️ กลับไปแก้</button>
+  </div>
+</div>
+
+<!-- แผ่นล่าง: ครูแก้เลขประจำตัว -->
+<div class="sheet-wrap" id="ts-sheet" role="dialog" aria-modal="true" aria-label="แก้เลขประจำตัวนักเรียน">
+  <div class="sheet" id="ts-sheet-body"></div>
+</div>
 
 <!-- แผ่นล่าง: ใส่ PIN เพื่อสลับคน -->
 <div class="sheet-wrap" id="pin-sheet" role="dialog" aria-modal="true" aria-labelledby="pin-title">
@@ -1257,7 +1357,7 @@ body.light .okb { color:#3A8C00; }
   <button type="button" data-go="s-tmiss"><span class="ic" aria-hidden="true">🔔</span>ตามเด็ก</button>
   <button type="button" data-go="s-tcheck"><span class="ic" aria-hidden="true">🪪</span>ตรวจ</button>
   <button type="button" data-go="s-tfit"><span class="ic" aria-hidden="true">💪</span>สมรรถภาพ</button>
-  <button type="button" data-go="s-tpet"><span class="ic" aria-hidden="true">🐾</span>ห้องน้อง</button>
+  <button type="button" data-go="s-tpet"><span class="ic" aria-hidden="true">🧪</span>ทดลอง</button>
 </nav>
 
 <nav class="nav" id="nav" aria-label="เมนูหลัก" hidden>
@@ -2334,21 +2434,21 @@ function celebrate(r, ctx) {
   } else if (ctx.kind === 'quest') {
     L.push({ html: hero() + '<h1>เควสบ้านสำเร็จ! 🏡</h1>' + plus + '<p class="muted">' + esc(r.text) + '</p>' + wait + unlockBox('📅', 'สัปดาห์หน้ามีเควสใหม่', 'ชวนคนในบ้านขยับด้วยกันอีกนะ'), say: 'เควสบ้านสำเร็จ เก่งมาก' });
   }
-  if (r.goal) L.push({ sound: 'up', say: 'ถึงเป้าสัปดาห์แล้ว', html: '<div class="reveal" aria-hidden="true">🎯</div><p class="muted">ถึงเป้าสัปดาห์แล้ว!</p><h1>ขยับครบ ' + fmt(r.goal.goal) + ' นาที</h1>' +
+  if (r.goal) L.push({ sound: 'goal', say: 'ถึงเป้าสัปดาห์แล้ว', html: '<div class="reveal" aria-hidden="true">🎯</div><p class="muted">ถึงเป้าสัปดาห์แล้ว!</p><h1>ขยับครบ ' + fmt(r.goal.goal) + ' นาที</h1>' +
     (r.goal.xp ? '<p class="num plus">+' + fmt(r.goal.xp) + ' แต้ม</p>' : '') + '<p class="muted">สัปดาห์หน้าเป้าใหม่ท้าทายขึ้นอีกนิด สู้ ๆ!</p>' });
-  if (r.badge) L.push({ sound: 'up', say: 'ได้เหรียญใหม่', html: '<div class="reveal" aria-hidden="true">' + esc(r.badge.icon) + '</div><p class="muted">ได้เหรียญใหม่!</p><h1>ขยับครบ ' + r.badge.days + ' วัน</h1>' +
+  if (r.badge) L.push({ sound: 'badge', say: 'ได้เหรียญใหม่', html: '<div class="reveal" aria-hidden="true">' + esc(r.badge.icon) + '</div><p class="muted">ได้เหรียญใหม่!</p><h1>ขยับครบ ' + r.badge.days + ' วัน</h1>' +
     (r.badge.xp ? '<p class="num plus">+' + fmt(r.badge.xp) + ' แต้ม</p>' : '') });
   (r.stickers || []).forEach(function (s) {
-    L.push({ sound: 'up', say: 'ได้สติกเกอร์ใหม่ ' + s.name, html: '<p class="muted">ปลดล็อกสติกเกอร์ใหม่!</p><div class="reveal" aria-hidden="true">' + esc(s.icon) + '</div><h1>' + esc(s.name) + '</h1><p class="muted">' + esc(s.how) + '</p>' });
+    L.push({ sound: 'badge', say: 'ได้สติกเกอร์ใหม่ ' + s.name, html: '<p class="muted">ปลดล็อกสติกเกอร์ใหม่!</p><div class="reveal" aria-hidden="true">' + esc(s.icon) + '</div><h1>' + esc(s.name) + '</h1><p class="muted">' + esc(s.how) + '</p>' });
   });
   (r.events || []).forEach(function (ev) {
     var st = splitSticker(ev.sticker);
-    L.push({ sound: 'up', confetti: true, say: 'ทำอีเวนต์ครบแล้ว', html: '<p class="muted">ทำอีเวนต์ครบแล้ว!</p><div class="reveal ev" aria-hidden="true">' + esc(st.icon) + '</div><h1>' + esc(st.name || ev.name) + '</h1>' +
+    L.push({ sound: 'event', confetti: true, say: 'ทำอีเวนต์ครบแล้ว', html: '<p class="muted">ทำอีเวนต์ครบแล้ว!</p><div class="reveal ev" aria-hidden="true">' + esc(st.icon) + '</div><h1>' + esc(st.name || ev.name) + '</h1>' +
       '<p class="muted">สติกเกอร์รุ่นพิเศษจาก ' + esc(ev.name) + '</p>' + (S.xpEvent ? '<p class="num plus">+' + fmt(S.xpEvent) + ' แต้ม</p>' : '') });
   });
   if (r.levelUp) {
     var u = r.levelUp, title = u.lv >= 10 && u.newLegend && u.legend > 0 ? '🏆 ดาวตำนาน ★' + u.legend : 'Lv.' + u.lv + ' ' + esc(u.title) + ' ' + esc(u.icon);
-    L.push({ sound: 'up', confetti: true, say: 'เลเวลอัป ' + (u.lv >= 10 && u.newLegend ? 'ดาวตำนาน' : 'เลเวล ' + u.lv + ' ' + u.title),
+    L.push({ sound: 'level', confetti: true, say: 'เลเวลอัป ' + (u.lv >= 10 && u.newLegend ? 'ดาวตำนาน' : 'เลเวล ' + u.lv + ' ' + u.title),
       html: (u.newArc ? '<span class="tag grad">⚡ เข้าสู่' + esc(u.arcName) + '</span>' : '') + hero() + '<p class="muted">เลเวลอัป!</p><h1>' + title + '</h1>' +
         (u.newDiff ? unlockBox('🔓', 'ปลดล็อกแล้ว', 'ภารกิจ ' + new Array(u.newDiff + 1).join('⭐')) : '') });
   }
@@ -2378,7 +2478,7 @@ function showCele() {
   confetti(!!c.confetti);
   show('s-cele');
   ding(c.sound || 'ok');
-  buzz(c.sound === 'up' ? [60, 40, 60, 40, 140] : 50);
+  buzz(c.sound === 'up' || c.sound === 'level' || c.sound === 'goal' || c.sound === 'badge' || c.sound === 'event' ? [60, 40, 60, 40, 140] : 50);
   say(c.say);
 }
 $('cele-btns').onclick = function (e) {
@@ -5980,7 +6080,7 @@ function loadList(force) {
   GM.lists[key] = { loading: true, at: 0 };
   var body = GM.tab === 'rank' ? { token: a.token, view: 'rank', grade: GM.grade } : { token: a.token, view: GM.view };
   call('gboard', body).then(function (res) {
-    GM.lists[key] = res.ok ? { at: Date.now(), list: res.list, left: res.likesLeft, room: res.room, myGrade: res.myGrade } : { at: 0, error: res.error || 'โหลดไม่สำเร็จ' };
+    GM.lists[key] = res.ok ? { at: Date.now(), list: res.list, left: res.likesLeft, room: res.room, myGrade: res.myGrade, model: res.model || null } : { at: 0, error: res.error || 'โหลดไม่สำเร็จ' };
     if (current === 's-game' && !GM.visit && listKey() === key) renderGame();
   });
 }
@@ -6006,6 +6106,7 @@ function listHtml() {
     return h.join('');
   }
   if (L.error) { h.push('<p class="err" style="text-align:center">' + esc(L.error) + '</p>'); return h.join(''); }
+  if (!rank && L.model) h.push('<button type="button" class="gmodel" data-gk="model"><span class="gmi" aria-hidden="true">🏆</span><span class="tsw"><b>ศูนย์ฝึกต้นแบบ</b><small>จากคุณครู · ⭐ ' + fmt(L.model.s) + ' ดาว · แตะดูไอเดีย</small></span><span class="chev" aria-hidden="true">›</span></button>');
   if (!rank) h.push('<p class="gleft">❤️ วันนี้กดถูกใจได้อีก <b>' + L.left + '</b> ครั้ง</p>');
   if (!L.list.length) {
     h.push('<div class="card" style="text-align:center;padding:22px 16px"><div style="font-size:2.4em" aria-hidden="true">🏗️</div><b>' +
@@ -6042,6 +6143,13 @@ function visitHtml() {
   if (v.loading) { h.push('<div class="card"><div class="sk" style="height:22px;width:60%"></div></div><div class="gstage"><div class="sk" style="height:220px"></div></div>'); return h.join(''); }
   if (v.error) { h.push('<p class="err" style="text-align:center">' + esc(v.error) + '</p>'); return h.join(''); }
   var c = v.center;
+  if (c.model) {
+    h.push('<section class="card gvh gvmodel"><div class="gtx"><b>🏆 ศูนย์ฝึกต้นแบบ</b><small>จากคุณครู · ลาน 5×5 ไว้เป็นไอเดีย</small></div><div class="gvs"><b>⭐ ' + fmt(c.stars) + '</b></div></section>');
+    h.push('<div class="gstage" id="gm-visit">' + gameSvg({ cells: c.cells, draw: c.size, open: c.size, lv: c.lv }, { w: gW(c.size, 344) }) + '<span class="gscene">' + SCENES[GART.arcOf(c.lv)][0] + ' ฉาก' + SCENES[GART.arcOf(c.lv)][1] + '</span></div>');
+    h.push('<button class="gbtn" type="button" data-ga="mine">ไปสร้างศูนย์ฝึกของฉัน ›</button>');
+    h.push('<p class="ghint">ศูนย์ฝึกต้นแบบไว้ดูเป็นไอเดีย กดถูกใจไม่ได้ · เก็บแต้มเพิ่มเพื่อปลดล็อกอาคารและขยายลานนะ</p>');
+    return h.join('');
+  }
   h.push('<section class="card gvh"><div class="gtx"><b>🏟️ ศูนย์ฝึกของ ' + esc(c.n) + '</b><small>' + esc(c.r) + '</small>' + (c.pet ? '<small>🐾 น้อง' + esc(c.pet.name) + ' (' + esc(c.pet.label) + (c.pet.tier >= 2 ? ' ' + ['', '', '✨', '🌈', '👑'][c.pet.tier] : '') + ')</small>' : '') + '</div><div class="gvs"><b>⭐ ' + fmt(c.stars) + '</b><b>❤️ ' + fmt(c.likes) + '</b></div></section>');
   h.push('<div class="gstage" id="gm-visit">' + gameSvg({ cells: c.cells, draw: c.size, open: c.size, lv: c.lv, pet: c.pet }, { w: gW(c.size, 344) }) + '<span class="gscene">' + SCENES[GART.arcOf(c.lv)][0] + ' ฉาก' + SCENES[GART.arcOf(c.lv)][1] + '</span></div>');
   if (c.me) h.push('<button class="gbtn" type="button" data-ga="mine">นี่คือศูนย์ฝึกของฉัน · ไปสร้างต่อ ›</button>');
@@ -6341,17 +6449,17 @@ $('pt-body').onclick = function (e) {
   if ((x = t.closest('[data-try]'))) { PT.tryOn = PT.tryOn === x.getAttribute('data-try') ? '' : x.getAttribute('data-try'); renderPet(); return; }
   if ((x = t.closest('[data-nm]'))) { PT.draft = x.getAttribute('data-nm'); renderPet(); return; }
   if ((x = t.closest('[data-feed]'))) { petDo('feed', { item: x.getAttribute('data-feed') }); return; }
-  if ((x = t.closest('[data-trick]'))) { var tr = x.getAttribute('data-trick'); unlockAudio(); ding('up'); petAnim(tr, 'happy', 1500); return; }
+  if ((x = t.closest('[data-trick]'))) { var tr = x.getAttribute('data-trick'); unlockAudio(); ding('trick'); petAnim(tr, 'happy', 1500); return; }
   if (!(x = t.closest('[data-pa]'))) return;
   var a = x.getAttribute('data-pa'), p = petNow();
   if (a === 'tap') {
     if (PT.busy) return;
-    unlockAudio(); buzz(25); ding('tick');
+    unlockAudio(); buzz(25); ding('egg');
     PT.taps = Math.min(3, PT.taps + 1);
     renderPet();
     if (PT.taps >= 3) petDo('hatch');
   } else if (a === 'pet') {
-    unlockAudio(); buzz(15); ding('ok');
+    unlockAudio(); buzz(15); ding('pet');
     petAnim('hop', 'happy', 1100); petFx('💖', 4);
   } else if (a === 'buy') petDo('buy', { item: PT.tryOn });
   else if (a === 'wear') { var w = pWear(PT.tryOn); if (w) petDo('wear', { slot: w.slot, item: w.id }); }
@@ -6376,7 +6484,7 @@ function petDo(op, extra) {
     var p = petNow(), r = res.result || {};
     if (op === 'reroll') {
       PT.panel = ''; PT.taps = 0; PT.tryOn = '';
-      ding('up'); buzz([30, 30, 50]); toast('ได้ไข่ใบใหม่! แตะไข่ 3 ครั้งเพื่อฟัก 🥚' + (r.left != null ? ' (วันนี้ซื้อได้อีก ' + r.left + ' ใบ)' : ''));
+      ding('buy'); buzz([30, 30, 50]); toast('ได้ไข่ใบใหม่! แตะไข่ 3 ครั้งเพื่อฟัก 🥚' + (r.left != null ? ' (วันนี้ซื้อได้อีก ' + r.left + ' ใบ)' : ''));
       try { window.scrollTo(0, 0); } catch (e) {}
     } else if (op === 'hatch') {
       PT.reveal = true; PT.panel = !p.named ? 'name' : ''; PT.taps = 0;
@@ -6389,8 +6497,8 @@ function petDo(op, extra) {
         toast(tierWow(p.tier || 1) + 'ได้' + p.label + '!');
       }
     } else if (op === 'name') { PT.panel = ''; toast('ชื่อ ' + p.name + ' น่ารักมาก! 🐾'); petAnim('hop', 'happy', 1000); }
-    else if (op === 'feed') { var sn = pSnack(r.item); petAnim('eat', 'happy', 1300); petFx(sn ? sn.icon : '🍎', 3); toast((sn ? sn.icon + ' ' : '') + p.name + 'ชอบมาก! −' + petCat().snackCost + ' 🪙'); ding('ok'); }
-    else if (op === 'buy') { var w = pWear(r.item); PT.tryOn = ''; petAnim('hop', 'happy', 1100); petFx('✨', 5); toast('ใส่' + (w ? w.label : '') + 'แล้ว! −' + (w ? w.cost : 0) + ' 🪙'); ding('up'); }
+    else if (op === 'feed') { var sn = pSnack(r.item); petAnim('eat', 'happy', 1300); petFx(sn ? sn.icon : '🍎', 3); toast((sn ? sn.icon + ' ' : '') + p.name + 'ชอบมาก! −' + petCat().snackCost + ' 🪙'); ding('feed'); }
+    else if (op === 'buy') { var w = pWear(r.item); PT.tryOn = ''; petAnim('hop', 'happy', 1100); petFx('✨', 5); toast('ใส่' + (w ? w.label : '') + 'แล้ว! −' + (w ? w.cost : 0) + ' 🪙'); ding('wear'); }
     else if (op === 'wear') { PT.tryOn = ''; renderPet(); }
     if (current === 's-pet' && op !== 'wear' && !PT.anim) renderPet();
   });
@@ -6491,6 +6599,7 @@ function hatchShow(p, done) {
   el.innerHTML = '<div class="hrays"></div><div class="hglow"></div><div class="hrain" aria-hidden="true"></div>' +
     '<div class="hegg" aria-hidden="true">' + PETART.svg('mystery', 0, 220, { crack: 1 }) + '</div><div class="hburst" aria-hidden="true"></div><div class="hflash"></div><div class="hskip">แตะเพื่อข้าม</div>';
   document.body.appendChild(el);
+  if (window.SND) SND.hold(true);
   HX = { el: el, p: p, t: t, done: done, timers: [], phase: 1, at: Date.now() };
   el.addEventListener('click', function (e) {
     if (!HX) return;
@@ -6500,9 +6609,9 @@ function hatchShow(p, done) {
   });
   if (reduce) { hatchReveal(); return; }
   var T = t === 4 ? [750, 1600, 2600] : t === 3 ? [650, 1400, 2200] : t === 2 ? [600, 1200, 1850] : [500, 1000, 1450];
-  ding('tick'); buzz(30);
-  hatchAt(T[0], function () { hatchPhase(2); hatchEgg(2); ding('tick'); buzz(40); });
-  hatchAt(T[1], function () { hatchPhase(3); hatchEgg(3); ding('snap'); buzz([30, 20, 30]); });
+  ding('shake'); buzz(30);
+  hatchAt(T[0], function () { hatchPhase(2); hatchEgg(2); ding('crack'); buzz(40); });
+  hatchAt(T[1], function () { hatchPhase(3); hatchEgg(3); ding('crack2'); buzz([30, 20, 30]); });
   hatchAt(T[2], hatchReveal);
 }
 function hatchAt(ms, fn) { if (HX) HX.timers.push(setTimeout(fn, ms)); }
@@ -6532,7 +6641,7 @@ function hatchReveal() {
     for (var k = 0; k < (t === 4 ? 16 : 10); k++) r += '<i style="left:' + Math.round(Math.random() * 94) + '%;--t:' + (2.4 + Math.random() * 2).toFixed(1) + 's;--d:' + (Math.random() * 2.5).toFixed(1) + 's">' + rain[k % rain.length] + '</i>';
     rn.innerHTML = r;
   }
-  ding('up'); if (t >= 3) setTimeout(function () { ding('up'); }, 380);
+  ding('hatch' + t);
   buzz(t === 4 ? [60, 40, 60, 40, 120, 60, 160] : t >= 2 ? [40, 30, 60, 30, 90] : [40, 30, 60]);
   try { say((t >= 2 ? HBAN[t][1].replace(/!/g, '') + ' ' : '') + 'ได้' + p.label); } catch (e) {}
   var go = el.querySelector('.hgo'); if (go) setTimeout(function () { try { go.focus(); } catch (e) {} }, 400);
@@ -6542,6 +6651,7 @@ function hatchClose(silent) {
   var h = HX; HX = null;
   h.timers.forEach(clearTimeout);
   if (h.el && h.el.parentNode) h.el.parentNode.removeChild(h.el);
+  if (window.SND) SND.hold(false);
   if (!silent && h.done) h.done();
 }
 window.hatchShow = hatchShow;
@@ -6623,7 +6733,7 @@ $('tp-body').addEventListener('click', function (e) {
     renderTPet(); return;
   }
   v = x.getAttribute('data-tl');
-  if (v === 'poke') { unlockAudio(); ding('ok'); tlAnim('hop', 'happy', 1100); }
+  if (v === 'poke') { unlockAudio(); ding('pet'); tlAnim('hop', 'happy', 1100); }
   else if (v === 'strip') { TL.wear = {}; renderTPet(); }
   else if (v === 'hatch') { unlockAudio(); tlHatch(TL.sp); }
   else if (v === 'roll') {
@@ -6634,6 +6744,697 @@ $('tp-body').addEventListener('click', function (e) {
   }
 });
 window.openTPet = openTPet;
+
+/* ===== 6B-19: เพลงประกอบตามหน้า + เสียงเอฟเฟกต์ 8-bit =====
+ * สร้างเสียงด้วยโค้ดทั้งหมด (Web Audio) ไม่ใช้ไฟล์เพลง ไม่ติดลิขสิทธิ์ ไม่เปลืองเน็ต
+ * เพลง: หน้าแรก = สดใส · ศูนย์ฝึก/จับเวลา = คึกคัก · ห้องน้อง = น่ารัก · ดูคลิป/โหมดครู = เงียบ
+ * เพลงหรี่ลงเองตอนมีเสียงฉลอง อ่านออกเสียง และฉากฟักไข่ */
+(function () {
+  if (DB.prefs.music === undefined) DB.prefs.music = true;
+  if (DB.prefs.musicVol === undefined) DB.prefs.musicVol = 50;
+  if (DB.prefs.sfxVol === undefined) DB.prefs.sfxVol = 80;
+})();
+var SND = (function () {
+  var AC = window.AudioContext || window.webkitAudioContext;
+  var ctx = null, master, sfxBus, musBus, songG, duckG, waves = {}, noise = null, held = false;
+  var NOTE = {};
+  (function () {
+    var nm = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'], fl = { 'C#': 'Db', 'D#': 'Eb', 'F#': 'Gb', 'G#': 'Ab', 'A#': 'Bb' };
+    for (var o = 1; o <= 8; o++) nm.forEach(function (n, i) { var f = 440 * Math.pow(2, ((o + 1) * 12 + i - 69) / 12); NOTE[n + o] = f; if (fl[n]) NOTE[fl[n] + o] = f; });
+  })();
+  var CH = { C: ['C', 'E', 'G'], G: ['G', 'B', 'D'], Am: ['A', 'C', 'E'], F: ['F', 'A', 'C'], Em: ['E', 'G', 'B'], D: ['D', 'F#', 'A'], Dm: ['D', 'F', 'A'], Bb: ['Bb', 'D', 'F'] };
+
+  function init() {
+    if (ctx) return ctx;
+    if (!AC) return null;
+    try {
+      ctx = new AC();
+      master = ctx.createGain(); master.gain.value = 0.9; master.connect(ctx.destination);
+      sfxBus = ctx.createGain(); sfxBus.connect(master);
+      duckG = ctx.createGain(); duckG.connect(master);
+      songG = ctx.createGain(); songG.connect(duckG);
+      musBus = ctx.createGain(); musBus.connect(songG);
+      [0.125, 0.25].forEach(function (d) {
+        var n = 32, re = new Float32Array(n), im = new Float32Array(n);
+        for (var k = 1; k < n; k++) re[k] = 4 / (k * Math.PI) * Math.sin(k * Math.PI * d);
+        waves[d] = ctx.createPeriodicWave(re, im);
+      });
+      var len = ctx.sampleRate; noise = ctx.createBuffer(1, len, ctx.sampleRate);
+      var ch = noise.getChannelData(0); for (var i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
+      vols();
+    } catch (e) { ctx = null; }
+    return ctx;
+  }
+  function vols() {
+    if (!ctx) return;
+    sfxBus.gain.value = (DB.prefs.sound ? DB.prefs.sfxVol / 100 : 0) * 0.6;
+    musBus.gain.value = (DB.prefs.music ? DB.prefs.musicVol / 100 : 0) * 0.32;
+  }
+  function wake() { if (ctx && ctx.state === 'suspended' && ctx.resume && !document.hidden) { try { ctx.resume(); } catch (e) {} } }
+
+  /* ---- เครื่องเสียงพื้นฐาน ---- */
+  function tone(bus, t, f, d, o) {
+    o = o || {};
+    var osc = ctx.createOscillator(), g = ctx.createGain(), v = o.v == null ? 0.4 : o.v, a = o.a || 0.004, r = o.r == null ? Math.min(0.06, d * 0.45) : o.r;
+    if (o.w === 'tri') osc.type = 'triangle'; else if (o.w === 'sq') osc.type = 'square'; else if (o.w === 'sine') osc.type = 'sine';
+    else osc.setPeriodicWave(waves[o.w === 12 ? 0.125 : 0.25]);
+    osc.frequency.setValueAtTime(f, t);
+    if (o.to) osc.frequency.exponentialRampToValueAtTime(o.to, t + (o.tt || d));
+    if (o.vib) { var l = ctx.createOscillator(), lg = ctx.createGain(); l.frequency.value = o.vib; lg.gain.value = f * 0.018; l.connect(lg); lg.connect(osc.frequency); l.start(t + Math.min(0.08, d / 3)); l.stop(t + d + 0.03); }
+    g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(v, t + a);
+    g.gain.setValueAtTime(v, Math.max(t + a, t + d - r)); g.gain.linearRampToValueAtTime(0.0001, t + d);
+    osc.connect(g); g.connect(bus); osc.start(t); osc.stop(t + d + 0.03);
+  }
+  function hit(bus, t, d, o) {
+    o = o || {};
+    var s = ctx.createBufferSource(), g = ctx.createGain(), f = ctx.createBiquadFilter();
+    s.buffer = noise; s.loop = true;
+    f.type = o.type || 'highpass'; f.frequency.value = o.f || 6000;
+    if (o.sweep) f.frequency.exponentialRampToValueAtTime(o.sweep, t + d);
+    g.gain.setValueAtTime(o.v || 0.25, t); g.gain.exponentialRampToValueAtTime(0.0001, t + d);
+    s.connect(f); f.connect(g); g.connect(bus); s.start(t, Math.random() * 0.5); s.stop(t + d + 0.03);
+  }
+  function kick(bus, t, v) { tone(bus, t, 150, 0.13, { w: 'sine', to: 42, tt: 0.11, v: v || 0.75, r: 0.08 }); }
+  function N(n) { return typeof n === 'number' ? n : NOTE[n]; }
+  function run(t, notes, st, o) { o = o || {}; notes.forEach(function (n, i) { if (n) tone(sfxBus, t + i * st, N(n), o.d || st * 1.15, o); }); return t + notes.length * st; }
+  function chord(t, notes, d, o) { notes.forEach(function (n) { tone(sfxBus, t, N(n), d, o); }); }
+
+  /* ---- เพลง 3 เพลง (8 ห้อง วนไปเรื่อย ๆ) ---- */
+  var SONGS = {
+    home: { bpm: 116, chords: ['C', 'G', 'Am', 'F', 'C', 'G', 'Am', 'F'], leadW: 25, bass: 'eighth', arp: 'up', drums: 'pop',
+      lead: 'E5:2 G5:2 C6:4 B5:2 G5:2 E5:4|D5:2 G5:2 B5:4 A5:2 G5:2 D5:4|C5:2 E5:2 A5:4 G5:2 E5:2 C5:2 E5:2|F5:4 A5:2 G5:2 F5:2 E5:2 D5:4|' +
+        'E5:2 G5:2 C6:2 D6:2 E6:4 D6:2 C6:2|B5:2 G5:2 D6:4 C6:2 B5:2 A5:2 G5:2|A5:2 C6:2 E6:4 D6:2 C6:2 A5:4|F5:2 A5:2 C6:2 A5:2 G5:4 R:4' },
+    center: { bpm: 136, chords: ['Em', 'C', 'G', 'D', 'Em', 'C', 'D', 'D'], leadW: 25, bass: 'drive', arp: 'stab', drums: 'sport',
+      lead: 'E5:3 G5:1 B5:4 A5:2 G5:2 F#5:4|E5:3 G5:1 C6:4 B5:2 A5:2 G5:4|D5:2 G5:2 B5:2 D6:2 C6:2 B5:2 A5:4|F#5:4 A5:4 D6:6 R:2|' +
+        'B5:2 B5:2 B5:2 A5:2 G5:2 A5:2 B5:4|C6:2 B5:2 A5:2 G5:2 E5:4 G5:4|F#5:2 G5:2 A5:2 B5:2 C6:2 D6:2 E6:4|D6:8 R:4 B5:2 D6:2' },
+    pet: { bpm: 100, chords: ['F', 'Dm', 'Bb', 'C', 'F', 'Dm', 'Bb', 'C'], leadW: 'tri', bass: 'quarter', arp: 'broken', drums: 'soft',
+      lead: 'A5:2 C6:2 F6:2 C6:2 A5:4 G5:2 F5:2|F5:2 A5:2 D6:4 C6:2 A5:2 F5:4|D5:2 F5:2 Bb5:4 A5:2 G5:2 F5:4|E5:2 G5:2 C6:4 Bb5:2 A5:2 G5:4|' +
+        'A5:2 C6:2 F6:4 E6:2 D6:2 C6:4|D6:2 C6:2 A5:4 F5:2 A5:2 D6:4|Bb5:2 A5:2 G5:2 F5:2 D5:4 F5:4|E5:2 G5:2 Bb5:2 A5:2 G5:4 R:4' }
+  };
+  Object.keys(SONGS).forEach(function (k) {
+    var s = SONGS[k], ev = {}, bars = s.lead.split('|');
+    s.name = k; s.len = bars.length * 16;
+    bars.forEach(function (b, bi) { var st = bi * 16; b.trim().split(/\s+/).forEach(function (tok) { var p = tok.split(':'), l = +p[1]; if (p[0] !== 'R') (ev[st] = ev[st] || []).push({ n: p[0], l: l }); st += l; }); });
+    s.ev = ev;
+  });
+  function cn(name, oct) { return NOTE[name + oct]; }
+  function playStep(s, i, t, sp) {
+    var bar = Math.floor(i / 16), k = i % 16, ch = CH[s.chords[bar % s.chords.length]], root = ch[0], fifth = ch[2], b = musBus;
+    (s.ev[i] || []).forEach(function (e) { tone(b, t, NOTE[e.n], e.l * sp * 0.9, { w: s.leadW, v: s.leadW === 'tri' ? 0.34 : 0.17, vib: e.l >= 4 ? 5.5 : 0 }); });
+    if (s.bass === 'eighth' && k % 2 === 0) tone(b, t, cn(k === 4 || k === 12 ? fifth : root, k === 14 ? 3 : 2), sp * 1.7, { w: 'tri', v: 0.42 });
+    if (s.bass === 'drive' && k % 2 === 0) tone(b, t, cn(root, k % 4 === 0 ? 2 : 3), sp * 1.6, { w: 'tri', v: 0.45 });
+    if (s.bass === 'quarter' && k % 4 === 0) tone(b, t, cn(k === 4 || k === 12 ? fifth : root, 2), sp * 3.4, { w: 'tri', v: 0.4 });
+    if (s.arp === 'up') { var seq = [0, 1, 2, 1]; tone(b, t, cn(ch[seq[k % 4]], 4) * (k % 8 >= 4 ? 2 : 1), sp * 0.9, { w: 12, v: 0.05 }); }
+    if (s.arp === 'stab' && (k === 2 || k === 6 || k === 10 || k === 14)) ch.forEach(function (n) { tone(b, t, cn(n, 4), sp * 1.2, { w: 12, v: 0.045 }); });
+    if (s.arp === 'broken' && k % 2 === 0) { var bs = [0, 2, 1, 2]; tone(b, t, cn(ch[bs[(k / 2) % 4]], 4), sp * 1.8, { w: 12, v: 0.055 }); }
+    if (s.drums === 'pop') {
+      if (k === 0 || k === 8) kick(b, t, 0.6);
+      if (k === 4 || k === 12) hit(b, t, 0.1, { type: 'bandpass', f: 1900, v: 0.2 });
+      if (k % 2 === 0) hit(b, t, 0.03, { f: 7500, v: 0.07 });
+    } else if (s.drums === 'sport') {
+      if (k === 0 || k === 7 || k === 8 || k === 10) kick(b, t, 0.7);
+      if (k === 4 || k === 12) hit(b, t, 0.12, { type: 'bandpass', f: 2000, v: 0.26 });
+      if (k === 14) hit(b, t, 0.14, { f: 6500, v: 0.08 });
+      else hit(b, t, 0.025, { f: 8000, v: k % 2 ? 0.035 : 0.07 });
+    } else if (s.drums === 'soft') {
+      if (k === 0 || k === 8) kick(b, t, 0.32);
+      if (k === 4 || k === 12) tone(b, t, 1700, 0.035, { w: 'tri', v: 0.12 });
+      if (k % 2 === 0) hit(b, t, 0.025, { f: 8500, v: 0.035 });
+    }
+  }
+  var cur = null, want = '', next = 0, step = 0, timer = 0, swapT = 0;
+  function tick() {
+    if (!ctx || !cur) return;
+    if (ctx.state !== 'running') return;
+    var sp = 60 / cur.bpm / 4;
+    if (next < ctx.currentTime) next = ctx.currentTime + 0.05;
+    while (next < ctx.currentTime + 0.15) { try { playStep(cur, step, next, sp); } catch (e) {} step = (step + 1) % cur.len; next += sp; }
+  }
+  function apply() {
+    var name = DB.prefs.music ? want : '';
+    if (!ctx) return;
+    var now = ctx.currentTime;
+    if ((cur && cur.name) === name) return;
+    clearTimeout(swapT);
+    songG.gain.cancelScheduledValues(now); songG.gain.setTargetAtTime(0, now, 0.08);
+    swapT = setTimeout(function () {
+      cur = name ? SONGS[name] : null; step = 0; next = ctx.currentTime + 0.06;
+      var n2 = ctx.currentTime; songG.gain.cancelScheduledValues(n2); songG.gain.setValueAtTime(0, n2); songG.gain.linearRampToValueAtTime(1, n2 + 0.6);
+      if (cur && !timer) timer = setInterval(tick, 40);
+      if (!cur && timer) { clearInterval(timer); timer = 0; }
+    }, cur ? 320 : 0);
+  }
+  function scene(name) { want = name || ''; if (ctx) apply(); }
+  function duck(level, secs) {
+    if (!ctx) return;
+    var now = ctx.currentTime;
+    duckG.gain.cancelScheduledValues(now); duckG.gain.setTargetAtTime(level, now, 0.04);
+    if (secs && !held) duckG.gain.setTargetAtTime(1, now + secs, 0.25);
+  }
+  function hold(on) { held = !!on; if (ctx) duck(on ? 0 : 1); }
+  function unlock() { if (!DB.prefs.sound && !DB.prefs.music) return; if (init()) { wake(); apply(); } }
+
+  /* ---- เสียงเอฟเฟกต์ 8-bit ---- */
+  var BIG = { level: 1.6, goal: 1.1, badge: 1.0, event: 1.0, quest: 0.9, mission: 0.8, hatch1: 1.2, hatch2: 1.6, hatch3: 1.9, hatch4: 2.6 };
+  var FX = {
+    tick: function (t) { tone(sfxBus, t, 1500, 0.035, { w: 25, v: 0.25 }); },
+    ok: function (t) { tone(sfxBus, t, NOTE.B5, 0.06, { w: 25, v: 0.3 }); tone(sfxBus, t + 0.06, NOTE.E6, 0.2, { w: 25, v: 0.3 }); },
+    up: function (t) { var e = run(t, ['C5', 'E5', 'G5', 'C6'], 0.065, { w: 25, v: 0.28 }); tone(sfxBus, e, NOTE.E6, 0.22, { w: 25, v: 0.26, vib: 6 }); },
+    bad: function (t) { tone(sfxBus, t, 196, 0.12, { w: 'sq', v: 0.16 }); tone(sfxBus, t + 0.13, 147, 0.26, { w: 'sq', v: 0.16, to: 120 }); },
+    snap: function (t) { hit(sfxBus, t, 0.07, { f: 3000, v: 0.4 }); tone(sfxBus, t, 2200, 0.03, { w: 12, v: 0.2 }); },
+    submit: function (t) { var e = run(t, ['G5', 'C6', 'E6'], 0.06, { w: 25, v: 0.26 }); tone(sfxBus, e, NOTE.G6, 0.26, { w: 25, v: 0.26, vib: 6 }); tone(sfxBus, e, NOTE.C5, 0.26, { w: 'tri', v: 0.3 }); },
+    mission: function (t) {
+      run(t, ['C5', 'D5', 'E5', 'G5', 'A5', 'C6', 'D6', 'E6', 'G6'], 0.035, { w: 25, v: 0.22 });
+      tone(sfxBus, t + 0.34, NOTE.B5, 0.06, { w: 25, v: 0.28 }); tone(sfxBus, t + 0.4, NOTE.E6, 0.3, { w: 25, v: 0.28, vib: 6 });
+    },
+    quest: function (t) { FX.mission(t); chord(t + 0.42, ['C5', 'E5', 'G5'], 0.35, { w: 12, v: 0.12 }); },
+    clip: function (t) { [2093, 2637, 3136, 2349, 2794, 3520].forEach(function (f, i) { tone(sfxBus, t + i * 0.05, f, 0.09, { w: 'tri', v: 0.22 }); }); },
+    event: function (t) { var e = run(t, ['G5', 'C6', 'E6', 'G6'], 0.08, { w: 25, v: 0.24 }); chord(e, ['C6', 'E6', 'G6'], 0.4, { w: 12, v: 0.13, vib: 6 }); tone(sfxBus, e, NOTE.C4, 0.4, { w: 'tri', v: 0.35 }); },
+    goal: function (t) {
+      var e = run(t, ['C5', 'E5', 'G5', 'C6'], 0.08, { w: 25, v: 0.25 });
+      chord(e, ['C5', 'E5', 'G5', 'C6'], 0.5, { w: 12, v: 0.11, vib: 6 }); tone(sfxBus, e, NOTE.C3, 0.5, { w: 'tri', v: 0.4 }); hit(sfxBus, e, 0.6, { f: 5000, v: 0.12 });
+    },
+    badge: function (t) { run(t, ['E6', 'G#6', 'B6', 'E7'], 0.055, { w: 25, v: 0.22 }); tone(sfxBus, t + 0.24, NOTE.E7, 0.5, { w: 'tri', v: 0.2, vib: 7 }); tone(sfxBus, t + 0.24, NOTE.B6, 0.5, { w: 'tri', v: 0.12, vib: 7 }); },
+    level: function (t) {
+      [0, 0.1, 0.2].forEach(function (d) { tone(sfxBus, t + d, NOTE.G5, 0.08, { w: 25, v: 0.26 }); tone(sfxBus, t + d, NOTE.E5, 0.08, { w: 12, v: 0.12 }); });
+      for (var i = 0; i < 6; i++) hit(sfxBus, t + i * 0.05, 0.04, { type: 'bandpass', f: 1800, v: 0.08 + i * 0.03 });
+      tone(sfxBus, t + 0.32, NOTE.C6, 0.55, { w: 25, v: 0.28, vib: 6 }); chord(t + 0.32, ['E5', 'G5'], 0.55, { w: 12, v: 0.12 });
+      tone(sfxBus, t + 0.32, NOTE.C3, 0.55, { w: 'tri', v: 0.45 }); hit(sfxBus, t + 0.32, 0.8, { f: 4500, v: 0.18 }); kick(sfxBus, t + 0.32, 0.6);
+      run(t + 0.9, ['C6', 'E6', 'G6', 'C7'], 0.06, { w: 'tri', v: 0.22 }); tone(sfxBus, t + 1.14, NOTE.C7, 0.4, { w: 'tri', v: 0.18, vib: 7 });
+    },
+    egg: function (t) { tone(sfxBus, t, 320, 0.07, { w: 'tri', to: 190, v: 0.4 }); hit(sfxBus, t, 0.04, { type: 'bandpass', f: 1200, v: 0.12 }); },
+    pet: function (t) { tone(sfxBus, t, 300, 0.16, { w: 'tri', to: 760, tt: 0.08, v: 0.32 }); tone(sfxBus, t + 0.1, 1250, 0.08, { w: 12, to: 1650, v: 0.16 }); },
+    trick: function (t) { tone(sfxBus, t, 220, 0.18, { w: 25, to: 980, v: 0.24 }); FX.ok(t + 0.2); },
+    feed: function (t) { [0, 0.13, 0.26].forEach(function (d) { hit(sfxBus, t + d, 0.06, { type: 'lowpass', f: 1400, v: 0.35 }); tone(sfxBus, t + d, 180, 0.05, { w: 'tri', v: 0.2 }); }); tone(sfxBus, t + 0.42, NOTE.E6, 0.08, { w: 25, v: 0.24 }); tone(sfxBus, t + 0.5, NOTE.A6, 0.18, { w: 25, v: 0.24 }); },
+    wear: function (t) { hit(sfxBus, t, 0.22, { type: 'bandpass', f: 1500, sweep: 7000, v: 0.16 }); run(t + 0.12, ['E6', 'A6', 'C#7'], 0.05, { w: 'tri', v: 0.22 }); },
+    buy: function (t) { tone(sfxBus, t, NOTE.E6, 0.05, { w: 25, v: 0.26 }); tone(sfxBus, t + 0.05, NOTE.B6, 0.22, { w: 25, v: 0.26 }); hit(sfxBus, t, 0.05, { f: 4000, v: 0.2 }); },
+    shake: function (t) { tone(sfxBus, t, 90, 0.4, { w: 'tri', v: 0.45, vib: 18 }); hit(sfxBus, t, 0.08, { type: 'bandpass', f: 900, v: 0.14 }); },
+    crack: function (t) { hit(sfxBus, t, 0.08, { f: 2500, v: 0.4 }); tone(sfxBus, t, 900, 0.1, { w: 12, to: 480, v: 0.18 }); },
+    crack2: function (t) { FX.crack(t); hit(sfxBus, t + 0.11, 0.12, { f: 2000, v: 0.45 }); tone(sfxBus, t + 0.12, 1800, 0.18, { w: 'tri', v: 0.2, vib: 9 }); },
+    hatch1: function (t) { hit(sfxBus, t, 0.15, { f: 3000, v: 0.3 }); var e = run(t + 0.05, ['C6', 'E6', 'G6'], 0.07, { w: 25, v: 0.25 }); chord(e, ['C6', 'E6', 'G6', 'C7'], 0.45, { w: 12, v: 0.1, vib: 6 }); tone(sfxBus, e, NOTE.C4, 0.45, { w: 'tri', v: 0.35 }); },
+    hatch2: function (t) {
+      hit(sfxBus, t, 0.2, { f: 2500, v: 0.3 });
+      run(t + 0.05, ['C6', 'D6', 'E6', 'F#6', 'G#6', 'A#6', 'C7'], 0.05, { w: 'tri', v: 0.24 });
+      chord(t + 0.42, ['C6', 'E6', 'G#6'], 0.9, { w: 12, v: 0.1, vib: 5 }); tone(sfxBus, t + 0.42, NOTE.C7, 0.9, { w: 'tri', v: 0.16, vib: 7 }); tone(sfxBus, t + 0.42, NOTE.C4, 0.9, { w: 'tri', v: 0.3 });
+    },
+    hatch3: function (t) {
+      hit(sfxBus, t, 0.25, { f: 2500, v: 0.32 });
+      var pen = ['C5', 'D5', 'E5', 'G5', 'A5', 'C6', 'D6', 'E6', 'G6', 'A6', 'C7'];
+      run(t + 0.04, pen, 0.035, { w: 25, v: 0.2 });
+      var e = t + 0.45; chord(e, ['C5', 'E5', 'G5', 'B5', 'D6'], 0.9, { w: 12, v: 0.08, vib: 5 }); tone(sfxBus, e, NOTE.C3, 0.9, { w: 'tri', v: 0.4 });
+      run(e + 0.1, ['E6', 'G6', 'B6', 'D7', 'E7'], 0.07, { w: 'tri', v: 0.2 }); hit(sfxBus, e, 1.0, { f: 5000, v: 0.12 });
+    },
+    hatch4: function (t) {
+      for (var i = 0; i < 14; i++) hit(sfxBus, t + i * 0.04, 0.05, { type: 'bandpass', f: 1600, v: 0.06 + i * 0.018 });
+      var s = t + 0.6; kick(sfxBus, s, 0.9); hit(sfxBus, s, 1.4, { f: 4000, v: 0.25 });
+      [['C5', 'E5', 'G5', 'C3', 0.32], ['F5', 'A5', 'C6', 'F3', 0.32], ['G5', 'B5', 'D6', 'G3', 0.32]].forEach(function (c, i) {
+        var tt = s + i * 0.32; chord(tt, c.slice(0, 3), c[4], { w: 'sq', v: 0.07 }); tone(sfxBus, tt, N(c[3]), c[4], { w: 'tri', v: 0.4 });
+      });
+      var f = s + 0.96; chord(f, ['C6', 'E6', 'G6'], 1.0, { w: 'sq', v: 0.08, vib: 5 }); tone(sfxBus, f, NOTE.C3, 1.0, { w: 'tri', v: 0.45 }); kick(sfxBus, f, 0.9); hit(sfxBus, f, 1.2, { f: 4500, v: 0.2 });
+      run(f + 0.3, ['C7', 'G6', 'E7', 'C7', 'G7'], 0.08, { w: 'tri', v: 0.18 });
+    }
+  };
+  function sfx(kind) {
+    if (!init()) return;
+    wake();
+    var fn = FX[kind] || FX.ok;
+    try { fn(ctx.currentTime + 0.012); } catch (e) {}
+    if (BIG[kind] && cur && !held) duck(0.25, BIG[kind]);
+  }
+
+  function onGesture() { if (ctx) { wake(); apply(); } else if (want && DB.prefs.music) unlock(); }
+  ['pointerdown', 'pointerup', 'touchend', 'keydown'].forEach(function (ev) { document.addEventListener(ev, onGesture, true); });
+  document.addEventListener('visibilitychange', function () {
+    if (!ctx) return;
+    try { if (document.hidden) ctx.suspend(); else ctx.resume(); } catch (e) {}
+  });
+  function tap() { if (!init()) return null; var d = ctx.createMediaStreamDestination(); master.connect(d); return d.stream; }
+  return { sfx: sfx, scene: scene, duck: duck, hold: hold, unlock: unlock, vols: vols, kinds: Object.keys(FX), _tap: tap,
+    state: function () { return { ctx: ctx ? ctx.state : 'none', song: cur ? cur.name : '', want: want, held: held }; } };
+})();
+window.SND = SND;
+
+/* แทนเสียงเดิม: ทุกที่ที่เรียก ding('...') จะได้เสียง 8-bit ใหม่ */
+function ding(kind) { if (!DB.prefs.sound || !window.SND) return; SND.sfx(kind || 'ok'); }
+function unlockAudio() { if (window.SND) SND.unlock(); }
+
+/* เพลงตามหน้า */
+var MUSIC_OF = { 's-game': 'center', 's-timer': 'center', 's-pet': 'pet', 's-clip': '', 's-install': '', 's-tlogin': '' };
+function musicOf(id) {
+  if (window.TEACHER_SCREENS && TEACHER_SCREENS[id]) return '';
+  return MUSIC_OF[id] != null ? MUSIC_OF[id] : 'home';
+}
+var _show_snd = show;
+show = function (id) { _show_snd(id); if (window.SND) SND.scene(musicOf(id)); };
+var _say_snd = say;
+say = function (text) { if (window.SND && DB.prefs.speak && text) SND.duck(0.3, Math.min(6, 1.2 + String(text).length * 0.07)); _say_snd(text); };
+
+/* หน้าตั้งค่า: แยกเพลง / เอฟเฟกต์ + แถบความดัง */
+var _rs_snd = renderSettings;
+renderSettings = function () {
+  _rs_snd();
+  setSwitch('sw-mus', DB.prefs.music);
+  var vm = $('vol-mus'), vs = $('vol-sfx');
+  if (vm) { vm.value = DB.prefs.musicVol; vm.disabled = !DB.prefs.music; vm.setAttribute('aria-valuetext', DB.prefs.musicVol + '%'); }
+  if (vs) { vs.value = DB.prefs.sfxVol; vs.disabled = !DB.prefs.sound; vs.setAttribute('aria-valuetext', DB.prefs.sfxVol + '%'); }
+  var lm = $('vol-mus-v'), ls = $('vol-sfx-v');
+  if (lm) lm.textContent = DB.prefs.musicVol + '%';
+  if (ls) ls.textContent = DB.prefs.sfxVol + '%';
+};
+$('sw-mus').onclick = function () { DB.prefs.music = !DB.prefs.music; save(); renderSettings(); SND.unlock(); SND.vols(); SND.scene(musicOf(current)); };
+$('sw-snd').onclick = function () { DB.prefs.sound = !DB.prefs.sound; save(); renderSettings(); SND.unlock(); SND.vols(); ding('ok'); };
+$('vol-mus').addEventListener('input', function () { DB.prefs.musicVol = +this.value; $('vol-mus-v').textContent = this.value + '%'; SND.unlock(); SND.vols(); });
+$('vol-mus').addEventListener('change', function () { save(); renderSettings(); });
+$('vol-sfx').addEventListener('input', function () { DB.prefs.sfxVol = +this.value; $('vol-sfx-v').textContent = this.value + '%'; SND.vols(); });
+$('vol-sfx').addEventListener('change', function () { save(); renderSettings(); ding('ok'); });
+
+/* ===== 6B-20: เลขประจำตัว 4 หลัก + ทวนข้อมูลก่อนสมัคร + ครูค้นหานักเรียน/แก้เลขประจำตัว ===== */
+
+/* ---------- จำนวนหลักเลขประจำตัว (ค่าจากแท็บตั้งค่า ส่งมากับ ping) ---------- */
+var SIDLEN = DB.sidLen != null ? DB.sidLen : 4;
+function applySidLen(n) {
+  if (n != null && n >= 0 && n <= 10) { SIDLEN = n; DB.sidLen = n; try { save(); } catch (e) {} }
+  var el = $('r-sid');
+  if (el) { el.maxLength = SIDLEN || 10; el.placeholder = SIDLEN ? 'เลข ' + SIDLEN + ' หลักบนบัตรนักเรียน' : 'เลขบนบัตรนักเรียน'; }
+  var lb = $('lb-rsid');
+  if (lb) lb.textContent = 'เลขประจำตัวนักเรียน' + (SIDLEN ? ' (' + SIDLEN + ' หลัก)' : '');
+  var li = $('in-sid');
+  if (li) li.placeholder = SIDLEN ? 'เลข ' + SIDLEN + ' หลัก' : 'เลขบนบัตรนักเรียน';
+}
+applySidLen();
+function sidOk(sid) { return SIDLEN ? new RegExp('^\\d{' + SIDLEN + '}$').test(sid) : /^\d{1,10}$/.test(sid); }
+function sidBoxes(sid, bad) { return String(sid).split('').map(function (d) { return '<b' + (bad ? ' class="bad"' : '') + '>' + esc(d) + '</b>'; }).join(''); }
+
+/* ---------- สมัคร: ตรวจครบแล้วให้ทวนข้อมูลก่อนส่ง ---------- */
+var RC = null;
+$('f-reg').onsubmit = function (e) {
+  e.preventDefault();
+  var err = $('reg-err'), name = $('r-name').value.replace(/\s+/g, ' ').trim(), room = digits($('r-room').value), no = digits($('r-no').value);
+  var sid = digits($('r-sid').value), pin = digits($('r-pin').value), pin2 = digits($('r-pin2').value);
+  err.textContent = '';
+  if (name.length < 4) { err.textContent = 'ใส่ชื่อ-นามสกุลจริงก่อนนะ'; return; }
+  if (!gradePick) { err.textContent = 'เลือกชั้น ป.1–ป.6 ก่อนนะ'; return; }
+  if (!(+room >= 1 && +room <= 30)) { err.textContent = 'ใส่ห้องเป็นตัวเลข เช่น 2'; return; }
+  if (!(+no >= 1 && +no <= 99)) { err.textContent = 'ใส่เลขที่เป็นตัวเลข 1–99'; return; }
+  if (!sid) { err.textContent = 'ใส่เลขประจำตัวนักเรียนก่อนนะ'; $('r-sid').focus(); return; }
+  if (!sidOk(sid)) {
+    err.textContent = SIDLEN ? 'เลขประจำตัวต้องมี ' + SIDLEN + ' หลัก (ตอนนี้ใส่ ' + sid.length + ' หลัก) ดูจากบัตรนักเรียนนะ' : 'ใส่เลขประจำตัวเป็นตัวเลข';
+    $('r-sid').focus(); return;
+  }
+  if (!/^\d{4,6}$/.test(pin)) { err.textContent = 'PIN เป็นตัวเลข 4–6 หลัก'; return; }
+  if (pin !== pin2) { err.textContent = 'PIN 2 ช่องไม่ตรงกัน'; return; }
+  RC = { studentId: sid, name: name, grade: gradePick, room: +room, no: +no, pin: pin };
+  $('rc-sid').innerHTML = sidBoxes(sid);
+  $('rc-info').innerHTML = '<div><span>ชื่อ</span><b>' + esc(name) + '</b></div>' +
+    '<div><span>ชั้น / ห้อง</span><b>ป.' + gradePick + '/' + (+room) + '</b></div>' +
+    '<div><span>เลขที่</span><b>' + (+no) + '</b></div>';
+  $('rc-sheet').classList.add('on');
+  try { $('rc-ok').focus(); } catch (er) {}
+  try { say('เลขประจำตัว ' + sid.split('').join(' ') + ' ถูกต้องไหม'); } catch (er) {}
+};
+function closeRegConfirm() { $('rc-sheet').classList.remove('on'); }
+$('rc-back').onclick = function () { closeRegConfirm(); try { $('r-sid').focus(); } catch (e) {} };
+$('rc-sheet').onclick = function (e) { if (e.target === this) closeRegConfirm(); };
+$('rc-ok').onclick = function () {
+  if (!RC) return;
+  var p = RC;
+  RC = null;
+  closeRegConfirm();
+  signIn('register', p, $('btn-reg'), $('reg-err'));
+};
+
+/* =================== โหมดครู: ค้นหานักเรียน =================== */
+TEACHER_SCREENS['s-tstu'] = 1;
+var TS = { list: null, at: 0, q: '', bad: false, sidLen: SIDLEN, cur: null, step: 'view', newSid: '', err: '', res: null, busy: false };
+function tsBad(st) { return !!TS.sidLen && String(st.sid).length !== TS.sidLen; }
+function openTStu(force) {
+  show('s-tstu');
+  renderTStu();
+  if (force || !TS.list || Date.now() - TS.at > 60000) loadTStu();
+}
+function loadTStu() {
+  return tcall('tstudents').then(function (res) {
+    if (!res.ok) { if (res.code !== 'AUTH_T') $('ts-body').innerHTML = '<p class="err">' + esc(res.error || 'โหลดรายชื่อไม่สำเร็จ ลองใหม่') + '</p>'; return null; }
+    TS.list = (res.students || []).slice().sort(function (a, b) { return (a.grade || 9) - (b.grade || 9) || (a.room || 99) - (b.room || 99) || (a.no || 999) - (b.no || 999); });
+    TS.sidLen = res.sidLen != null ? res.sidLen : TS.sidLen;
+    TS.at = Date.now();
+    if (current === 's-tstu') renderTStu();
+    return TS.list;
+  });
+}
+function renderTStu() {
+  var box = $('ts-body');
+  if (!TS.list) { box.innerHTML = '<div class="sk" style="height:56px"></div><div class="sk" style="height:72px"></div><div class="sk" style="height:72px"></div><div class="sk" style="height:72px"></div>'; return; }
+  var nBad = TS.list.filter(tsBad).length;
+  var h = [];
+  h.push('<label class="field"><span>ค้นหาด้วยชื่อ เลขประจำตัว หรือห้อง (เช่น 4/1)</span><input id="ts-q" type="search" autocomplete="off" placeholder="พิมพ์เพื่อค้นหา" value="' + esc(TS.q) + '"></label>');
+  if (TS.sidLen) {
+    h.push('<div class="fchips" role="tablist">' +
+      '<button type="button" role="tab" data-tsf="all" class="' + (TS.bad ? '' : 'on') + '" aria-selected="' + !TS.bad + '">ทั้งหมด ' + TS.list.length + ' คน</button>' +
+      '<button type="button" role="tab" data-tsf="bad" class="' + (TS.bad ? 'on' : '') + '" aria-selected="' + TS.bad + '">⚠️ เลขไม่ใช่ ' + TS.sidLen + ' หลัก ' + nBad + ' คน</button></div>');
+  }
+  h.push('<div id="ts-res" class="stack" style="gap:8px"></div>');
+  box.innerHTML = h.join('');
+  renderTStuRes();
+  var q = $('ts-q');
+  q.oninput = function () { TS.q = this.value; renderTStuRes(); };
+}
+function tsMatch(st, q) {
+  if (!q) return true;
+  var m = q.match(/^(?:ป\.?\s*)?(\d)\s*\/\s*(\d{1,2})$/);
+  if (m) return st.grade === +m[1] && st.room === +m[2];
+  if (/^\d+$/.test(q)) return String(st.sid).indexOf(q) === 0;
+  return String(st.name).toLowerCase().indexOf(q.toLowerCase()) >= 0;
+}
+function renderTStuRes() {
+  var out = $('ts-res');
+  if (!out || !TS.list) return;
+  var q = String(TS.q || '').trim();
+  var hits = TS.list.filter(function (st) { return (!TS.bad || tsBad(st)) && tsMatch(st, q); });
+  if (!hits.length) { out.innerHTML = '<p class="muted" style="text-align:center;padding:18px 0">' + (TS.bad ? 'ไม่มีนักเรียนที่เลขผิดจำนวนหลัก 🎉' : 'ไม่พบนักเรียนที่ค้นหา') + '</p>'; return; }
+  var max = 60, h = hits.slice(0, max).map(function (st) {
+    var bad = tsBad(st), tags = [];
+    if (bad) tags.push('<i class="tg bad">⚠️ ' + String(st.sid).length + ' หลัก</i>');
+    if (!st.hasPin) tags.push('<i class="tg">🔑 ยังไม่ตั้ง PIN</i>');
+    if (!st.active) tags.push('<i class="tg off">ปิดบัญชี</i>');
+    return '<button type="button" class="tsrow" data-tsid="' + esc(st.sid) + '"><div class="tsw"><b>' + esc(st.name || '(ไม่มีชื่อ)') + '</b>' +
+      '<small>' + (st.classId ? 'ป.' + st.grade + '/' + st.room : 'ไม่มีห้อง') + ' · เลขที่ ' + (st.no || '-') + '</small>' + (tags.length ? '<span class="tgs">' + tags.join('') + '</span>' : '') + '</div>' +
+      '<span class="tssid' + (bad ? ' bad' : '') + '">' + esc(st.sid) + '</span><span class="chev" aria-hidden="true">›</span></button>';
+  });
+  if (hits.length > max) h.push('<p class="muted" style="text-align:center">แสดง ' + max + ' จาก ' + hits.length + ' คน พิมพ์ค้นหาให้แคบลง</p>');
+  out.innerHTML = h.join('');
+}
+$('ts-body').addEventListener('click', function (e) {
+  var f = e.target.closest('[data-tsf]');
+  if (f) { TS.bad = f.getAttribute('data-tsf') === 'bad'; renderTStu(); return; }
+  var r = e.target.closest('[data-tsid]');
+  if (r) openTsSheet(r.getAttribute('data-tsid'));
+});
+$('ts-back').onclick = function () { openTeacher(); };
+
+/* ---------- แผ่นล่าง: แก้เลขประจำตัว ---------- */
+function tsDate(v) {
+  var t = String(v || '');
+  if (!/^\d{4}-\d{2}-\d{2}/.test(t)) return t || '-';
+  var d = keyDate(t.slice(0, 10));
+  return d.getDate() + ' ' + TH_MO[d.getMonth()] + ' ' + String(d.getFullYear() + 543).slice(2) + (t.length >= 16 ? ' ' + t.slice(11, 16) + ' น.' : '');
+}
+function tsFind(sid) { return (TS.list || []).filter(function (x) { return x.sid === sid; })[0] || null; }
+function openTsSheet(sid) {
+  TS.cur = tsFind(sid);
+  if (!TS.cur) return;
+  TS.step = 'view'; TS.newSid = ''; TS.err = ''; TS.res = null; TS.busy = false;
+  renderTsSheet();
+  $('ts-sheet').classList.add('on');
+  setTimeout(function () { var i = $('ts-new'); if (i) try { i.focus(); } catch (e) {} }, 60);
+}
+function closeTsSheet() { $('ts-sheet').classList.remove('on'); TS.cur = null; }
+function renderTsSheet() {
+  var st = TS.cur, L = TS.sidLen, h = ['<div class="grab"></div>'];
+  if (!st) return;
+  var who = esc(st.name) + '<small class="muted" style="display:block;font-weight:600">' + (st.classId ? 'ป.' + st.grade + '/' + st.room : 'ไม่มีห้อง') + ' · เลขที่ ' + (st.no || '-') + '</small>';
+  if (TS.step === 'view') {
+    var bad = tsBad(st);
+    h.push('<h2 style="font-size:1.2em">' + who + '</h2>');
+    h.push('<p class="muted" style="text-align:center">เลขประจำตัวตอนนี้' + (bad ? ' <b style="color:var(--red)">(' + String(st.sid).length + ' หลัก)</b>' : '') + '</p>');
+    h.push('<div class="rcdig sm">' + sidBoxes(st.sid, bad) + '</div>');
+    h.push('<p class="muted" style="font-size:.85em;text-align:center">สมัครเมื่อ ' + esc(tsDate(st.created)) + ' · เข้าใช้ล่าสุด ' + esc(tsDate(st.last)) + (st.hasPin ? '' : ' · ยังไม่ตั้ง PIN') + '</p>');
+    h.push('<label class="field"><span>เลขประจำตัวใหม่' + (L ? ' (' + L + ' หลัก)' : '') + '</span><input id="ts-new" inputmode="numeric" pattern="[0-9]*" maxlength="' + (L || 10) + '" autocomplete="off" placeholder="ดูจากบัตรนักเรียน" value="' + esc(TS.newSid) + '"></label>');
+    h.push('<p class="err" id="ts-err" role="alert">' + esc(TS.err) + '</p>');
+    h.push('<button class="cta" type="button" data-tsa="next">ถัดไป ›</button><button class="ghost" type="button" data-tsa="close">ปิด</button>');
+  } else if (TS.step === 'confirm') {
+    h.push('<h2 style="font-size:1.2em">ยืนยันเปลี่ยนเลขประจำตัว</h2>');
+    h.push('<p style="font-weight:700">' + who + '</p>');
+    h.push('<div class="tsswap"><span>' + esc(st.sid) + '</span><i aria-hidden="true">→</i><b>' + esc(TS.newSid) + '</b></div>');
+    h.push('<ul class="tsnote"><li>✅ บันทึก ภารกิจ น้องคู่หู ศูนย์ฝึก และผลสมรรถภาพ ย้ายตามมาครบ</li>' +
+      '<li>🔑 PIN เดิมจะใช้ไม่ได้ นักเรียนต้องกด <b>“สมัครครั้งแรก”</b> ใส่เลขใหม่ แล้วตั้ง PIN ใหม่</li></ul>');
+    h.push('<p class="err" id="ts-err" role="alert">' + esc(TS.err) + '</p>');
+    h.push('<button class="cta" type="button" data-tsa="go"' + (TS.busy ? ' disabled' : '') + '>' + (TS.busy ? 'กำลังเปลี่ยน…' : 'ยืนยันเปลี่ยนเลข') + '</button><button class="ghost" type="button" data-tsa="back"' + (TS.busy ? ' disabled' : '') + '>‹ กลับไปแก้</button>');
+  } else {
+    var r = TS.res || {}, mv = r.moved || {}, parts = Object.keys(mv).filter(function (k) { return k !== 'แคชระบบ'; }).map(function (k) { return esc(k) + ' ' + mv[k] + ' แถว'; });
+    h.push('<h2 style="font-size:1.25em">เปลี่ยนเลขแล้ว ✅</h2>');
+    h.push('<p style="font-weight:700">' + who + '</p>');
+    h.push('<div class="tsswap"><span>' + esc(r.oldSid || '') + '</span><i aria-hidden="true">→</i><b>' + esc(r.sid || '') + '</b></div>');
+    h.push('<div class="tstell"><b>บอกนักเรียนว่า</b><ol><li>เปิดแอปสมุดสุขภาพ</li><li>กด <b>“สมัครครั้งแรก”</b></li><li>ใส่เลขประจำตัว <b>' + esc(r.sid || '') + '</b> แล้วตั้ง PIN ใหม่</li></ol><small>บันทึกเดิมอยู่ครบ ไม่ต้องบันทึกใหม่</small></div>');
+    h.push('<p class="muted" style="font-size:.85em">ย้ายข้อมูลแล้ว: ' + (parts.length ? parts.join(' · ') : 'ยังไม่มีบันทึก') + '</p>');
+    h.push('<button class="cta" type="button" data-tsa="close">เสร็จ</button>');
+  }
+  $('ts-sheet-body').innerHTML = h.join('');
+  var inp = $('ts-new');
+  if (inp) {
+    inp.oninput = function () { TS.newSid = digits(this.value).slice(0, L || 10); if (this.value !== TS.newSid) this.value = TS.newSid; if (TS.err) { TS.err = ''; var er = $('ts-err'); if (er) er.textContent = ''; } };
+    inp.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); tsNext(); } };
+  }
+}
+function tsNext() {
+  var st = TS.cur, v = TS.newSid, L = TS.sidLen;
+  TS.err = '';
+  if (!v) TS.err = 'ใส่เลขประจำตัวใหม่ก่อน';
+  else if (L && v.length !== L) TS.err = 'เลขประจำตัวต้องมี ' + L + ' หลัก (ตอนนี้ ' + v.length + ' หลัก)';
+  else if (v === st.sid) TS.err = 'เลขใหม่เหมือนเลขเดิม';
+  else {
+    var other = tsFind(v);
+    if (other) TS.err = 'เลข ' + v + ' มีนักเรียนใช้อยู่แล้ว: ' + other.name + (other.classId ? ' (ป.' + other.grade + '/' + other.room + ')' : '');
+  }
+  if (TS.err) { renderTsSheet(); var i = $('ts-new'); if (i) try { i.focus(); } catch (e) {} return; }
+  TS.step = 'confirm';
+  renderTsSheet();
+}
+function tsGo() {
+  var st = TS.cur;
+  if (!st || TS.busy) return;
+  TS.busy = true; TS.err = '';
+  renderTsSheet();
+  tcall('tsid', { sid: st.sid, newSid: TS.newSid, name: st.name }).then(function (res) {
+    TS.busy = false;
+    if (!res.ok) {
+      if (res.code === 'AUTH_T') { closeTsSheet(); return; }
+      TS.err = res.error || 'เปลี่ยนไม่สำเร็จ ลองใหม่';
+      renderTsSheet();
+      if (res.code === 'NOT_FOUND' || res.code === 'CHANGED') loadTStu();
+      return;
+    }
+    st.sid = res.sid; st.hasPin = false;
+    TS.res = res; TS.step = 'done';
+    renderTsSheet();
+    ding('ok');
+    renderTStuRes();
+    var f = $('ts-body').querySelector('[data-tsf="bad"]');
+    if (f && TS.sidLen) f.textContent = '⚠️ เลขไม่ใช่ ' + TS.sidLen + ' หลัก ' + TS.list.filter(tsBad).length + ' คน';
+  });
+}
+$('ts-sheet').addEventListener('click', function (e) {
+  if (e.target === this) { if (!TS.busy) closeTsSheet(); return; }
+  var b = e.target.closest('[data-tsa]');
+  if (!b) return;
+  var a = b.getAttribute('data-tsa');
+  if (a === 'close') closeTsSheet();
+  else if (a === 'next') tsNext();
+  else if (a === 'back') { TS.step = 'view'; TS.err = ''; renderTsSheet(); }
+  else if (a === 'go') tsGo();
+});
+
+/* ปุ่มเข้าหน้าค้นหานักเรียน บนหน้าภาพรวม */
+var _rtd13 = renderTDash;
+renderTDash = function () {
+  _rtd13.apply(this, arguments);
+  var b = $('t-body');
+  if (b && !b.querySelector('#tstu-go')) b.insertAdjacentHTML('afterbegin', '<button type="button" class="tstu-go" id="tstu-go"><span class="ic" aria-hidden="true">🔎</span><span class="tsw"><b>ค้นหานักเรียน</b><small>ดูข้อมูลการสมัคร · แก้เลขประจำตัวที่กรอกผิด</small></span><span class="chev" aria-hidden="true">›</span></button>');
+};
+$('t-body').addEventListener('click', function (e) { if (e.target.closest('#tstu-go')) openTStu(); });
+
+/* ===== 6B-20: สนามทดลองของครู = ศูนย์ฝึกต้นแบบ =====
+ * อยู่ในเมนู 🧪 ทดลอง แท็บ 🏟️ สนาม · เหรียญไม่จำกัด ปลดล็อกทุกอาคาร ลาน 5×5 เลือกฉากได้
+ * บันทึกในระบบอัตโนมัติ (Script Properties) · เปิดให้นักเรียนเยี่ยมชมได้ ชื่อ "ศูนย์ฝึกต้นแบบ" ไม่มีชื่อครู ไม่ขึ้นอันดับ */
+
+/* ---------- แท็บในห้องทดลอง ---------- */
+var TPT = 'pet';
+var _openTPet14 = openTPet;
+function tpTab(t) {
+  TPT = t;
+  var bs = $('tp-tabs').querySelectorAll('[data-tpt]');
+  for (var i = 0; i < bs.length; i++) { var on = bs[i].getAttribute('data-tpt') === t; bs[i].classList.toggle('on', on); bs[i].setAttribute('aria-selected', on ? 'true' : 'false'); }
+  $('tp-body').hidden = t !== 'pet';
+  $('tfd-body').hidden = t !== 'field';
+}
+openTPet = function () {
+  if (TPT === 'field') { show('s-tpet'); tpTab('field'); openTField(); }
+  else { tpTab('pet'); _openTPet14(); }
+};
+$('tp-tabs').onclick = function (e) {
+  var b = e.target.closest('[data-tpt]');
+  if (!b) return;
+  var t = b.getAttribute('data-tpt');
+  if (t === TPT) return;
+  tpTab(t);
+  if (t === 'field') openTField();
+  else if (!$('tp-body').innerHTML.trim()) _openTPet14();
+  try { window.scrollTo(0, 0); } catch (er) {}
+};
+
+/* ---------- สนาม ---------- */
+var TFD = { loaded: false, loading: false, err: '', items: [], cells: [], scene: 1, show: false, at: '', sel: -1, mode: '', pick: '', clear: 0, pop: -1, saving: false, dirty: false, saveErr: '', timer: 0, seq: 0 };
+var TFD_LV = [1, 4, 7, 10];
+function tfItem(id) { for (var i = 0; i < TFD.items.length; i++) if (TFD.items[i].id === id) return TFD.items[i]; return null; }
+function tfAt(p) { for (var i = 0; i < TFD.cells.length; i++) if (TFD.cells[i][0] === p) return i; return -1; }
+function tfStars() { var t = 0; TFD.cells.forEach(function (c) { var it = tfItem(c[1]); if (it && it.kind === 'b') t += c[2]; }); return t; }
+function openTField(force) {
+  if (TFD.loaded && !force) { renderTField(); return; }
+  if (TFD.loading) return;
+  TFD.loading = true; TFD.err = '';
+  renderTField();
+  tcall('tcenter').then(function (res) {
+    TFD.loading = false;
+    if (!res.ok) { TFD.err = res.code === 'AUTH_T' ? '' : (res.error || 'โหลดไม่สำเร็จ'); renderTField(); return; }
+    var c = res.center || {};
+    TFD.items = res.items || []; TFD.cells = (c.cells || []).map(function (x) { return x.slice(); }); TFD.scene = c.scene || 1; TFD.show = !!c.show; TFD.at = c.at || '';
+    TFD.loaded = true; TFD.sel = -1; TFD.mode = ''; TFD.pick = ''; TFD.dirty = false; TFD.saveErr = '';
+    renderTField();
+  });
+}
+function tfLabel(p) {
+  var i = tfAt(p), c = i >= 0 ? TFD.cells[i] : null, it = c ? tfItem(c[1]) : null;
+  return it ? it.label + (it.kind === 'b' ? ' ' + c[2] + ' ดาว' : '') : 'ช่องว่าง แตะเพื่อสร้าง';
+}
+function tfSaveText() {
+  if (TFD.saving) return '💾 กำลังบันทึก…';
+  if (TFD.saveErr) return '<span class="err">⚠️ ' + esc(TFD.saveErr) + '</span> <button type="button" class="linkbtn" data-tf="retry">บันทึกอีกครั้ง</button>';
+  if (TFD.dirty) return '💾 กำลังจะบันทึก…';
+  return TFD.at ? '✅ บันทึกแล้ว ' + esc(String(TFD.at).slice(11, 16)) + ' น.' : 'ยังไม่ได้สร้าง ลองแตะช่องบนลานเลย';
+}
+function renderTField() {
+  var box = $('tfd-body');
+  if (!TFD.loaded) {
+    box.innerHTML = TFD.err ? '<p class="err">' + esc(TFD.err) + '</p><button type="button" class="ghost" data-tf="reload">ลองใหม่</button>' :
+      '<div class="sk" style="height:70px"></div><div class="sk" style="height:300px"></div><div class="sk" style="height:90px"></div>';
+    return;
+  }
+  var h = [], n = TFD.cells.length, armed = TFD.clear && Date.now() - TFD.clear < 4000;
+  h.push('<div class="card tlnote"><span aria-hidden="true">🏆</span><div><b>ศูนย์ฝึกต้นแบบ · 🪙 ไม่จำกัด</b><small>ปลดล็อกทุกอาคาร ลาน 5×5 · บันทึกให้อัตโนมัติ · เปิดให้นักเรียนดูเป็นไอเดียได้ (ไม่มีชื่อครู ไม่ขึ้นอันดับ ไม่มีถูกใจ)</small></div></div>');
+  h.push('<div class="card tfshow"><span class="tsw"><b>' + (TFD.show ? '👀 นักเรียนเยี่ยมชมได้' : '🙈 ซ่อนจากนักเรียนอยู่') + '</b><small>' +
+    (TFD.show ? (n ? 'อยู่บนสุดของหน้า เยี่ยมชมเพื่อน ในศูนย์ฝึกของเด็ก' : 'ลานยังว่าง เด็กจะเห็นเมื่อมีของอย่างน้อย 1 ชิ้น') : 'สร้างให้พอใจก่อน แล้วค่อยเปิดให้เด็กดู') + '</small></span>' +
+    '<button type="button" class="switch' + (TFD.show ? '' : ' off') + '" role="switch" aria-checked="' + TFD.show + '" data-tf="show" aria-label="ให้นักเรียนเยี่ยมชมศูนย์ฝึกต้นแบบ"></button></div>');
+  h.push('<section class="card gsum"><div><b>⭐ ' + tfStars() + '</b><small>ดาวอาคาร</small></div><div><b>🪙 ∞</b><small>เหรียญ</small></div><div><b>' + n + '/25</b><small>ช่องที่ใช้</small></div></section>');
+  h.push('<div class="fchips tlrow" role="group" aria-label="ฉาก">' + [1, 2, 3, 4].map(function (s) {
+    return '<button type="button" class="' + (TFD.scene === s ? 'on' : '') + '" aria-pressed="' + (TFD.scene === s) + '" data-tfs="' + s + '">' + SCENES[s][0] + ' ' + SCENES[s][1] + '</button>';
+  }).join('') + '</div>');
+  h.push('<div class="gstage" id="tfd-stage">' + gameSvg({ cells: TFD.cells, draw: 5, open: 5, lv: TFD_LV[TFD.scene - 1] }, { w: gW(5, 344), tap: true, sel: TFD.sel, move: TFD.mode === 'move', pop: TFD.pop, label: tfLabel }) +
+    '<span class="gscene">' + SCENES[TFD.scene][0] + ' ฉาก' + SCENES[TFD.scene][1] + '</span></div>');
+  h.push(tfAct());
+  h.push('<div class="pair"><button type="button" class="ghost" data-tf="maxall">⭐ อัปดาวเต็มทุกอาคาร</button><button type="button" class="ghost' + (armed ? ' warn' : '') + '" data-tf="clear"' + (n ? '' : ' disabled') + '>' + (armed ? 'แตะอีกครั้งเพื่อล้าง' : '🧹 ล้างทั้งลาน') + '</button></div>');
+  h.push('<p class="ghint" id="tfd-save" aria-live="polite">' + tfSaveText() + '</p>');
+  box.innerHTML = h.join('');
+  TFD.pop = -1;
+}
+function tfAct() {
+  var p = TFD.sel, i = p >= 0 ? tfAt(p) : -1, c = i >= 0 ? TFD.cells[i] : null, it = c ? tfItem(c[1]) : null;
+  if (TFD.mode === 'move' && it) {
+    return '<div class="card gact"><span class="gbig" aria-hidden="true">' + it.icon + '</span><div class="gtx"><b>ย้าย' + esc(it.label) + '</b><small>แตะช่องที่จะย้ายไป · มีของอยู่แล้ว = สลับที่</small></div><button class="ghost sm" type="button" data-tf="cancel">ยกเลิก</button></div>';
+  }
+  if (p < 0) return '<div class="card gact"><span class="gbig" aria-hidden="true">👆</span><div class="gtx"><b>แตะช่องบนลาน</b><small>ช่องว่าง = สร้าง · แตะอาคาร = อัปดาว ย้าย หรือรื้อ</small></div></div>';
+  if (!c) {
+    var pick = tfItem(TFD.pick);
+    var btn = function (x) { return '<button type="button" class="' + (TFD.pick === x.id ? 'on' : '') + '" data-tfi="' + x.id + '" aria-pressed="' + (TFD.pick === x.id) + '"><span class="e" aria-hidden="true">' + itemArt(x.id, 1, 62) + '</span><span class="n">' + esc(x.label) + '</span><span class="c">' + (x.lv > 1 ? 'เด็กปลดล็อก Lv.' + x.lv : 'ฟรี') + '</span></button>'; };
+    return '<div class="card gbuild"><div class="gih"><div class="gtx"><b>สร้างอะไรดี?</b><small>ครูสร้างได้ทุกอย่าง ไม่เสียเหรียญ</small></div><button class="gx" type="button" data-tf="close" aria-label="ปิด">✕</button></div>' +
+      '<div class="gshop">' + TFD.items.filter(function (x) { return x.kind === 'b'; }).map(btn).join('') + '</div><p class="gsec">ของตกแต่ง</p>' +
+      '<div class="gshop">' + TFD.items.filter(function (x) { return x.kind !== 'b'; }).map(btn).join('') + '</div>' +
+      (pick ? '<button class="gbtn" type="button" data-tf="build">สร้าง' + esc(pick.label) + ' (ฟรี)</button>' : '<p class="gpoor">แตะเลือกสิ่งที่อยากสร้าง</p>') + '</div>';
+  }
+  var max = it.cost.length, h = '<div class="card gitem"><div class="gih"><span class="gart" aria-hidden="true">' + itemArt(it.id, c[2], 50) + '</span><div class="gtx"><b>' + esc(it.label) + '</b><small>' +
+    (it.kind === 'b' ? gStarTxt(c[2], max) : 'ของตกแต่ง (ไม่มีดาว)') + '</small></div><button class="gx" type="button" data-tf="close" aria-label="ปิด">✕</button></div>';
+  if (it.kind === 'b') {
+    h += '<div class="pair tfstars">' + [1, 2, 3].slice(0, max).map(function (s) { return '<button type="button" class="ghost' + (c[2] === s ? ' on' : '') + '" data-tfst="' + s + '" aria-pressed="' + (c[2] === s) + '">' + '⭐'.repeat(s) + '</button>'; }).join('') + '</div>';
+  }
+  h += '<div class="pair"><button class="ghost" type="button" data-tf="move">↔️ ย้าย</button><button class="ghost" type="button" data-tf="remove">🧹 รื้อ</button></div></div>';
+  return h;
+}
+function tfChanged(msg) {
+  TFD.dirty = true; TFD.saveErr = '';
+  renderTField();
+  if (msg) toast(msg);
+  clearTimeout(TFD.timer);
+  TFD.timer = setTimeout(tfSave, 700);
+}
+function tfSave() {
+  if (TFD.saving) { TFD.timer = setTimeout(tfSave, 400); return; }
+  TFD.saving = true; TFD.dirty = false;
+  var seq = ++TFD.seq, el = $('tfd-save');
+  if (el) el.innerHTML = tfSaveText();
+  tcall('tcentersave', { cells: TFD.cells, scene: TFD.scene, show: TFD.show }).then(function (res) {
+    TFD.saving = false;
+    if (!res.ok) { if (res.code !== 'AUTH_T') TFD.saveErr = res.error || 'บันทึกไม่สำเร็จ'; }
+    else if (seq === TFD.seq && !TFD.dirty) { TFD.at = res.center.at; }
+    var e2 = $('tfd-save');
+    if (e2) e2.innerHTML = tfSaveText();
+  });
+}
+function tfTap(p) {
+  if (TFD.mode === 'move') {
+    var i = tfAt(TFD.sel);
+    if (p === TFD.sel || i < 0) { TFD.mode = ''; renderTField(); return; }
+    var j = tfAt(p);
+    if (j >= 0) TFD.cells[j][0] = TFD.sel;
+    TFD.cells[i][0] = p;
+    TFD.cells.sort(function (a, b) { return a[0] - b[0]; });
+    TFD.mode = ''; TFD.sel = p; TFD.pop = p;
+    ding('snap');
+    tfChanged(j >= 0 ? 'สลับที่แล้ว ↔️' : 'ย้ายแล้ว ↔️');
+    return;
+  }
+  TFD.sel = TFD.sel === p ? -1 : p; TFD.pick = '';
+  renderTField();
+  var act = $('tfd-body').querySelector('.gact,.gitem,.gbuild');
+  if (act && act.scrollIntoView && TFD.sel >= 0) { try { act.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } catch (e) {} }
+}
+$('tfd-body').addEventListener('click', function (e) {
+  var t = e.target;
+  var cell = t.closest('#tfd-stage [data-p]');
+  if (cell) { tfTap(+cell.getAttribute('data-p')); return; }
+  var gi = t.closest('[data-tfi]');
+  if (gi) { TFD.pick = gi.getAttribute('data-tfi'); renderTField(); return; }
+  var sc = t.closest('[data-tfs]');
+  if (sc) { TFD.scene = +sc.getAttribute('data-tfs'); tfChanged(); return; }
+  var st = t.closest('[data-tfst]');
+  if (st) {
+    var k = tfAt(TFD.sel);
+    if (k >= 0) { TFD.cells[k][2] = +st.getAttribute('data-tfst'); TFD.pop = TFD.sel; ding('up'); tfChanged(); }
+    return;
+  }
+  var a = t.closest('[data-tf]');
+  if (!a) return;
+  var op = a.getAttribute('data-tf'), i = tfAt(TFD.sel);
+  if (op === 'reload') openTField(true);
+  else if (op === 'close') { TFD.sel = -1; TFD.pick = ''; renderTField(); }
+  else if (op === 'cancel') { TFD.mode = ''; renderTField(); }
+  else if (op === 'build') {
+    var it = tfItem(TFD.pick);
+    if (!it || TFD.sel < 0 || i >= 0) return;
+    TFD.cells.push([TFD.sel, it.id, 1]); TFD.cells.sort(function (x, y) { return x[0] - y[0]; });
+    TFD.pop = TFD.sel; TFD.pick = '';
+    ding('up');
+    tfChanged(it.icon + ' สร้าง' + it.label + 'แล้ว');
+  }
+  else if (op === 'move') { if (i >= 0) { TFD.mode = 'move'; renderTField(); } }
+  else if (op === 'remove') { if (i >= 0) { TFD.cells.splice(i, 1); TFD.sel = -1; ding('tick'); tfChanged('รื้อแล้ว'); } }
+  else if (op === 'maxall') {
+    var up = 0;
+    TFD.cells.forEach(function (c) { var x = tfItem(c[1]); if (x && x.kind === 'b' && c[2] < x.cost.length) { c[2] = x.cost.length; up++; } });
+    if (!up) { toast('อาคารดาวเต็มหมดแล้ว ✨'); return; }
+    ding('level');
+    tfChanged('อัปดาวเต็ม ' + up + ' อาคาร ✨');
+  }
+  else if (op === 'clear') {
+    if (TFD.clear && Date.now() - TFD.clear < 4000) { TFD.clear = 0; TFD.cells = []; TFD.sel = -1; TFD.mode = ''; tfChanged('ล้างลานแล้ว'); }
+    else { TFD.clear = Date.now(); renderTField(); setTimeout(function () { if (TFD.clear && Date.now() - TFD.clear >= 4000) { TFD.clear = 0; if (current === 's-tpet' && TPT === 'field') renderTField(); } }, 4100); }
+  }
+  else if (op === 'show') { TFD.show = !TFD.show; tfChanged(TFD.show ? 'เปิดให้นักเรียนเยี่ยมชมแล้ว 👀' : 'ซ่อนจากนักเรียนแล้ว'); }
+  else if (op === 'retry') tfSave();
+});
+$('tfd-body').addEventListener('keydown', function (e) {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  var cell = e.target.closest ? e.target.closest('#tfd-stage [data-p]') : null;
+  if (cell) { e.preventDefault(); tfTap(+cell.getAttribute('data-p')); }
+});
 
 /* ---------- เริ่มต้น ---------- */
 function boot() {
@@ -6653,8 +7454,11 @@ function boot() {
     show('s-login');
     if (a) $('in-sid').value = a.sid;
   }
-  if (!DB.school) {
-    rawCall({ action: 'ping' }, 15000).then(function (r) { if (r && r.ok && r.schoolName) { DB.school = r.schoolName; save(); $('school-name').textContent = r.schoolName; } });
+  if (!DB.school || DB.sidLen == null) {
+    rawCall({ action: 'ping' }, 15000).then(function (r) {
+      if (r && r.ok && r.schoolName) { DB.school = r.schoolName; save(); $('school-name').textContent = r.schoolName; }
+      if (r && r.ok && r.sidLen != null && window.applySidLen) applySidLen(r.sidLen);
+    });
   }
   if (DEMO) setupDemo();
   installable();
@@ -6664,7 +7468,7 @@ function setupDemo() {
   $('demo-card').hidden = false;
   $('demo-tpass').hidden = false;
   $('demo-reset').hidden = false;
-  $('demo-go').onclick = function () { signIn('login', { studentId: '99999', pin: '1234' }, this, $('login-err')); };
+  $('demo-go').onclick = function () { signIn('login', { studentId: (window.HBDemo && HBDemo.student.sid) || '9999', pin: '1234' }, this, $('login-err')); };
   var armed = 0;
   $('demo-reset').onclick = function () {
     if (Date.now() - armed > 4000) { armed = Date.now(); toast('กดอีกครั้งเพื่อล้างข้อมูลตัวอย่างทั้งหมด'); return; }
