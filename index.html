@@ -990,6 +990,30 @@ body.light .okb { color:#3A8C00; }
 .gmodel .chev { color:#6B4300; font-size:1.4em; }
 .gvmodel { box-shadow:inset 0 0 0 2px #FFD84D; }
 
+/* ===== 6B-21: ข้อมูลนักเรียนรายคน (โหมดครู) ===== */
+#ts-sheet-body { max-height:88vh; overflow-y:auto; }
+.tsacts { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.tsacts .ghost { padding:10px 8px; font-size:.92em; }
+.tsacts .ghost.warn { color:var(--red); }
+.cta.danger { background:var(--red); color:#fff; }
+.tssum { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.tssum > div { background:var(--card-2); border-radius:16px; padding:10px 12px; }
+.tssum b { display:block; font:800 1.1em var(--display); }
+.tssum small { color:var(--ink-2); font-weight:600; font-size:.78em; line-height:1.3; display:block; }
+.tsweeks b, .tsdays > b { display:block; }
+.tswk { display:flex; align-items:flex-end; gap:6px; margin-top:8px; height:104px; }
+.tswk > div { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:2px; min-width:0; }
+.tswk span { width:100%; max-width:30px; border-radius:8px 8px 3px 3px; background:var(--grad); }
+.tswk small { font-size:.7em; font-weight:700; }
+.tswk i { font-style:normal; font-size:.68em; color:var(--ink-2); }
+.tsdays { display:flex; flex-direction:column; gap:2px; }
+.tsday { display:grid; grid-template-columns:76px 50px 1fr; gap:6px; align-items:baseline; padding:6px 0; border-top:1px solid var(--line); font-size:.88em; }
+.tsday .d { font-weight:700; }
+.tsday .m { font-weight:800; text-align:right; }
+.tsday .w { color:var(--ink-2); }
+.tsday.empty { opacity:.45; }
+.tsx { text-decoration:line-through; }
+
 </style>
 </head>
 <body>
@@ -3972,12 +3996,12 @@ $('m-body').addEventListener('change', function (e) {
 });
 
 /* ===== 6B-8: ภาพศูนย์ฝึกแบบวาดเอง (SVG มุมเฉียง 3 มิติ) =====
- * เกาะลอยฟ้า N×N · อาคาร 8 แบบ × 3 ขั้น (หน้าตาเปลี่ยนทุกขั้น) · ของตกแต่ง 4 แบบ
+ * เกาะลอยฟ้า N×N · อาคาร 21 แบบ × 3 ขั้น (หน้าตาเปลี่ยนทุกขั้น) · ของตกแต่ง 16 แบบ
  * ฉากรอบเกาะเปลี่ยนตามภาค: 1 กลางวัน · 2 ยามเย็น · 3 กลางคืนอวกาศ · 4 สีทองตำนาน
  * พิกัด: U = คอลัมน์, V = แถว (ช่อง p = แถว×5 + คอลัมน์), h = ความสูง */
 var GART = (function () {
   var OL = '#2A1A4E', SEQ = 0;
-  function hx(c) { c = c.replace('#', ''); return [parseInt(c.slice(0, 2), 16), parseInt(c.slice(2, 4), 16), parseInt(c.slice(4, 6), 16)]; }
+  function hx(c) { c = c.replace('#', ''); if (c.length === 3) c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2]; return [parseInt(c.slice(0, 2), 16), parseInt(c.slice(2, 4), 16), parseInt(c.slice(4, 6), 16)]; }
   function shade(c, a) {
     var r = hx(c), t = a < 0 ? 0 : 255, f = Math.abs(a);
     return '#' + r.map(function (v) { var x = Math.round(v + (t - v) * f); return (x < 16 ? '0' : '') + x.toString(16); }).join('');
@@ -4285,6 +4309,375 @@ var GART = (function () {
   B.light = function (c, U, V, s, gid) { box(c, 3, U + 0.42, V + 0.42, 0, U + 0.58, V + 0.58, 0.04, '#C7CEDA', { k: 0.5 }); lamp(c, U + 0.5, V + 0.5, 0.6, gid); };
   B.stand = function (c, U, V) { standV(c, U + 0.15, U + 0.85, V + 0.25, 3, ['#3D7BF0', '#FFD84D', '#F0503D'], true); };
 
+  /* >>> 6B-22: ของใหม่ อาคาร 13 แบบ (3 ขั้น) + ของตกแต่ง 12 แบบ */
+  function post(c, u, v, h0, h1, col) { box(c, 3, u - 0.013, v - 0.013, h0, u + 0.013, v + 0.013, h1, col || '#ECE8F6', { k: 0.5 }); }
+  /* ตาข่ายตั้งตรง แนว V ที่ u (u, v0..v1, สูง h0..h1) */
+  function netV(c, u, v0, v1, h0, h1, n) {
+    var G = c.G, s = poly([G(u, v0, h0), G(u, v1, h0), G(u, v1, h1), G(u, v0, h1)], 'rgba(255,255,255,.35)', ' stroke="#fff" stroke-width="' + f1(c.sw * 0.8) + '"');
+    for (var k = 1; k < n; k++) {
+      var a = G(u, v0 + k * (v1 - v0) / n, h0), b = G(u, v0 + k * (v1 - v0) / n, h1);
+      s += '<line x1="' + f1(a[0]) + '" y1="' + f1(a[1]) + '" x2="' + f1(b[0]) + '" y2="' + f1(b[1]) + '" stroke="#fff" stroke-opacity=".6" stroke-width="' + f1(c.sw * 0.5) + '"/>';
+    }
+    c.add(3, u + (v0 + v1) / 2 + 0.01, s);
+  }
+  /* ผิวเอียง 4 มุม (พิกัด 3 มิติ) */
+  function face(c, L, d, P, fill, ex) { c.add(L, d, poly(P.map(function (q) { return c.G(q[0], q[1], q[2]); }), fill, ex === undefined ? stroke(c, 0.5) : ex)); }
+  /* ขั้น 2: ม้านั่ง + ธง · ขั้น 3: อัฒจันทร์ + ไฟสนาม */
+  function kit(c, U, V, s, gid, o) {
+    o = o || {};
+    if (s >= 2) { bench(c, U + 0.3, V + 0.9, U + 0.7, V + 0.96, o.bench || '#3D7BF0'); flag(c, U + 0.93, V + 0.93, 0.24, o.flag || '#FFD84D'); }
+    if (s >= 3) {
+      if (!o.noStand) standV(c, U + 0.2, U + 0.8, V - 0.02, 2, o.stand || ['#F0503D', '#3D7BF0'], true);
+      lamp(c, U + 0.05, V + 0.05, 0.64, gid); lamp(c, U + 0.95, V + 0.07, 0.56, gid);
+    }
+  }
+  B.takraw = function (c, U, V, s, gid) {
+    pad(c, U, V, s >= 2 ? '#3D7BF0' : '#4CB960', s);
+    var h = 0.036, d = U + V + 1.005;
+    quad(c, 2, d - 0.003, rect(U + 0.15, V + 0.24, U + 0.85, V + 0.76), h, '#2F9E6B', stroke(c, 0.4));
+    lines(c, U, V, rect(U + 0.15, V + 0.24, U + 0.85, V + 0.76), h);
+    ell(c, 2, d, U + 0.3, V + 0.5, h, 0.06, 'none', ' stroke="#F4FFF4" stroke-width="' + f1(c.sw) + '"');
+    ell(c, 2, d, U + 0.7, V + 0.5, h, 0.06, 'none', ' stroke="#F4FFF4" stroke-width="' + f1(c.sw) + '"');
+    post(c, U + 0.5, V + 0.21, h, 0.27); post(c, U + 0.5, V + 0.79, h, 0.27);
+    netV(c, U + 0.5, V + 0.21, V + 0.79, 0.16, 0.26, 8);
+    dot(c, 3, U + V + 1.3, U + 0.66, V + 0.44, 0.24, 0.036, '#F5A524', stroke(c, 0.7));
+    dot(c, 3, U + V + 1.31, U + 0.66, V + 0.44, 0.24, 0.016, '#FFE7A8');
+    kit(c, U, V, s, gid, { bench: '#FFD84D', flag: '#F0503D' });
+  };
+  B.futsal = function (c, U, V, s, gid) {
+    pad(c, U, V, '#8FA0B5', s);
+    var h = 0.036, d = U + V + 1.005;
+    quad(c, 2, d - 0.003, rect(U + 0.1, V + 0.18, U + 0.9, V + 0.82), h, s >= 2 ? '#2F6FD0' : '#E07B3A', stroke(c, 0.4));
+    lines(c, U, V, rect(U + 0.1, V + 0.18, U + 0.9, V + 0.82), h);
+    line(c, 2, d, [U + 0.5, V + 0.18, h], [U + 0.5, V + 0.82, h], '#F4FFF4', c.sw * 1.2);
+    ell(c, 2, d, U + 0.5, V + 0.5, h, 0.08, 'none', ' stroke="#F4FFF4" stroke-width="' + f1(c.sw * 1.2) + '"');
+    lines(c, U, V, rect(U + 0.1, V + 0.36, U + 0.2, V + 0.64), h);
+    lines(c, U, V, rect(U + 0.8, V + 0.36, U + 0.9, V + 0.64), h);
+    [0.1, 0.9].forEach(function (gu, i) {
+      var dir = i ? -1 : 1, g0 = U + gu;
+      box(c, 3, g0 - 0.01, V + 0.42, h, g0 + 0.01, V + 0.44, 0.15, '#FFFFFF', { k: 0.6 });
+      box(c, 3, g0 - 0.01, V + 0.56, h, g0 + 0.01, V + 0.58, 0.15, '#FFFFFF', { k: 0.6 });
+      box(c, 3, g0 - 0.01, V + 0.42, 0.14, g0 + 0.01, V + 0.58, 0.155, '#FFFFFF', { k: 0.6, bias: 0.01 });
+      quad(c, 3, g0 + V + 0.49, [[g0, V + 0.43], [g0, V + 0.57], [g0 - dir * 0.05, V + 0.57], [g0 - dir * 0.05, V + 0.43]], 0.08, 'rgba(255,255,255,.4)', ' stroke="#fff" stroke-opacity=".7" stroke-width="' + f1(c.sw * 0.6) + '"');
+    });
+    dot(c, 3, U + V + 1.1, U + 0.58, V + 0.56, 0.06, 0.028, '#fff', stroke(c, 0.7));
+    kit(c, U, V, s, gid, { bench: '#F0503D', flag: '#46D6FF', stand: ['#3D7BF0', '#FFD84D'] });
+  };
+  B.volleyball = function (c, U, V, s, gid) {
+    pad(c, U, V, '#E9C98A', s);
+    var h = 0.036;
+    quad(c, 2, U + V + 1.002, rect(U + 0.14, V + 0.22, U + 0.86, V + 0.78), h, '#F2D9A2');
+    lines(c, U, V, rect(U + 0.14, V + 0.22, U + 0.86, V + 0.78), h, '#3D7BF0');
+    post(c, U + 0.5, V + 0.19, h, 0.35, '#3D7BF0'); post(c, U + 0.5, V + 0.81, h, 0.35, '#3D7BF0');
+    netV(c, U + 0.5, V + 0.19, V + 0.81, 0.23, 0.33, 9);
+    dot(c, 3, U + V + 1.3, U + 0.32, V + 0.42, 0.34, 0.036, '#FFE45C', stroke(c, 0.7));
+    dot(c, 3, U + V + 1.31, U + 0.33, V + 0.41, 0.35, 0.014, '#3D7BF0');
+    if (s >= 2) {
+      box(c, 3, U + 0.895, V + 0.105, h, U + 0.91, V + 0.12, 0.36, '#ECE8F6', { k: 0.5 });
+      ell(c, 3, U + V + 1.1, U + 0.9, V + 0.11, 0.38, 0.12, '#FF6FB1', stroke(c, 0.55));
+      bench(c, U + 0.25, V + 0.88, U + 0.6, V + 0.94, '#46D6FF');
+    }
+    if (s >= 3) { standV(c, U + 0.2, U + 0.8, V - 0.02, 2, ['#46D6FF', '#FFD84D'], true); lamp(c, U + 0.05, V + 0.05, 0.64, gid); flag(c, U + 0.07, V + 0.93, 0.3, '#46D6FF', true); }
+  };
+  B.petanque = function (c, U, V, s, gid) {
+    pad(c, U, V, '#4CB960', s);
+    box(c, 2, U + 0.12, V + 0.26, 0.035, U + 0.88, V + 0.74, 0.06, s >= 2 ? '#B97F48' : '#9AA0B8', { top: '#D8C9A8', k: 0.5, bias: 0.01 });
+    for (var k = 0; k < 16; k++) dot(c, 2, U + V + 1.02, U + 0.16 + (k * 0.137 % 0.68), V + 0.3 + ((k * 0.211) % 0.4), 0.061, 0.007, '#B5A27A');
+    ell(c, 2, U + V + 1.03, U + 0.22, V + 0.5, 0.061, 0.06, 'none', ' stroke="#fff" stroke-width="' + f1(c.sw * 1.2) + '"');
+    [[0.62, 0.42, '#C7CEDA'], [0.7, 0.56, '#C7CEDA'], [0.5, 0.55, '#8C94B8'], [0.58, 0.63, '#8C94B8']].concat(s >= 2 ? [[0.76, 0.44, '#F0C14D'], [0.46, 0.4, '#F0C14D']] : []).forEach(function (b) {
+      dot(c, 3, U + b[0] + V + b[1], U + b[0], V + b[1], 0.08, 0.024, b[2], stroke(c, 0.6));
+    });
+    dot(c, 3, U + V + 1.15, U + 0.64, V + 0.52, 0.07, 0.012, '#FF6A1F', stroke(c, 0.5));
+    kit(c, U, V, s, gid, { bench: '#B97F48', flag: '#FF6FB1', stand: ['#B97F48', '#FFD84D'] });
+  };
+  B.tennis = function (c, U, V, s, gid) {
+    pad(c, U, V, s >= 2 ? '#7E5BEF' : '#4CB960', s);
+    var h = 0.036, d = U + V + 1.005, wh = '#F4FFF4';
+    quad(c, 2, d - 0.003, rect(U + 0.1, V + 0.2, U + 0.9, V + 0.8), h, s >= 2 ? '#2F7FD8' : '#3FA35E', stroke(c, 0.4));
+    lines(c, U, V, rect(U + 0.1, V + 0.2, U + 0.9, V + 0.8), h);
+    lines(c, U, V, rect(U + 0.1, V + 0.27, U + 0.9, V + 0.73), h);
+    line(c, 2, d, [U + 0.3, V + 0.27, h], [U + 0.3, V + 0.73, h], wh, c.sw);
+    line(c, 2, d, [U + 0.7, V + 0.27, h], [U + 0.7, V + 0.73, h], wh, c.sw);
+    line(c, 2, d, [U + 0.3, V + 0.5, h], [U + 0.7, V + 0.5, h], wh, c.sw);
+    post(c, U + 0.5, V + 0.17, h, 0.2); post(c, U + 0.5, V + 0.83, h, 0.2);
+    netV(c, U + 0.5, V + 0.17, V + 0.83, 0.1, 0.18, 10);
+    dot(c, 3, U + V + 1.3, U + 0.72, V + 0.38, 0.2, 0.022, '#D7F542', stroke(c, 0.6));
+    kit(c, U, V, s, gid, { bench: '#FFD84D', flag: '#46D6FF', stand: ['#7E5BEF', '#46D6FF'] });
+  };
+  function ppTable(c, u, v, col) {
+    [[0.02, 0.02], [0.28, 0.02], [0.02, 0.15], [0.28, 0.15]].forEach(function (q) { box(c, 3, u + q[0] - 0.008, v + q[1] - 0.008, 0.035, u + q[0] + 0.008, v + q[1] + 0.008, 0.11, '#5B6280', { k: 0.4 }); });
+    box(c, 3, u, v, 0.11, u + 0.3, v + 0.17, 0.125, col, { k: 0.6, bias: 0.02 });
+    line(c, 3, u + v + 0.2, [u, v + 0.085, 0.126], [u + 0.3, v + 0.085, 0.126], '#fff', c.sw * 0.6);
+    face(c, 3, u + v + 0.25, [[u + 0.15, v - 0.012, 0.125], [u + 0.15, v + 0.182, 0.125], [u + 0.15, v + 0.182, 0.16], [u + 0.15, v - 0.012, 0.16]], 'rgba(255,255,255,.55)', ' stroke="#fff" stroke-width="' + f1(c.sw * 0.6) + '"');
+  }
+  B.pingpong = function (c, U, V, s, gid) {
+    pad(c, U, V, '#C9B79C', s);
+    quad(c, 2, U + V + 1.002, rect(U + 0.1, V + 0.1, U + 0.9, V + 0.9), 0.036, s >= 2 ? '#D8644A' : '#B0786A', stroke(c, 0.4));
+    ppTable(c, U + 0.35, V + 0.22, '#2F6FD0');
+    if (s >= 2) ppTable(c, U + 0.35, V + 0.58, '#2FA36B');
+    emo(c, 3, U + V + 1.4, U + 0.24, V + (s >= 2 ? 0.7 : 0.4), 0.16, 0.11, '🏓');
+    if (s >= 2 && s < 3) { bench(c, U + 0.12, V + 0.3, U + 0.18, V + 0.7, '#FFD84D'); flag(c, U + 0.93, V + 0.93, 0.24, '#2F6FD0'); }
+    if (s >= 3) {
+      pillars(c, U + 0.1, V + 0.1, U + 0.9, V + 0.9, 0.42, '#F2E6D0');
+      roof(c, U + 0.05, V + 0.05, U + 0.95, V + 0.95, 0.42, 0.16, '#2F6FD0', { trim: '#FFD84D', bias: 0.5 });
+      lamp(c, U + 0.95, V + 0.95, 0.5, gid);
+    }
+  };
+  function jrope(c, u, v, col) {
+    var G = c.G, a = G(u, v - 0.09, 0.14), b = G(u, v + 0.09, 0.14), m = G(u, v, 0.5);
+    box(c, 3, u - 0.012, v - 0.1, 0.07, u + 0.012, v - 0.08, 0.15, '#FFD84D', { k: 0.5 });
+    box(c, 3, u - 0.012, v + 0.08, 0.07, u + 0.012, v + 0.1, 0.15, '#FFD84D', { k: 0.5 });
+    c.add(3, u + v + 0.05, '<path d="M' + f1(a[0]) + ' ' + f1(a[1]) + ' Q' + f1(m[0]) + ' ' + f1(m[1]) + ' ' + f1(b[0]) + ' ' + f1(b[1]) + '" stroke="' + col + '" stroke-width="' + f1(c.sw * 1.8) + '" fill="none" stroke-linecap="round"/>');
+  }
+  B.rope = function (c, U, V, s, gid) {
+    pad(c, U, V, '#4CB960', s);
+    box(c, 2, U + 0.12, V + 0.12, 0.035, U + 0.88, V + 0.88, 0.06, '#FF8A5B', { k: 0.5, bias: 0.01 });
+    var spots = s === 1 ? [[0.32, 0.5], [0.66, 0.5]] : [[0.3, 0.32], [0.66, 0.32], [0.3, 0.68], [0.66, 0.68]];
+    var cols = ['#7E5BEF', '#3D7BF0', '#F0503D', '#2FA36B'];
+    spots.forEach(function (q, i) { ell(c, 2, U + V + 1.02, U + q[0], V + q[1], 0.061, 0.08, '#FFD84D', stroke(c, 0.4)); jrope(c, U + q[0], V + q[1], cols[i]); });
+    if (s >= 2) { box(c, 3, U + 0.9, V + 0.42, 0.035, U + 0.93, V + 0.58, 0.3, '#3A2F6B', { k: 0.6, top: '#C6FF4D' }); emo(c, 3, U + V + 1.6, U + 0.92, V + 0.5, 0.2, 0.09, '⏱️'); }
+    kit(c, U, V, s, gid, { bench: '#7E5BEF', flag: '#FF6FB1', stand: ['#FF8A5B', '#7E5BEF'] });
+  };
+  B.climb = function (c, U, V, s, gid) {
+    pad(c, U, V, '#4CB960', s);
+    var hw = s === 1 ? 0.55 : s === 2 ? 0.68 : 0.82, U0 = U + 0.14, U1 = U + 0.86, V0 = V + 0.14, V1 = V + 0.3;
+    box(c, 2, U + 0.12, V + 0.34, 0.035, U + 0.88, V + 0.86, 0.075, '#3D7BF0', { k: 0.5, bias: 0.01 });
+    box(c, 3, U0, V0, 0.035, U1, V1, hw, '#8C6BD8', { top: '#B9A6FF', k: 0.6 });
+    var cols = ['#FFD84D', '#FF6FB1', '#46D6FF', '#7CFFCB', '#FF8A5B'], wd = (U0 + U1) / 2 + (V0 + V1) / 2 + 0.06;
+    [[0.08, 0.2], [0.2, 0.55], [0.3, 0.3], [0.38, 0.8], [0.46, 0.12], [0.5, 0.6], [0.6, 0.35], [0.66, 0.9], [0.14, 0.75], [0.26, 0.92], [0.56, 0.08], [0.42, 0.45]].forEach(function (q, k) {
+      dot(c, 3, wd, U0 + q[0], V1 + 0.002, 0.08 + q[1] * (hw - 0.14), 0.017, cols[k % 5], stroke(c, 0.4));
+    });
+    line(c, 3, wd + 0.01, [U + 0.62, V1 + 0.004, hw], [U + 0.62, V1 + 0.004, 0.08], '#FFD84D', c.sw * 1.2);
+    if (s >= 2) {
+      var B0 = U + 0.72, B1 = U + 0.86, H2 = hw * 0.75;
+      box(c, 3, B0, V1, 0.035, B1, V + 0.72, H2, '#5B8DEF', { top: '#9CC2FF', k: 0.6, bias: 0.02 });
+        [[0.06, 0.2], [0.14, 0.7], [0.22, 0.4], [0.3, 0.85], [0.34, 0.15], [0.1, 0.5]].forEach(function (q, m) { dot(c, 3, B1 + V + 0.6, B1 + 0.002, V1 + q[0], 0.08 + q[1] * (H2 - 0.14), 0.016, cols[(m + 2) % 5], stroke(c, 0.4)); });
+    }
+    if (s >= 3) { flag(c, U0 + 0.02, V0 + 0.02, hw + 0.14, '#FFD84D'); emo(c, 3, wd + 0.02, U + 0.4, V1 + 0.01, hw * 0.55, 0.13, '🧗'); lamp(c, U + 0.95, V + 0.95, 0.55, gid); }
+    if (s >= 2) bench(c, U + 0.2, V + 0.9, U + 0.55, V + 0.96, '#FFD84D');
+  };
+  B.skate = function (c, U, V, s, gid) {
+    pad(c, U, V, '#AEB4C4', s);
+    var a = U + 0.14, b = U + 0.86, hh = s >= 2 ? 0.34 : 0.28;
+    box(c, 3, a, V + 0.08, 0.035, b, V + 0.12, hh, s >= 3 ? '#FF6FB1' : '#FF8A3D', { top: '#FFD84D', k: 0.6 });
+    var G = c.G, rp = function (v) { var t = (v - 0.12) / 0.24; return 0.04 + (hh - 0.04) * (1 - Math.sin(t * Math.PI / 2)); }, cur = [];
+    for (var k = 0; k <= 6; k++) cur.push(V + 0.12 + k * 0.04);
+    c.add(3, U + V + 0.75, poly(cur.map(function (v) { return G(a, v, rp(v)); }).concat(cur.slice().reverse().map(function (v) { return G(b, v, rp(v)); })), '#C9CEDA', stroke(c, 0.5)));
+    c.add(3, U + V + 0.76, poly([G(b, V + 0.12, 0.04)].concat(cur.map(function (v) { return G(b, v, rp(v)); })), '#8C94B8', stroke(c, 0.5)));
+    line(c, 3, U + V + 0.77, [a, V + 0.12, hh], [b, V + 0.12, hh], '#FFD84D', c.sw * 1.6);
+    post(c, U + 0.28, V + 0.62, 0.035, 0.09, '#8C94B8'); post(c, U + 0.72, V + 0.62, 0.035, 0.09, '#8C94B8');
+    box(c, 3, U + 0.25, V + 0.61, 0.09, U + 0.75, V + 0.63, 0.105, '#C7CEDA', { k: 0.6, bias: 0.02 });
+    if (s >= 2) {
+      face(c, 3, U + V + 1.5, [[U + 0.6, V + 0.72, 0.04], [U + 0.6, V + 0.9, 0.04], [U + 0.86, V + 0.9, 0.16], [U + 0.86, V + 0.72, 0.16]], '#5E87B8');
+      face(c, 3, U + V + 1.55, [[U + 0.6, V + 0.9, 0.04], [U + 0.86, V + 0.9, 0.04], [U + 0.86, V + 0.9, 0.16]], '#465F86');
+    }
+    emo(c, 3, U + V + 1.2, U + 0.4, V + 0.8, 0.08, 0.12, '🛹');
+    if (s >= 3) {
+      lamp(c, U + 0.06, V + 0.94, 0.58, gid); lamp(c, U + 0.94, V + 0.5, 0.5, gid); flag(c, U + 0.92, V + 0.92, 0.32, '#C6FF4D');
+    }
+  };
+  B.bike = function (c, U, V, s, gid) {
+    pad(c, U, V, '#4CB960', s);
+    var h = 0.037, d = U + V + 1.005;
+    quad(c, 2, d, stadium(U + 0.08, V + 0.12, U + 0.92, V + 0.88, 12), h, '#3D7BF0', stroke(c, 0.45));
+    quad(c, 2, d + 0.001, stadium(U + 0.165, V + 0.205, U + 0.835, V + 0.795, 12), h, 'none', ' stroke="#fff" stroke-opacity=".9" stroke-dasharray="' + f1(c.W * 0.04) + ' ' + f1(c.W * 0.03) + '" stroke-width="' + f1(c.sw) + '"');
+    quad(c, 2, d + 0.002, stadium(U + 0.25, V + 0.29, U + 0.75, V + 0.71, 12), h, s >= 2 ? '#5BCB70' : '#4CB960', stroke(c, 0.45));
+    if (s >= 2) [[0.5, 0.16], [0.5, 0.84], [0.16, 0.5]].forEach(function (q) { ell(c, 2, d + 0.003, U + q[0], V + q[1], h + 0.01, 0.05, '#B97F48', stroke(c, 0.4)); });
+    emo(c, 3, U + V + 1.6, U + 0.82, V + 0.5, 0.1, 0.14, '🚴');
+    if (s >= 3) {
+      box(c, 3, U + 0.47, V + 0.73, h, U + 0.5, V + 0.76, 0.42, '#fff', { k: 0.5 });
+      box(c, 3, U + 0.47, V + 0.92, h, U + 0.5, V + 0.95, 0.42, '#fff', { k: 0.5 });
+      box(c, 3, U + 0.465, V + 0.73, 0.35, U + 0.505, V + 0.95, 0.45, '#3D7BF0', { k: 0.6, bias: 0.05 });
+    }
+    kit(c, U, V, s, gid, { bench: '#FFD84D', flag: '#3D7BF0', stand: ['#3D7BF0', '#FFD84D'] });
+  };
+  B.dojo = function (c, U, V, s, gid) {
+    pad(c, U, V, '#C9B79C', s);
+    box(c, 2, U + 0.14, V + 0.14, 0.035, U + 0.86, V + 0.86, 0.065, '#3D7BF0', { k: 0.5, bias: 0.01 });
+    quad(c, 2, U + V + 1.03, rect(U + 0.3, V + 0.3, U + 0.7, V + 0.7), 0.066, '#F0503D', stroke(c, 0.4));
+    if (s < 3) emo(c, 3, U + V + 1.2, U + 0.5, V + 0.5, 0.12, 0.13, '🥋');
+    if (s >= 2) {
+      box(c, 3, U + 0.82, V + 0.18, 0.065, U + 0.84, V + 0.2, 0.46, '#5B6280', { k: 0.5 });
+      box(c, 3, U + 0.76, V + 0.18, 0.44, U + 0.84, V + 0.2, 0.46, '#5B6280', { k: 0.5 });
+      box(c, 3, U + 0.74, V + 0.16, 0.14, U + 0.8, V + 0.22, 0.4, '#F0503D', { k: 0.6, bias: 0.05 });
+      bench(c, U + 0.2, V + 0.9, U + 0.6, V + 0.96, '#B97F48');
+    }
+    if (s >= 3) {
+      pillars(c, U + 0.14, V + 0.14, U + 0.86, V + 0.86, 0.4, '#B5482E');
+      roof(c, U + 0.08, V + 0.08, U + 0.92, V + 0.92, 0.4, 0.16, '#3A2F6B', { trim: '#FFD84D', bias: 0.5 });
+      dot(c, 4, 0, U + 0.86, V + 0.86, 0.32, 0.03, '#F0503D'); dot(c, 4, 0, U + 0.14, V + 0.86, 0.32, 0.03, '#F0503D');
+      lamp(c, U + 0.95, V + 0.95, 0.5, gid);
+    }
+  };
+  B.gymnast = function (c, U, V, s, gid) {
+    pad(c, U, V, '#4CB960', s);
+    box(c, 2, U + 0.12, V + 0.12, 0.035, U + 0.88, V + 0.88, 0.06, '#46A0F0', { k: 0.5, bias: 0.01 });
+    quad(c, 2, U + V + 1.03, rect(U + 0.18, V + 0.18, U + 0.82, V + 0.82), 0.061, 'none', ' stroke="#fff" stroke-width="' + f1(c.sw * 1.2) + '"');
+    post(c, U + 0.27, V + 0.3, 0.06, 0.18, '#8C94B8'); post(c, U + 0.73, V + 0.3, 0.06, 0.18, '#8C94B8');
+    box(c, 3, U + 0.22, V + 0.285, 0.18, U + 0.78, V + 0.315, 0.205, '#D9A066', { k: 0.6, bias: 0.02 });
+    if (s >= 2) {
+      post(c, U + 0.6, V + 0.58, 0.06, 0.5, '#C7CEDA'); post(c, U + 0.6, V + 0.86, 0.06, 0.5, '#C7CEDA');
+      box(c, 3, U + 0.59, V + 0.58, 0.49, U + 0.61, V + 0.86, 0.51, '#C7CEDA', { k: 0.5, bias: 0.05 });
+      [0.68, 0.76].forEach(function (v) { line(c, 3, U + V + 1.4, [U + 0.6, V + v, 0.5], [U + 0.6, V + v, 0.3], '#5B6280', c.sw * 0.8); ell(c, 3, U + V + 1.41, U + 0.6, V + v, 0.28, 0.028, 'none', ' stroke="#FFD84D" stroke-width="' + f1(c.sw * 1.5) + '"'); });
+      emo(c, 3, U + V + 1.2, U + 0.35, V + 0.6, 0.1, 0.13, '🤸');
+    }
+    if (s >= 3) { box(c, 3, U + 0.2, V + 0.7, 0.06, U + 0.36, V + 0.82, 0.2, '#F0503D', { top: '#FFB3A6', k: 0.6 }); }
+    kit(c, U, V, s, gid, { bench: '#FF6FB1', flag: '#46A0F0', stand: ['#46A0F0', '#FF6FB1'] });
+  };
+  B.archery = function (c, U, V, s, gid) {
+    pad(c, U, V, '#4CB960', s);
+    var h = 0.037, n = s, lanes = [[0.5], [0.34, 0.66], [0.24, 0.5, 0.76]][s - 1];
+    quad(c, 2, U + V + 1.002, rect(U + 0.08, V + 0.14, U + 0.92, V + 0.86), h, '#5BCB70');
+    for (var k = 0; k <= n; k++) { var vv = V + 0.14 + k * 0.72 / n; line(c, 2, U + V + 1.004, [U + 0.08, vv, h], [U + 0.92, vv, h], '#F4FFF4', c.sw * 0.8); }
+    line(c, 2, U + V + 1.005, [U + 0.2, V + 0.14, h], [U + 0.2, V + 0.86, h], '#F0503D', c.sw * 1.6);
+    lanes.forEach(function (v) {
+      box(c, 3, U + 0.8, V + v - 0.07, h, U + 0.86, V + v + 0.07, 0.2, '#E8C27A', { k: 0.5 });
+      emo(c, 3, U + V + v + 1.0, U + 0.86, V + v, 0.08, 0.15, '🎯');
+    });
+    emo(c, 3, U + V + 0.6, U + 0.14, V + lanes[0], 0.08, 0.13, '🏹');
+    if (s >= 2) { flag(c, U + 0.08, V + 0.1, 0.3, '#FFD84D'); flag(c, U + 0.92, V + 0.1, 0.3, '#F0503D'); bench(c, U + 0.1, V + 0.9, U + 0.45, V + 0.96, '#B97F48'); }
+    if (s >= 3) {
+      pillars(c, U + 0.04, V + 0.16, U + 0.2, V + 0.84, 0.38, '#F2E6D0');
+      roof(c, U + 0.0, V + 0.12, U + 0.24, V + 0.88, 0.38, 0.12, '#2FA36B', { trim: '#FFD84D', bias: 0.3 });
+      lamp(c, U + 0.95, V + 0.95, 0.5, gid);
+    }
+  };
+  /* ของตกแต่งใหม่ */
+  B.water = function (c, U, V) {
+    box(c, 3, U + 0.36, V + 0.36, 0, U + 0.64, V + 0.64, 0.32, '#ECF6FF', { top: '#C7DFF5', k: 0.55 });
+    box(c, 3, U + 0.41, V + 0.41, 0.32, U + 0.59, V + 0.59, 0.52, '#7FD3FF', { k: 0.5, shine: 1, bias: 0.02 });
+    box(c, 3, U + 0.47, V + 0.47, 0.52, U + 0.53, V + 0.53, 0.56, '#3D7BF0', { k: 0.5, bias: 0.03 });
+    box(c, 3, U + 0.64, V + 0.42, 0.2, U + 0.67, V + 0.46, 0.23, '#F0503D', { k: 0.5, bias: 0.1 });
+    box(c, 3, U + 0.64, V + 0.54, 0.2, U + 0.67, V + 0.58, 0.23, '#3D7BF0', { k: 0.5, bias: 0.1 });
+    box(c, 3, U + 0.7, V + 0.66, 0, U + 0.76, V + 0.72, 0.06, '#fff', { k: 0.5 });
+    emo(c, 3, U + V + 1.6, U + 0.5, V + 0.5, 0.75, 0.13, '💧');
+  };
+  B.bins = function (c, U, V) {
+    [['#2FA36B', 0.16], ['#FFD84D', 0.4], ['#3D7BF0', 0.64]].forEach(function (b) {
+      box(c, 3, U + b[1], V + 0.38, 0, U + b[1] + 0.18, V + 0.6, 0.24, b[0], { k: 0.55 });
+      box(c, 3, U + b[1] - 0.01, V + 0.37, 0.24, U + b[1] + 0.19, V + 0.61, 0.27, shade(b[0], -0.2), { k: 0.55, bias: 0.01 });
+    });
+    emo(c, 3, U + V + 1.4, U + 0.49, V + 0.62, 0.12, 0.1, '♻️');
+  };
+  function bench2(c, u0, v0, u1, v1, col) {
+    [[u0 + 0.02, v0 + 0.02], [u1 - 0.02, v0 + 0.02], [u0 + 0.02, v1 - 0.02], [u1 - 0.02, v1 - 0.02]].forEach(function (q) { box(c, 3, q[0] - 0.01, q[1] - 0.01, 0, q[0] + 0.01, q[1] + 0.01, 0.08, '#5B4030', { k: 0.4 }); });
+    box(c, 3, u0, v0, 0.08, u1, v1, 0.1, col, { k: 0.55 });
+    box(c, 3, u0, v0, 0.1, u1, v0 + 0.025, 0.22, shade(col, -0.1), { k: 0.55, bias: -0.02 });
+  }
+  B.bench = function (c, U, V) {
+    tree(c, U + 0.78, V + 0.24, 0.3);
+    bench2(c, U + 0.16, V + 0.3, U + 0.56, V + 0.42, '#C98A4B');
+    bench2(c, U + 0.42, V + 0.62, U + 0.82, V + 0.74, '#3D7BF0');
+  };
+  B.flowers = function (c, U, V) {
+    box(c, 2, U + 0.14, V + 0.18, 0, U + 0.86, V + 0.82, 0.08, '#8A5A35', { top: '#6B4226', k: 0.5 });
+    var cols = ['#FF6FB1', '#FFD84D', '#FF5A5A', '#B98BFF', '#FFFFFF', '#FF8A3D'];
+    for (var k = 0; k < 18; k++) {
+      var u = U + 0.2 + (k % 6) * 0.115, v = V + 0.26 + Math.floor(k / 6) * 0.2, hh = 0.13 + (k * 7 % 3) * 0.025;
+      line(c, 3, u + v, [u, v, 0.08], [u, v, hh], '#2F9E4A', c.sw * 0.8);
+      dot(c, 3, u + v + 0.001, u + 0.02, v, hh - 0.04, 0.02, '#3FAE57');
+      dot(c, 3, u + v + 0.002, u, v, hh, 0.028, cols[k % 6], stroke(c, 0.4));
+    }
+  };
+  B.palm = function (c, U, V) {
+    ell(c, 2, U + V + 1, U + 0.5, V + 0.5, 0.01, 0.22, '#E9C98A', stroke(c, 0.3));
+    for (var k = 0; k < 6; k++) box(c, 3, U + 0.47 + k * 0.012, V + 0.47, k * 0.11, U + 0.53 + k * 0.012, V + 0.53, (k + 1) * 0.11, k % 2 ? '#A0703F' : '#8A5A35', { k: 0.45, bias: k * 0.001 });
+    var G = c.G, top = G(U + 0.56, V + 0.5, 0.68), W = c.W, s = '';
+    [[-0.32, 0.06], [0.32, 0.08], [-0.2, 0.2], [0.22, 0.22], [0.02, -0.16], [-0.04, 0.24]].forEach(function (q) {
+      var x = top[0] + q[0] * W, y = top[1] + q[1] * W;
+      s += '<path d="M' + f1(top[0]) + ' ' + f1(top[1]) + ' Q' + f1((top[0] + x) / 2) + ' ' + f1(Math.min(top[1], y) - W * 0.12) + ' ' + f1(x) + ' ' + f1(y) + '" stroke="#2F9E4A" stroke-width="' + f1(W * 0.07) + '" fill="none" stroke-linecap="round"/>';
+    });
+    s += '<circle cx="' + f1(top[0] - W * 0.03) + '" cy="' + f1(top[1] + W * 0.03) + '" r="' + f1(W * 0.035) + '" fill="#7A4E2D"/><circle cx="' + f1(top[0] + W * 0.035) + '" cy="' + f1(top[1] + W * 0.04) + '" r="' + f1(W * 0.035) + '" fill="#8A5A35"/>';
+    c.add(3, U + V + 1.3, s);
+  };
+  B.tent = function (c, U, V) {
+    roof(c, U + 0.16, V + 0.22, U + 0.74, V + 0.72, 0.0, 0.36, '#F0503D', { gable: '#FFD84D', bias: 0.3 });
+    var G = c.G, a = G(U + 0.74, V + 0.47, 0.0), b = G(U + 0.74, V + 0.47, 0.26);
+    c.add(3, U + V + 1.25, '<line x1="' + f1(a[0]) + '" y1="' + f1(a[1]) + '" x2="' + f1(b[0]) + '" y2="' + f1(b[1]) + '" stroke="#7A2E1E" stroke-width="' + f1(c.sw * 1.2) + '"/>');
+    box(c, 3, U + 0.78, V + 0.76, 0, U + 0.9, V + 0.79, 0.03, '#8A5A35', { k: 0.4 });
+    box(c, 3, U + 0.82, V + 0.72, 0, U + 0.85, V + 0.84, 0.03, '#7A4E2D', { k: 0.4 });
+    emo(c, 3, U + V + 1.8, U + 0.84, V + 0.78, 0.04, 0.12, '🔥');
+    flag(c, U + 0.17, V + 0.47, 0.5, '#46D6FF');
+  };
+  B.playground = function (c, U, V) {
+    box(c, 2, U + 0.08, V + 0.08, 0, U + 0.92, V + 0.92, 0.035, '#E9C98A', { k: 0.4 });
+    pillars(c, U + 0.18, V + 0.18, U + 0.38, V + 0.38, 0.3, '#FF6FB1');
+    box(c, 3, U + 0.17, V + 0.17, 0.28, U + 0.39, V + 0.39, 0.31, '#FFD84D', { k: 0.55, bias: 0.02 });
+    roof(c, U + 0.15, V + 0.15, U + 0.41, V + 0.41, 0.48, 0.12, '#3D7BF0', { bias: 0.2 });
+    pillars(c, U + 0.18, V + 0.18, U + 0.38, V + 0.38, 0.48, '#FF6FB1');
+    face(c, 3, U + V + 1.0, [[U + 0.39, V + 0.22, 0.3], [U + 0.39, V + 0.34, 0.3], [U + 0.76, V + 0.34, 0.04], [U + 0.76, V + 0.22, 0.04]], '#46D6FF');
+    [0.58, 0.86].forEach(function (u) {
+      line(c, 3, u + V + 0.5, [U + u, V + 0.56, 0.035], [U + u, V + 0.7, 0.42], '#7E5BEF', c.sw * 1.5);
+      line(c, 3, u + V + 0.5, [U + u, V + 0.84, 0.035], [U + u, V + 0.7, 0.42], '#7E5BEF', c.sw * 1.5);
+    });
+    line(c, 3, U + V + 1.45, [U + 0.58, V + 0.7, 0.42], [U + 0.86, V + 0.7, 0.42], '#7E5BEF', c.sw * 1.8);
+    [0.66, 0.78].forEach(function (u) {
+      line(c, 3, U + V + 1.46, [U + u, V + 0.7, 0.42], [U + u, V + 0.7, 0.14], '#5B6280', c.sw * 0.7);
+      box(c, 3, U + u - 0.04, V + 0.68, 0.12, U + u + 0.04, V + 0.72, 0.14, '#F0503D', { k: 0.5, bias: 0.3 });
+    });
+  };
+  B.fountain = function (c, U, V) {
+    box(c, 2, U + 0.12, V + 0.12, 0, U + 0.88, V + 0.88, 0.1, '#D9DCE8', { top: '#ECEFF6', k: 0.5 });
+    quad(c, 2, U + V + 1.02, rect(U + 0.18, V + 0.18, U + 0.82, V + 0.82), 0.09, '#3FA9E0', stroke(c, 0.4));
+    box(c, 3, U + 0.45, V + 0.45, 0.09, U + 0.55, V + 0.55, 0.3, '#ECEFF6', { k: 0.5 });
+    ell(c, 3, U + V + 1.05, U + 0.5, V + 0.5, 0.3, 0.13, '#D9DCE8', stroke(c, 0.5));
+    ell(c, 3, U + V + 1.06, U + 0.5, V + 0.5, 0.31, 0.1, '#7FD3FF');
+    var G = c.G, t = G(U + 0.5, V + 0.5, 0.52), W = c.W, s = '';
+    [[-0.22, 0.1], [0.22, 0.1], [-0.12, 0.17], [0.12, 0.17]].forEach(function (q) {
+      s += '<path d="M' + f1(t[0]) + ' ' + f1(t[1] + W * 0.06) + ' Q' + f1(t[0] + q[0] * W * 0.5) + ' ' + f1(t[1] - W * 0.1) + ' ' + f1(t[0] + q[0] * W) + ' ' + f1(t[1] + q[1] * W + W * 0.12) + '" stroke="#BFEAFF" stroke-width="' + f1(c.sw * 1.6) + '" fill="none" stroke-linecap="round" opacity=".9"/>';
+    });
+    s += '<line x1="' + f1(t[0]) + '" y1="' + f1(t[1] + W * 0.1) + '" x2="' + f1(t[0]) + '" y2="' + f1(t[1] - W * 0.05) + '" stroke="#BFEAFF" stroke-width="' + f1(c.sw * 2.2) + '" stroke-linecap="round"/>';
+    c.add(3, U + V + 1.2, s);
+  };
+  B.arch = function (c, U, V) {
+    box(c, 3, U + 0.18, V + 0.44, 0, U + 0.27, V + 0.56, 0.56, '#F0503D', { k: 0.6 });
+    box(c, 3, U + 0.73, V + 0.44, 0, U + 0.82, V + 0.56, 0.56, '#F0503D', { k: 0.6 });
+    box(c, 3, U + 0.12, V + 0.42, 0.56, U + 0.88, V + 0.58, 0.64, '#2A2A3A', { top: '#3A3A4E', k: 0.6, bias: 0.3 });
+    box(c, 3, U + 0.2, V + 0.46, 0.46, U + 0.8, V + 0.54, 0.5, '#F0503D', { k: 0.6, bias: 0.31 });
+    face(c, 3, U + V + 1.32, [[U + 0.36, V + 0.54, 0.47], [U + 0.64, V + 0.54, 0.47], [U + 0.64, V + 0.54, 0.55], [U + 0.36, V + 0.54, 0.55]], '#FFD84D');
+    flag(c, U + 0.225, V + 0.5, 0.82, '#FFD84D'); flag(c, U + 0.775, V + 0.5, 0.82, '#46D6FF');
+  };
+  B.balloons = function (c, U, V) {
+    box(c, 3, U + 0.46, V + 0.56, 0, U + 0.54, V + 0.64, 0.06, '#7E5BEF', { k: 0.5 });
+    var G = c.G, base = G(U + 0.5, V + 0.6, 0.06), s = '', bl = [[0.3, 0.4, 0.62, '#FF5A5A'], [0.5, 0.35, 0.75, '#FFD84D'], [0.7, 0.42, 0.66, '#46D6FF'], [0.42, 0.6, 0.55, '#7CFFCB'], [0.62, 0.62, 0.58, '#FF6FB1']];
+    bl.forEach(function (b) { var p = G(U + b[0], V + b[1], b[2] - 0.08); s += '<path d="M' + f1(base[0]) + ' ' + f1(base[1]) + ' Q' + f1((base[0] + p[0]) / 2 + c.W * 0.03) + ' ' + f1((base[1] + p[1]) / 2) + ' ' + f1(p[0]) + ' ' + f1(p[1]) + '" stroke="#5B6280" stroke-width="' + f1(c.sw * 0.6) + '" fill="none"/>'; });
+    bl.forEach(function (b) {
+      var p = G(U + b[0], V + b[1], b[2]), r = c.W * 0.07;
+      s += '<ellipse cx="' + f1(p[0]) + '" cy="' + f1(p[1]) + '" rx="' + f1(r) + '" ry="' + f1(r * 1.2) + '" fill="' + b[3] + '"' + stroke(c, 0.5) + '/><ellipse cx="' + f1(p[0] - r * 0.35) + '" cy="' + f1(p[1] - r * 0.45) + '" rx="' + f1(r * 0.22) + '" ry="' + f1(r * 0.3) + '" fill="#fff" opacity=".6"/>';
+    });
+    c.add(3, U + V + 1.3, s);
+  };
+  B.statue = function (c, U, V) {
+    box(c, 3, U + 0.28, V + 0.28, 0, U + 0.72, V + 0.72, 0.16, '#D9DCE8', { top: '#ECEFF6', k: 0.55 });
+    box(c, 3, U + 0.34, V + 0.34, 0.16, U + 0.66, V + 0.66, 0.24, '#C7CEDA', { top: '#E2E6EF', k: 0.55, bias: 0.01 });
+    var G = c.G, W = c.W, g = '#F5B731', d = U + V + 1.2, s = '';
+    var hip = G(U + 0.5, V + 0.5, 0.42), sh = G(U + 0.5, V + 0.5, 0.6), hd = G(U + 0.5, V + 0.5, 0.68);
+    var seg = function (a, b, w) { return '<line x1="' + f1(a[0]) + '" y1="' + f1(a[1]) + '" x2="' + f1(b[0]) + '" y2="' + f1(b[1]) + '" stroke="' + g + '" stroke-width="' + f1(W * w) + '" stroke-linecap="round"/>'; };
+    var P = function (dx, dy) { return [hip[0] + dx * W, hip[1] + dy * W]; };
+    s += seg(hip, P(-0.07, 0.1), 0.05) + seg(P(-0.07, 0.1), P(-0.04, 0.2), 0.045) + seg(hip, P(0.08, 0.06), 0.05) + seg(P(0.08, 0.06), P(0.15, 0.13), 0.045);
+    s += seg(hip, sh, 0.07) + seg(sh, [sh[0] + 0.1 * W, sh[1] - 0.12 * W], 0.04) + seg(sh, [sh[0] - 0.09 * W, sh[1] + 0.05 * W], 0.04);
+    s += '<circle cx="' + f1(hd[0]) + '" cy="' + f1(hd[1]) + '" r="' + f1(W * 0.05) + '" fill="' + g + '"/>';
+    s += '<text x="' + f1(sh[0] + 0.11 * W) + '" y="' + f1(sh[1] - 0.12 * W) + '" font-size="' + f1(W * 0.1) + '" text-anchor="middle">🔥</text>';
+    c.add(3, d, s);
+    emo(c, 3, d + 0.01, U + 0.66, V + 0.5, 0.06, 0.09, '🏅');
+  };
+  B.trophy = function (c, U, V, s, gid) {
+    box(c, 3, U + 0.3, V + 0.3, 0, U + 0.7, V + 0.7, 0.14, '#3A2F6B', { top: '#5B4E9A', k: 0.6 });
+    box(c, 3, U + 0.36, V + 0.36, 0.14, U + 0.64, V + 0.64, 0.22, '#2A2050', { top: '#4A3E7E', k: 0.6, bias: 0.01 });
+    box(c, 3, U + 0.44, V + 0.44, 0.22, U + 0.56, V + 0.56, 0.27, '#E0A21C', { k: 0.6, bias: 0.02 });
+    box(c, 3, U + 0.48, V + 0.48, 0.27, U + 0.52, V + 0.52, 0.38, '#F5B731', { k: 0.6, bias: 0.03 });
+    var G = c.G, W = c.W, b = G(U + 0.5, V + 0.5, 0.38), t = G(U + 0.5, V + 0.5, 0.66), s2 = '';
+    c.add(3, U + V + 1.39, '<circle cx="' + f1(t[0]) + '" cy="' + f1(t[1] + W * 0.05) + '" r="' + f1(W * 0.3) + '" fill="url(#' + gid + 'g)"/>');
+    s2 += '<path d="M' + f1(b[0] - W * 0.13) + ' ' + f1(t[1]) + ' L' + f1(b[0] + W * 0.13) + ' ' + f1(t[1]) + ' Q' + f1(b[0] + W * 0.12) + ' ' + f1(b[1] - W * 0.02) + ' ' + f1(b[0]) + ' ' + f1(b[1]) + ' Q' + f1(b[0] - W * 0.12) + ' ' + f1(b[1] - W * 0.02) + ' ' + f1(b[0] - W * 0.13) + ' ' + f1(t[1]) + 'Z" fill="#FFD84D"' + stroke(c, 0.6) + '/>';
+    s2 += '<path d="M' + f1(b[0] - W * 0.13) + ' ' + f1(t[1] + W * 0.03) + ' q' + f1(-W * 0.09) + ' ' + f1(W * 0.02) + ' ' + f1(-W * 0.05) + ' ' + f1(W * 0.11) + '" stroke="#E0A21C" stroke-width="' + f1(W * 0.03) + '" fill="none"/>';
+    s2 += '<path d="M' + f1(b[0] + W * 0.13) + ' ' + f1(t[1] + W * 0.03) + ' q' + f1(W * 0.09) + ' ' + f1(W * 0.02) + ' ' + f1(W * 0.05) + ' ' + f1(W * 0.11) + '" stroke="#E0A21C" stroke-width="' + f1(W * 0.03) + '" fill="none"/>';
+    s2 += '<ellipse cx="' + f1(b[0]) + '" cy="' + f1(t[1]) + '" rx="' + f1(W * 0.13) + '" ry="' + f1(W * 0.04) + '" fill="#FFE98A"' + stroke(c, 0.5) + '/>';
+    s2 += '<path d="M' + f1(b[0] - W * 0.06) + ' ' + f1(t[1] + W * 0.05) + ' q' + f1(W * 0.02) + ' ' + f1(W * 0.08) + ' ' + f1(W * 0.05) + ' ' + f1(W * 0.1) + '" stroke="#fff" stroke-opacity=".7" stroke-width="' + f1(W * 0.02) + '" fill="none" stroke-linecap="round"/>';
+    s2 += '<text x="' + f1(b[0]) + '" y="' + f1(t[1] - W * 0.05) + '" font-size="' + f1(W * 0.11) + '" text-anchor="middle">⭐</text>';
+    c.add(3, U + V + 1.4, s2);
+  };
+  /* <<< 6B-22 */
+
   /* ---------- ฉากตามภาค ---------- */
   var THEME = {
     1: { sky: ['#7FD0FF', '#D8F4FF'], grass: '#5BC46E', soil: '#B9814F', rock: '#8A5A3C', bush: ['#3AA552', '#2F8F45'] },
@@ -4424,7 +4817,7 @@ var GART = (function () {
     return '<svg class="giso" viewBox="0 0 ' + f1(w) + ' ' + f1(h) + '" width="' + f1(w) + '" height="' + f1(h) + '"' + (o.slice ? ' preserveAspectRatio="xMidYMid slice"' : '') + (o.tap ? '' : ' role="img" aria-label="ภาพศูนย์ฝึกกีฬา"') + '>' +
       (o.bare ? '<defs><radialGradient id="' + gid + 'g"><stop offset="0" stop-color="#FFF6B0" stop-opacity=".85"/><stop offset="1" stop-color="#FFF6B0" stop-opacity="0"/></radialGradient></defs>' : backdrop(arc, w, h, gid)) + c.out.map(function (z) { return z.s; }).join('') + (o.haze && !o.bare ? haze(w, h, gid) : '') + '</svg>';
   }
-  var GITEM_KIND = function (id) { return ['tree', 'flag', 'light', 'stand'].indexOf(id) >= 0 ? 'd' : 'b'; };
+  var GITEM_KIND = function (id) { return ['tree', 'flag', 'light', 'stand', 'water', 'bench', 'flowers', 'bins', 'balloons', 'palm', 'tent', 'playground', 'fountain', 'arch', 'statue', 'trophy'].indexOf(id) >= 0 ? 'd' : 'b'; };
   return { render: render, arcOf: arcOf, B: B };
 })();
 
@@ -5974,8 +6367,10 @@ function actHtml(g) {
     (armed ? 'แตะอีกครั้งเพื่อรื้อ' : '🧹 รื้อ (คืน ' + fmt(refund) + ' 🪙)') + '</button></div></div>';
   return h;
 }
+/* 6B-22: เรียงของในร้านตามเลเวลที่ปลดล็อก แล้วตามราคา */
+function gSortItems(L) { return (L || []).map(function (x, i) { return [x, i]; }).sort(function (a, b) { return (a[0].lv - b[0].lv) || (a[0].cost[0] - b[0].cost[0]) || (a[1] - b[1]); }).map(function (x) { return x[0]; }); }
 function shopHtml(g) {
-  var items = g.items || [], pick = gItem(GM.pick), h = [];
+  var items = gSortItems(g.items), pick = gItem(GM.pick), h = [];
   var btn = function (it) {
     var lock = g.lv < it.lv, poor = !lock && g.coins < it.cost[0];
     return '<button type="button" class="' + (GM.pick === it.id ? 'on' : '') + (lock ? ' lockd' : '') + (poor ? ' poor' : '') + '" data-gi="' + it.id + '" aria-pressed="' + (GM.pick === it.id) + '">' +
@@ -7132,52 +7527,147 @@ $('ts-body').addEventListener('click', function (e) {
 });
 $('ts-back').onclick = function () { openTeacher(); };
 
-/* ---------- แผ่นล่าง: แก้เลขประจำตัว ---------- */
+/* ---------- แผ่นล่าง: ข้อมูลนักเรียนรายคน + ปุ่มครู (6B-21) ----------
+ * view = สรุป + 14 วันล่าสุด + ปุ่ม · sid / confirm / done = แก้เลขประจำตัว
+ * pin / pindone = ล้าง PIN · edit = แก้ชื่อ ชั้น ห้อง เลขที่ · active = ปิด/เปิดบัญชี */
+var TS_DAY = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+var TS_MTYPE = { move: '🏃', habit: '💧', quest: '🏠' };
 function tsDate(v) {
   var t = String(v || '');
   if (!/^\d{4}-\d{2}-\d{2}/.test(t)) return t || '-';
   var d = keyDate(t.slice(0, 10));
   return d.getDate() + ' ' + TH_MO[d.getMonth()] + ' ' + String(d.getFullYear() + 543).slice(2) + (t.length >= 16 ? ' ' + t.slice(11, 16) + ' น.' : '');
 }
+function tsDay(k) { var d = keyDate(k); return TS_DAY[d.getDay()] + ' ' + d.getDate() + ' ' + TH_MO[d.getMonth()]; }
 function tsFind(sid) { return (TS.list || []).filter(function (x) { return x.sid === sid; })[0] || null; }
 function openTsSheet(sid) {
   TS.cur = tsFind(sid);
   if (!TS.cur) return;
-  TS.step = 'view'; TS.newSid = ''; TS.err = ''; TS.res = null; TS.busy = false;
+  TS.step = 'view'; TS.newSid = ''; TS.err = ''; TS.res = null; TS.busy = false; TS.ed = null;
+  TS.detail = { sid: sid, loading: true, data: null, err: '' };
   renderTsSheet();
   $('ts-sheet').classList.add('on');
-  setTimeout(function () { var i = $('ts-new'); if (i) try { i.focus(); } catch (e) {} }, 60);
+  try { $('ts-sheet-body').scrollTop = 0; } catch (e) {}
+  loadTsDetail();
 }
-function closeTsSheet() { $('ts-sheet').classList.remove('on'); TS.cur = null; }
+function loadTsDetail() {
+  var sid = TS.cur && TS.cur.sid;
+  if (!sid) return;
+  TS.detail = { sid: sid, loading: true, data: TS.detail && TS.detail.sid === sid ? TS.detail.data : null, err: '' };
+  if (TS.step === 'view') renderTsSheet();
+  tcall('tstudent', { sid: sid }).then(function (res) {
+    if (!TS.cur || TS.cur.sid !== sid) return;
+    if (!res.ok) { TS.detail = { sid: sid, loading: false, data: null, err: res.code === 'AUTH_T' ? '' : (res.error || 'โหลดข้อมูลไม่สำเร็จ') }; }
+    else {
+      TS.detail = { sid: sid, loading: false, data: res, err: '' };
+      var s = res.student;
+      Object.assign(TS.cur, { name: s.name, grade: s.grade, room: s.room, no: s.no, classId: s.classId, active: s.active, hasPin: s.hasPin, created: s.created, last: s.last });
+    }
+    if (TS.step === 'view') renderTsSheet();
+  });
+}
+function closeTsSheet() { $('ts-sheet').classList.remove('on'); TS.cur = null; TS.detail = null; }
+function tsWho(st) { return esc(st.name) + '<small class="muted" style="display:block;font-weight:600">' + (st.classId ? 'ป.' + st.grade + '/' + st.room : 'ไม่มีห้อง') + ' · เลขที่ ' + (st.no || '-') + ' · เลขประจำตัว ' + esc(st.sid) + '</small>'; }
+function tsDetailHtml() {
+  var D = TS.detail || {}, st = TS.cur, h = [];
+  var info = D.data ? D.data.student : null, tags = [];
+  if (!st.active) tags.push('<i class="tg off">⛔ ปิดบัญชีอยู่</i>');
+  if (info && info.locked) tags.push('<i class="tg bad">🔒 ใส่ PIN ผิดจนล็อก</i>');
+  if (!st.hasPin) tags.push('<i class="tg">🔑 ยังไม่ตั้ง PIN</i>');
+  if (tsBad(st)) tags.push('<i class="tg bad">⚠️ เลข ' + String(st.sid).length + ' หลัก</i>');
+  h.push('<div class="gih"><h2 style="font-size:1.2em;flex:1">' + tsWho(st) + '</h2><button class="gx" type="button" data-tsa="close" aria-label="ปิด">✕</button></div>' + (tags.length ? '<span class="tgs">' + tags.join('') + '</span>' : ''));
+  h.push('<p class="muted" style="font-size:.85em">สมัครเมื่อ ' + esc(tsDate(st.created)) + ' · เข้าใช้ล่าสุด ' + esc(tsDate(st.last)) + '</p>');
+  h.push('<div class="tsacts">' +
+    '<button type="button" class="ghost" data-tsa="pin">🔑 ล้าง PIN</button>' +
+    '<button type="button" class="ghost" data-tsa="edit">✏️ แก้ชื่อ/ห้อง</button>' +
+    '<button type="button" class="ghost" data-tsa="sid">🔢 แก้เลขประจำตัว</button>' +
+    '<button type="button" class="ghost' + (st.active ? ' warn' : '') + '" data-tsa="active">' + (st.active ? '⛔ ปิดบัญชี' : '✅ เปิดบัญชี') + '</button></div>');
+  if (D.err) { h.push('<p class="err">' + esc(D.err) + '</p><button type="button" class="ghost sm" data-tsa="reload">ลองโหลดใหม่</button>'); return h.join(''); }
+  if (!D.data) { h.push('<div class="sk" style="height:92px"></div><div class="sk" style="height:220px"></div>'); return h.join(''); }
+  var S = D.data.summary;
+  if (!S) { h.push('<p class="muted">ข้อมูลชั้นหรือห้องไม่ครบ จึงยังไม่มีสรุป กด ✏️ แก้ชื่อ/ห้อง เพื่อเติมให้ครบ</p>'); return h.join(''); }
+  h.push('<div class="tssum">' +
+    '<div><b>' + esc(S.icon) + ' Lv.' + S.lv + '</b><small>' + esc(S.title) + '</small></div>' +
+    '<div><b>⭐ ' + fmt(S.total) + '</b><small>แต้มรวม · สัปดาห์นี้ ' + fmt(S.week) + '</small></div>' +
+    '<div><b>🔥 ' + S.streak + ' วัน</b><small>ไฟต่อเนื่อง · ดีสุด ' + S.best + '</small></div>' +
+    '<div><b>📅 ' + S.activeDays + ' วัน</b><small>วันที่ขยับทั้งหมด</small></div>' +
+    '<div><b>⏱️ ' + fmt(S.programMinutes) + '</b><small>นาทีในโปรแกรม</small></div>' +
+    '<div><b>🪙 ' + fmt(S.coins) + '</b><small>' + (S.pet ? '🐾 ' + esc(S.pet.name || S.pet.label) : 'ยังไม่มีน้องคู่หู') + '</small></div></div>');
+  var W = (S.weeks || []).slice(-8);
+  if (W.length) {
+    var mx = Math.max.apply(null, W.map(function (w) { return w.minutes; }).concat([60]));
+    h.push('<div class="card tsweeks"><b>นาทีรายสัปดาห์</b><div class="tswk">' + W.map(function (w) {
+      return '<div title="สัปดาห์ ' + w.no + ': ' + w.minutes + ' นาที"><span style="height:' + Math.max(3, Math.round(w.minutes / mx * 64)) + 'px"></span><small>' + w.minutes + '</small><i>ส.' + w.no + '</i></div>';
+    }).join('') + '</div></div>');
+  }
+  var days = D.data.days || [], idle = days.filter(function (d) { return !d.logs.length && !d.missions.length && !d.quiz && !d.clips; }).length;
+  h.push('<div class="card tsdays"><b>14 วันล่าสุด</b><small class="muted">ไม่ได้บันทึกอะไรเลย ' + idle + ' วัน</small>' + days.map(function (d) {
+    var empty = !d.logs.length && !d.missions.length && !d.quiz && !d.clips, bits = [];
+    d.logs.forEach(function (l) { bits.push('<span class="' + (l.x ? 'tsx' : '') + '">' + esc(l.act) + ' ' + l.min + (l.x ? ' (ไม่นับ)' : '') + '</span>'); });
+    if (d.missions.length) bits.push('<span>🎯 ' + d.missions.map(function (m) { return TS_MTYPE[m.type] || '🎯'; }).join('') + '</span>');
+    if (d.quiz) bits.push('<span>❓ ' + esc(d.quiz) + '</span>');
+    if (d.clips) bits.push('<span>🎬 ' + d.clips + '</span>');
+    return '<div class="tsday' + (empty ? ' empty' : '') + '"><span class="d">' + tsDay(d.date) + '</span><span class="m">' + (d.minutes ? d.minutes + ' น.' : '—') + '</span><span class="w">' + bits.join(' · ') + '</span></div>';
+  }).join('') + '</div>');
+  h.push('<button class="ghost" type="button" data-tsa="close">ปิด</button>');
+  return h.join('');
+}
 function renderTsSheet() {
   var st = TS.cur, L = TS.sidLen, h = ['<div class="grab"></div>'];
   if (!st) return;
-  var who = esc(st.name) + '<small class="muted" style="display:block;font-weight:600">' + (st.classId ? 'ป.' + st.grade + '/' + st.room : 'ไม่มีห้อง') + ' · เลขที่ ' + (st.no || '-') + '</small>';
-  if (TS.step === 'view') {
+  if (TS.step === 'view') h.push(tsDetailHtml());
+  else if (TS.step === 'sid') {
     var bad = tsBad(st);
-    h.push('<h2 style="font-size:1.2em">' + who + '</h2>');
+    h.push('<h2 style="font-size:1.2em">🔢 แก้เลขประจำตัว</h2><p style="font-weight:700">' + tsWho(st) + '</p>');
     h.push('<p class="muted" style="text-align:center">เลขประจำตัวตอนนี้' + (bad ? ' <b style="color:var(--red)">(' + String(st.sid).length + ' หลัก)</b>' : '') + '</p>');
     h.push('<div class="rcdig sm">' + sidBoxes(st.sid, bad) + '</div>');
-    h.push('<p class="muted" style="font-size:.85em;text-align:center">สมัครเมื่อ ' + esc(tsDate(st.created)) + ' · เข้าใช้ล่าสุด ' + esc(tsDate(st.last)) + (st.hasPin ? '' : ' · ยังไม่ตั้ง PIN') + '</p>');
     h.push('<label class="field"><span>เลขประจำตัวใหม่' + (L ? ' (' + L + ' หลัก)' : '') + '</span><input id="ts-new" inputmode="numeric" pattern="[0-9]*" maxlength="' + (L || 10) + '" autocomplete="off" placeholder="ดูจากบัตรนักเรียน" value="' + esc(TS.newSid) + '"></label>');
     h.push('<p class="err" id="ts-err" role="alert">' + esc(TS.err) + '</p>');
-    h.push('<button class="cta" type="button" data-tsa="next">ถัดไป ›</button><button class="ghost" type="button" data-tsa="close">ปิด</button>');
+    h.push('<button class="cta" type="button" data-tsa="next">ถัดไป ›</button><button class="ghost" type="button" data-tsa="back">‹ กลับ</button>');
   } else if (TS.step === 'confirm') {
     h.push('<h2 style="font-size:1.2em">ยืนยันเปลี่ยนเลขประจำตัว</h2>');
-    h.push('<p style="font-weight:700">' + who + '</p>');
+    h.push('<p style="font-weight:700">' + tsWho(st) + '</p>');
     h.push('<div class="tsswap"><span>' + esc(st.sid) + '</span><i aria-hidden="true">→</i><b>' + esc(TS.newSid) + '</b></div>');
     h.push('<ul class="tsnote"><li>✅ บันทึก ภารกิจ น้องคู่หู ศูนย์ฝึก และผลสมรรถภาพ ย้ายตามมาครบ</li>' +
       '<li>🔑 PIN เดิมจะใช้ไม่ได้ นักเรียนต้องกด <b>“สมัครครั้งแรก”</b> ใส่เลขใหม่ แล้วตั้ง PIN ใหม่</li></ul>');
     h.push('<p class="err" id="ts-err" role="alert">' + esc(TS.err) + '</p>');
-    h.push('<button class="cta" type="button" data-tsa="go"' + (TS.busy ? ' disabled' : '') + '>' + (TS.busy ? 'กำลังเปลี่ยน…' : 'ยืนยันเปลี่ยนเลข') + '</button><button class="ghost" type="button" data-tsa="back"' + (TS.busy ? ' disabled' : '') + '>‹ กลับไปแก้</button>');
-  } else {
+    h.push('<button class="cta" type="button" data-tsa="go"' + (TS.busy ? ' disabled' : '') + '>' + (TS.busy ? 'กำลังเปลี่ยน…' : 'ยืนยันเปลี่ยนเลข') + '</button><button class="ghost" type="button" data-tsa="sid"' + (TS.busy ? ' disabled' : '') + '>‹ กลับไปแก้</button>');
+  } else if (TS.step === 'done') {
     var r = TS.res || {}, mv = r.moved || {}, parts = Object.keys(mv).filter(function (k) { return k !== 'แคชระบบ'; }).map(function (k) { return esc(k) + ' ' + mv[k] + ' แถว'; });
     h.push('<h2 style="font-size:1.25em">เปลี่ยนเลขแล้ว ✅</h2>');
-    h.push('<p style="font-weight:700">' + who + '</p>');
+    h.push('<p style="font-weight:700">' + esc(st.name) + '</p>');
     h.push('<div class="tsswap"><span>' + esc(r.oldSid || '') + '</span><i aria-hidden="true">→</i><b>' + esc(r.sid || '') + '</b></div>');
     h.push('<div class="tstell"><b>บอกนักเรียนว่า</b><ol><li>เปิดแอปสมุดสุขภาพ</li><li>กด <b>“สมัครครั้งแรก”</b></li><li>ใส่เลขประจำตัว <b>' + esc(r.sid || '') + '</b> แล้วตั้ง PIN ใหม่</li></ol><small>บันทึกเดิมอยู่ครบ ไม่ต้องบันทึกใหม่</small></div>');
     h.push('<p class="muted" style="font-size:.85em">ย้ายข้อมูลแล้ว: ' + (parts.length ? parts.join(' · ') : 'ยังไม่มีบันทึก') + '</p>');
-    h.push('<button class="cta" type="button" data-tsa="close">เสร็จ</button>');
+    h.push('<button class="cta" type="button" data-tsa="view">กลับไปดูข้อมูล</button><button class="ghost" type="button" data-tsa="close">ปิด</button>');
+  } else if (TS.step === 'pin') {
+    h.push('<h2 style="font-size:1.2em">🔑 ล้าง PIN</h2><p style="font-weight:700">' + tsWho(st) + '</p>');
+    h.push('<ul class="tsnote"><li>ใช้เมื่อเด็กลืม PIN หรือใส่ผิดจนล็อก</li><li>บันทึกเดิมอยู่ครบ ไม่หาย</li><li>หลังล้าง เด็กต้องกด <b>“สมัครครั้งแรก”</b> ใส่เลขประจำตัวเดิม แล้วตั้ง PIN ใหม่</li></ul>');
+    h.push('<p class="err" id="ts-err" role="alert">' + esc(TS.err) + '</p>');
+    h.push('<button class="cta" type="button" data-tsa="pingo"' + (TS.busy ? ' disabled' : '') + '>' + (TS.busy ? 'กำลังล้าง…' : 'ยืนยันล้าง PIN') + '</button><button class="ghost" type="button" data-tsa="view"' + (TS.busy ? ' disabled' : '') + '>‹ กลับ</button>');
+  } else if (TS.step === 'pindone') {
+    h.push('<h2 style="font-size:1.25em">ล้าง PIN แล้ว ✅</h2><p style="font-weight:700">' + esc(st.name) + '</p>');
+    h.push('<div class="tstell"><b>บอกนักเรียนว่า</b><ol><li>เปิดแอปสมุดสุขภาพ</li><li>กด <b>“สมัครครั้งแรก”</b></li><li>ใส่เลขประจำตัว <b>' + esc(st.sid) + '</b> แล้วตั้ง PIN ใหม่</li></ol><small>บันทึกเดิมอยู่ครบ</small></div>');
+    h.push('<button class="cta" type="button" data-tsa="view">กลับไปดูข้อมูล</button><button class="ghost" type="button" data-tsa="close">ปิด</button>');
+  } else if (TS.step === 'edit') {
+    var E = TS.ed;
+    h.push('<h2 style="font-size:1.2em">✏️ แก้ชื่อ ชั้น ห้อง เลขที่</h2><p class="muted" style="font-size:.85em">เลขประจำตัว ' + esc(st.sid) + '</p>');
+    h.push('<label class="field"><span>ชื่อ-นามสกุล</span><input id="ts-ename" maxlength="60" autocomplete="off" value="' + esc(E.name) + '"></label>');
+    h.push('<div class="field"><span>ชั้น</span><div class="chips grade" role="radiogroup" aria-label="ชั้น">' + [1, 2, 3, 4, 5, 6].map(function (g) {
+      return '<button type="button" class="chip' + (E.grade === g ? ' on' : '') + '" role="radio" aria-checked="' + (E.grade === g) + '" data-tsg="' + g + '">ป.' + g + '</button>';
+    }).join('') + '</div></div>');
+    h.push('<div class="pair"><label class="field"><span>ห้อง</span><input id="ts-eroom" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="' + esc(E.room) + '"></label>' +
+      '<label class="field"><span>เลขที่</span><input id="ts-eno" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="' + esc(E.no) + '"></label></div>');
+    h.push('<p class="hint">ย้ายห้องแล้ว บันทึกเก่ายังนับให้ห้องเดิม อันดับห้องใช้ห้องใหม่ตั้งแต่ระบบอัปเดตรอบถัดไป (ไม่เกิน 1 ชั่วโมง)</p>');
+    h.push('<p class="err" id="ts-err" role="alert">' + esc(TS.err) + '</p>');
+    h.push('<button class="cta" type="button" data-tsa="editgo"' + (TS.busy ? ' disabled' : '') + '>' + (TS.busy ? 'กำลังบันทึก…' : 'บันทึก') + '</button><button class="ghost" type="button" data-tsa="view"' + (TS.busy ? ' disabled' : '') + '>‹ กลับ</button>');
+  } else if (TS.step === 'active') {
+    var off = st.active;
+    h.push('<h2 style="font-size:1.2em">' + (off ? '⛔ ปิดบัญชีนี้?' : '✅ เปิดบัญชีนี้?') + '</h2><p style="font-weight:700">' + tsWho(st) + '</p>');
+    h.push(off ? '<ul class="tsnote"><li>ใช้กับบัญชีที่สมัครมั่วหรือสมัครซ้ำ</li><li>ปิดแล้ว เข้าแอปไม่ได้ ไม่ขึ้นอันดับ เพื่อนไม่เห็น</li><li>บันทึกเดิมยังอยู่ในชีต เปิดกลับได้ทุกเมื่อ</li></ul>'
+      : '<ul class="tsnote"><li>เปิดแล้วเด็กเข้าแอปได้ตามเดิม บันทึกเดิมอยู่ครบ</li></ul>');
+    h.push('<p class="err" id="ts-err" role="alert">' + esc(TS.err) + '</p>');
+    h.push('<button class="cta' + (off ? ' danger' : '') + '" type="button" data-tsa="activego"' + (TS.busy ? ' disabled' : '') + '>' + (TS.busy ? 'กำลังบันทึก…' : off ? 'ยืนยันปิดบัญชี' : 'ยืนยันเปิดบัญชี') + '</button><button class="ghost" type="button" data-tsa="view"' + (TS.busy ? ' disabled' : '') + '>‹ กลับ</button>');
   }
   $('ts-sheet-body').innerHTML = h.join('');
   var inp = $('ts-new');
@@ -7185,6 +7675,19 @@ function renderTsSheet() {
     inp.oninput = function () { TS.newSid = digits(this.value).slice(0, L || 10); if (this.value !== TS.newSid) this.value = TS.newSid; if (TS.err) { TS.err = ''; var er = $('ts-err'); if (er) er.textContent = ''; } };
     inp.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); tsNext(); } };
   }
+  if (TS.step === 'edit') {
+    ['ts-ename', 'ts-eroom', 'ts-eno'].forEach(function (id) {
+      $(id).oninput = function () {
+        if (id === 'ts-ename') TS.ed.name = this.value; else { var v = digits(this.value).slice(0, 2); if (this.value !== v) this.value = v; TS.ed[id === 'ts-eroom' ? 'room' : 'no'] = v; }
+        if (TS.err) { TS.err = ''; var er = $('ts-err'); if (er) er.textContent = ''; }
+      };
+    });
+  }
+}
+function tsGoStep(step) {
+  TS.step = step; TS.err = '';
+  renderTsSheet();
+  try { $('ts-sheet-body').scrollTop = 0; } catch (e) {}
 }
 function tsNext() {
   var st = TS.cur, v = TS.newSid, L = TS.sidLen;
@@ -7197,41 +7700,74 @@ function tsNext() {
     if (other) TS.err = 'เลข ' + v + ' มีนักเรียนใช้อยู่แล้ว: ' + other.name + (other.classId ? ' (ป.' + other.grade + '/' + other.room + ')' : '');
   }
   if (TS.err) { renderTsSheet(); var i = $('ts-new'); if (i) try { i.focus(); } catch (e) {} return; }
-  TS.step = 'confirm';
-  renderTsSheet();
+  tsGoStep('confirm');
 }
-function tsGo() {
+function tsAfter() {
+  renderTStuRes();
+  var f = $('ts-body') && $('ts-body').querySelector('[data-tsf="bad"]');
+  if (f && TS.sidLen) f.textContent = '⚠️ เลขไม่ใช่ ' + TS.sidLen + ' หลัก ' + TS.list.filter(tsBad).length + ' คน';
+}
+function tsCall(action, extra, done) {
   var st = TS.cur;
   if (!st || TS.busy) return;
   TS.busy = true; TS.err = '';
   renderTsSheet();
-  tcall('tsid', { sid: st.sid, newSid: TS.newSid, name: st.name }).then(function (res) {
+  tcall(action, Object.assign({ sid: st.sid, name: st.name }, extra || {})).then(function (res) {
     TS.busy = false;
     if (!res.ok) {
       if (res.code === 'AUTH_T') { closeTsSheet(); return; }
-      TS.err = res.error || 'เปลี่ยนไม่สำเร็จ ลองใหม่';
+      TS.err = res.error || 'ทำไม่สำเร็จ ลองใหม่';
       renderTsSheet();
       if (res.code === 'NOT_FOUND' || res.code === 'CHANGED') loadTStu();
       return;
     }
-    st.sid = res.sid; st.hasPin = false;
-    TS.res = res; TS.step = 'done';
-    renderTsSheet();
+    done(res);
     ding('ok');
-    renderTStuRes();
-    var f = $('ts-body').querySelector('[data-tsf="bad"]');
-    if (f && TS.sidLen) f.textContent = '⚠️ เลขไม่ใช่ ' + TS.sidLen + ' หลัก ' + TS.list.filter(tsBad).length + ' คน';
+    tsAfter();
+  });
+}
+function tsGo() {
+  tsCall('tsid', { newSid: TS.newSid }, function (res) {
+    TS.cur.sid = res.sid; TS.cur.hasPin = false;
+    TS.res = res; TS.detail = { sid: res.sid, loading: false, data: null, err: '' };
+    tsGoStep('done');
+  });
+}
+function tsEditGo() {
+  var E = TS.ed, name = String(E.name || '').replace(/\s+/g, ' ').trim();
+  TS.err = '';
+  if (name.length < 4 || name.indexOf(' ') < 0) TS.err = 'ใส่ชื่อและนามสกุล (เว้นวรรคระหว่างชื่อกับนามสกุล)';
+  else if (!E.grade) TS.err = 'เลือกชั้น';
+  else if (!(+E.room >= 1 && +E.room <= 30)) TS.err = 'ห้องต้องเป็นตัวเลข 1–30';
+  else if (!(+E.no >= 1 && +E.no <= 99)) TS.err = 'เลขที่ต้องเป็นตัวเลข 1–99';
+  if (TS.err) { renderTsSheet(); return; }
+  tsCall('tedit', { newName: name, grade: E.grade, room: +E.room, no: +E.no }, function (res) {
+    Object.assign(TS.cur, { name: res.name, grade: res.grade, room: res.room, no: res.no, classId: res.classId });
+    toast('บันทึกข้อมูลแล้ว ✏️');
+    TS.step = 'view'; TS.err = '';
+    loadTsDetail();
   });
 }
 $('ts-sheet').addEventListener('click', function (e) {
   if (e.target === this) { if (!TS.busy) closeTsSheet(); return; }
+  var g = e.target.closest('[data-tsg]');
+  if (g && TS.ed) { TS.ed.grade = +g.getAttribute('data-tsg'); renderTsSheet(); return; }
   var b = e.target.closest('[data-tsa]');
-  if (!b) return;
-  var a = b.getAttribute('data-tsa');
+  if (!b || TS.busy) return;
+  var a = b.getAttribute('data-tsa'), st = TS.cur;
   if (a === 'close') closeTsSheet();
+  else if (a === 'view') { tsGoStep('view'); if (!TS.detail || !TS.detail.data) loadTsDetail(); }
+  else if (a === 'reload') loadTsDetail();
+  else if (a === 'sid') { tsGoStep('sid'); setTimeout(function () { var i = $('ts-new'); if (i) try { i.focus(); } catch (er) {} }, 60); }
   else if (a === 'next') tsNext();
-  else if (a === 'back') { TS.step = 'view'; TS.err = ''; renderTsSheet(); }
+  else if (a === 'back') tsGoStep('view');
   else if (a === 'go') tsGo();
+  else if (a === 'pin') tsGoStep('pin');
+  else if (a === 'pingo') tsCall('tpin', {}, function () { st.hasPin = false; TS.detail = { sid: st.sid, loading: false, data: null, err: '' }; tsGoStep('pindone'); });
+  else if (a === 'edit') { TS.ed = { name: st.name, grade: st.grade || 0, room: st.room ? String(st.room) : '', no: st.no ? String(st.no) : '' }; tsGoStep('edit'); }
+  else if (a === 'editgo') tsEditGo();
+  else if (a === 'active') tsGoStep('active');
+  else if (a === 'activego') tsCall('tactive', { active: !st.active }, function (res) { st.active = res.active; toast(res.active ? 'เปิดบัญชีแล้ว ✅' : 'ปิดบัญชีแล้ว ⛔'); TS.step = 'view'; loadTsDetail(); });
 });
 
 /* ปุ่มเข้าหน้าค้นหานักเรียน บนหน้าภาพรวม */
@@ -7336,8 +7872,8 @@ function tfAct() {
     var pick = tfItem(TFD.pick);
     var btn = function (x) { return '<button type="button" class="' + (TFD.pick === x.id ? 'on' : '') + '" data-tfi="' + x.id + '" aria-pressed="' + (TFD.pick === x.id) + '"><span class="e" aria-hidden="true">' + itemArt(x.id, 1, 62) + '</span><span class="n">' + esc(x.label) + '</span><span class="c">' + (x.lv > 1 ? 'เด็กปลดล็อก Lv.' + x.lv : 'ฟรี') + '</span></button>'; };
     return '<div class="card gbuild"><div class="gih"><div class="gtx"><b>สร้างอะไรดี?</b><small>ครูสร้างได้ทุกอย่าง ไม่เสียเหรียญ</small></div><button class="gx" type="button" data-tf="close" aria-label="ปิด">✕</button></div>' +
-      '<div class="gshop">' + TFD.items.filter(function (x) { return x.kind === 'b'; }).map(btn).join('') + '</div><p class="gsec">ของตกแต่ง</p>' +
-      '<div class="gshop">' + TFD.items.filter(function (x) { return x.kind !== 'b'; }).map(btn).join('') + '</div>' +
+      '<div class="gshop">' + gSortItems(TFD.items).filter(function (x) { return x.kind === 'b'; }).map(btn).join('') + '</div><p class="gsec">ของตกแต่ง</p>' +
+      '<div class="gshop">' + gSortItems(TFD.items).filter(function (x) { return x.kind !== 'b'; }).map(btn).join('') + '</div>' +
       (pick ? '<button class="gbtn" type="button" data-tf="build">สร้าง' + esc(pick.label) + ' (ฟรี)</button>' : '<p class="gpoor">แตะเลือกสิ่งที่อยากสร้าง</p>') + '</div>';
   }
   var max = it.cost.length, h = '<div class="card gitem"><div class="gih"><span class="gart" aria-hidden="true">' + itemArt(it.id, c[2], 50) + '</span><div class="gtx"><b>' + esc(it.label) + '</b><small>' +

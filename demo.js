@@ -1800,10 +1800,37 @@ var FQ = (function () {
       { id: 'boxing', icon: '🥊', label: 'เวทีมวย', kind: 'b', cost: [120, 180, 240], lv: 4, tile: 'ring' },
       { id: 'gym', icon: '🏋️', label: 'ยิม', kind: 'b', cost: [150, 225, 300], lv: 4, tile: 'floor' },
       { id: 'pool', icon: '🏊', label: 'สระว่ายน้ำ', kind: 'b', cost: [200, 300, 400], lv: 7, tile: 'water' },
+      /* 6B-22: อาคารเพิ่ม 13 แบบ ปลดล็อกกระจาย Lv.1–8 */
+      { id: 'rope', icon: '🦘', label: 'ลานกระโดดเชือก', kind: 'b', cost: [60, 90, 120], lv: 1, tile: 'floor' },
+      { id: 'pingpong', icon: '🏓', label: 'ลานปิงปอง', kind: 'b', cost: [70, 105, 140], lv: 1, tile: 'floor' },
+      { id: 'takraw', icon: '🧶', label: 'สนามตะกร้อ', kind: 'b', cost: [80, 120, 160], lv: 2, tile: 'court' },
+      { id: 'petanque', icon: '⚪', label: 'ลานเปตอง', kind: 'b', cost: [70, 105, 140], lv: 2, tile: 'sand' },
+      { id: 'volleyball', icon: '🏐', label: 'สนามวอลเลย์บอล', kind: 'b', cost: [100, 150, 200], lv: 3, tile: 'sand' },
+      { id: 'futsal', icon: '🥅', label: 'สนามฟุตซอล', kind: 'b', cost: [110, 165, 220], lv: 3, tile: 'court' },
+      { id: 'tennis', icon: '🎾', label: 'สนามเทนนิส', kind: 'b', cost: [120, 180, 240], lv: 4, tile: 'court' },
+      { id: 'skate', icon: '🛹', label: 'ลานสเก็ตบอร์ด', kind: 'b', cost: [130, 195, 260], lv: 5, tile: 'floor' },
+      { id: 'dojo', icon: '🥋', label: 'โดโจเทควันโด', kind: 'b', cost: [140, 210, 280], lv: 5, tile: 'floor' },
+      { id: 'bike', icon: '🚴', label: 'ลู่จักรยาน', kind: 'b', cost: [150, 225, 300], lv: 6, tile: 'track' },
+      { id: 'gymnast', icon: '🤸', label: 'ลานยิมนาสติก', kind: 'b', cost: [150, 225, 300], lv: 6, tile: 'floor' },
+      { id: 'climb', icon: '🧗', label: 'กำแพงปีนผา', kind: 'b', cost: [200, 300, 400], lv: 7, tile: 'floor' },
+      { id: 'archery', icon: '🏹', label: 'ลานยิงธนู', kind: 'b', cost: [220, 330, 440], lv: 8, tile: 'grass' },
       { id: 'tree', icon: '🌳', label: 'ต้นไม้', kind: 'd', cost: [10], lv: 1, tile: 'grass' },
       { id: 'flag', icon: '🚩', label: 'ธง', kind: 'd', cost: [20], lv: 1, tile: 'grass' },
       { id: 'light', icon: '💡', label: 'ไฟสนาม', kind: 'd', cost: [30], lv: 1, tile: 'grass' },
-      { id: 'stand', icon: '🪑', label: 'อัฒจันทร์', kind: 'd', cost: [50], lv: 1, tile: 'floor' }
+      { id: 'stand', icon: '🪑', label: 'อัฒจันทร์', kind: 'd', cost: [50], lv: 1, tile: 'floor' },
+      /* 6B-22: ของตกแต่งเพิ่ม 12 แบบ ปลดล็อกกระจาย Lv.1–10 */
+      { id: 'water', icon: '🚰', label: 'ตู้น้ำดื่ม', kind: 'd', cost: [20], lv: 1, tile: 'floor' },
+      { id: 'bench', icon: '💺', label: 'ม้านั่งพัก', kind: 'd', cost: [15], lv: 1, tile: 'grass' },
+      { id: 'flowers', icon: '🌷', label: 'แปลงดอกไม้', kind: 'd', cost: [15], lv: 1, tile: 'grass' },
+      { id: 'bins', icon: '♻️', label: 'ถังขยะแยกประเภท', kind: 'd', cost: [20], lv: 2, tile: 'floor' },
+      { id: 'balloons', icon: '🎈', label: 'ลูกโป่ง', kind: 'd', cost: [25], lv: 2, tile: 'grass' },
+      { id: 'palm', icon: '🌴', label: 'ต้นมะพร้าว', kind: 'd', cost: [30], lv: 3, tile: 'grass' },
+      { id: 'tent', icon: '⛺', label: 'เต็นท์พักแรม', kind: 'd', cost: [40], lv: 3, tile: 'grass' },
+      { id: 'playground', icon: '🎠', label: 'สนามเด็กเล่น', kind: 'd', cost: [60], lv: 4, tile: 'sand' },
+      { id: 'fountain', icon: '⛲', label: 'น้ำพุ', kind: 'd', cost: [80], lv: 5, tile: 'floor' },
+      { id: 'arch', icon: '⛩️', label: 'ซุ้มประตู', kind: 'd', cost: [70], lv: 6, tile: 'grass' },
+      { id: 'statue', icon: '🗿', label: 'รูปปั้นนักกีฬา', kind: 'd', cost: [120], lv: 9, tile: 'floor' },
+      { id: 'trophy', icon: '🏆', label: 'ถ้วยรางวัลยักษ์', kind: 'd', cost: [150], lv: 10, tile: 'floor' }
     ],
     sizes: [{ lv: 1, n: 3 }, { lv: 4, n: 4 }, { lv: 7, n: 5 }],
     likesPerDay: 3
@@ -2457,6 +2484,10 @@ function route_(req) {
     case 'tfitsave': return teacherApi_(req, teacherFitnessSave_);
     case 'tstudents': return teacherApi_(req, teacherStudents_);
     case 'tsid': return teacherApi_(req, teacherSid_);
+    case 'tstudent': return teacherApi_(req, teacherStudent_);
+    case 'tpin': return teacherApi_(req, teacherPin_);
+    case 'tactive': return teacherApi_(req, teacherActive_);
+    case 'tedit': return teacherApi_(req, teacherEdit_);
     case 'tcenter': return teacherApi_(req, teacherCenter_);
     case 'tcentersave': return teacherApi_(req, teacherCenterSave_);
     default: return FQ.fail('ไม่รู้จักคำสั่งนี้', 'BAD');
@@ -3322,6 +3353,95 @@ function teacherStudents_(req, s) {
     });
   });
   return { students: out, sidLen: s.sidLen };
+}
+
+/* ข้อมูลนักเรียน 1 คนสำหรับครู: สรุป + 14 วันล่าสุด (บันทึก ภารกิจ คำถาม คลิป) */
+function teacherStudent_(req, s) {
+  var sid = normSid_(req.sid);
+  if (!sid) return FQ.fail('ไม่พบนักเรียนคนนี้', 'INPUT');
+  var t = table_(TAB.roster, H.roster, H.rosterOpt), st = findStudentRow_(t, sid);
+  if (!st) return FQ.fail('ไม่พบนักเรียนคนนี้ ลองโหลดใหม่', 'NOT_FOUND');
+  var last = t.data[st.row - 2][t.idx[SC.last]], now = new Date();
+  var info = {
+    sid: st.sid, name: st.name, grade: st.grade, room: st.room, no: st.no, classId: st.classId, nick: st.nick,
+    active: st.active, hasPin: !!st.pinHash, fails: st.fails, locked: !!(st.lockUntil && st.lockUntil.getTime() > now.getTime()),
+    created: st.created || '',
+    last: Object.prototype.toString.call(last) === '[object Date]' ? Utilities.formatDate(last, TZ, 'yyyy-MM-dd HH:mm') : String(last || '').replace(/^'/, '').slice(0, 16)
+  };
+  if (!st.classId) return { student: info, summary: null, days: [] };
+  var c = loadApi_(), a = { ok: true, klass: klassOf_(c, st), student: st }, mine = loadMine_(c, a), sv = status_(c, a, mine);
+  var today = todayKey_(), from = FQ.addDays(today, -13), map = {}, days = [];
+  for (var i = 0; i < 14; i++) { var d = FQ.addDays(today, -i), o = { date: d, minutes: 0, logs: [], missions: [], quiz: '', clips: 0 }; map[d] = o; days.push(o); }
+  (mine.logs || []).forEach(function (l) {
+    var o = map[l.date];
+    if (!o) return;
+    o.logs.push({ act: l.activity, min: Number(l.minutes) || 0, feel: l.feeling, x: !!l.excluded });
+    if (!l.excluded) o.minutes += Number(l.minutes) || 0;
+  });
+  (mine.done || []).forEach(function (m) {
+    var o = map[m.date];
+    if (o && m.check !== 'ไม่นับ') o.missions.push({ type: m.type, text: m.text || '' });
+  });
+  (mine.extra || []).forEach(function (x) {
+    var o = map[x.date];
+    if (!o || x.check === 'ไม่นับ') return;
+    if (x.kind === 'quiz') o.quiz = x.ok ? 'ถูก' : 'ผิด';
+    else if (x.kind === 'clip') o.clips++;
+  });
+  var xp = sv.xp || {}, lv = xp.level || {}, g = sv.game || {}, pet = g.pet || null;
+  return {
+    student: info,
+    summary: {
+      lv: lv.lv || 1, icon: lv.icon || '', title: lv.title || '', total: xp.total || 0, week: xp.week || 0,
+      streak: xp.streak ? xp.streak.current : 0, best: xp.streak ? xp.streak.best : 0, activeDays: xp.activeDays || 0,
+      programMinutes: sv.programMinutes || 0, stars: sv.totalStars || 0, coins: g.coins || 0,
+      pet: pet ? { label: pet.label || '', name: pet.name || '', tier: pet.tier || 1 } : null,
+      weeks: (sv.history || []).filter(function (w) { return w.start <= today; }).map(function (w) { return { no: w.no, minutes: w.minutes, stars: w.stars, days: w.qualifiedDays }; })
+    },
+    days: days
+  };
+}
+
+/* ครูทำกับบัญชีนักเรียน: ตรวจชื่อให้ตรงกับแถวก่อนแก้ (กันแก้ผิดคนตอนข้อมูลเพิ่งเปลี่ยน) */
+function withStudent_(req, fn) {
+  var sid = normSid_(req.sid);
+  if (!sid) return FQ.fail('ไม่พบนักเรียนคนนี้', 'INPUT');
+  return withLock_(function () {
+    var t = table_(TAB.roster, H.roster, H.rosterOpt), st = findStudentRow_(t, sid);
+    if (!st) return FQ.fail('ไม่พบนักเรียนคนนี้ (อาจถูกแก้ไปแล้ว) ลองโหลดใหม่', 'NOT_FOUND');
+    if (req.name !== undefined && String(req.name).trim() !== st.name) return FQ.fail('ข้อมูลนักเรียนเพิ่งเปลี่ยน ลองโหลดใหม่', 'CHANGED');
+    var res = fn(t, st);
+    if (res && res.ok !== false) { try { CacheService.getScriptCache().remove('game_people'); } catch (e) {} }
+    return res;
+  });
+}
+/* ล้าง PIN (และปลดล็อกที่ใส่ PIN ผิด): เด็กกด สมัครครั้งแรก ด้วยเลขเดิม ตั้ง PIN ใหม่ บันทึกเดิมอยู่ครบ */
+function teacherPin_(req) {
+  return withStudent_(req, function (t, st) {
+    setCells_(t, st.row, [[SC.pin, ''], [SC.fails, 0], [SC.lockUntil, '']]);
+    return { sid: st.sid, name: st.name };
+  });
+}
+/* ปิด / เปิดบัญชี: ปิดแล้วเข้าไม่ได้ ไม่ขึ้นอันดับ เพื่อนไม่เห็น บันทึกเดิมยังอยู่ในชีต */
+function teacherActive_(req) {
+  var on = req.active === true || req.active === 'true';
+  return withStudent_(req, function (t, st) {
+    setCells_(t, st.row, [[SC.active, on ? 'ใช่' : 'ไม่']]);
+    return { sid: st.sid, name: st.name, active: on };
+  });
+}
+/* แก้ชื่อ ชั้น ห้อง เลขที่ (บันทึกเก่ายังเป็นห้องเดิม อันดับห้องใช้ห้องใหม่ตั้งแต่ระบบอัปเดตรอบถัดไป) */
+function teacherEdit_(req) {
+  var name = cleanText_(String(req.newName || '').replace(/\s+/g, ' ').trim(), 60);
+  var grade = normGrade_(req.grade), room = normRoom_(req.room), no = normNo_(req.no);
+  if (name.replace(/^'/, '').length < 4 || name.indexOf(' ') < 0) return FQ.fail('ใส่ชื่อและนามสกุล (เว้นวรรคระหว่างชื่อกับนามสกุล)', 'INPUT');
+  if (!grade) return FQ.fail('เลือกชั้น ป.1–ป.6', 'INPUT');
+  if (!room) return FQ.fail('ห้องต้องเป็นตัวเลข 1–30', 'INPUT');
+  if (!no) return FQ.fail('เลขที่ต้องเป็นตัวเลข 1–99', 'INPUT');
+  return withStudent_(req, function (t, st) {
+    setCells_(t, st.row, [[SC.name, name], [SC.grade, 'ป.' + grade], [SC.room, room], [SC.no, no]]);
+    return { sid: st.sid, name: name.replace(/^'/, ''), grade: grade, room: room, no: no, classId: classIdOf_(grade, room) };
+  });
 }
 
 /* เปลี่ยนเลขประจำตัวของนักเรียน 1 คน: แก้ในแท็บนักเรียน ล้าง PIN (PIN ผูกกับเลข)
