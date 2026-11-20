@@ -306,7 +306,9 @@ var FQ = (function () {
     /* โหมดครู */
     missingDays: 7,
     sidLen: 4,
-    termNow: ''
+    termNow: '',
+    /* 6B-26: ทั้งโรงเรียนเดินทางด้วยก้าว (นาทีรวม × ก้าวต่อนาที × 0.5 เมตร) */
+    stepsPerMin: 100
   };
 
   /* ฉายา 10 ระดับ: นักกีฬา → พลังธาตุ → อวกาศ → ตำนาน */
@@ -558,7 +560,8 @@ var FQ = (function () {
       xpEvent: intOr(raw.xpEvent, DEFAULTS.xpEvent, 0, 5000),
       missingDays: intOr(raw.missingDays, DEFAULTS.missingDays, 2, 60),
       sidLen: intOr(raw.sidLen, DEFAULTS.sidLen, 0, 10),
-      termNow: /^[12]\/\d{4}$/.test(String(raw.termNow || '').trim()) ? String(raw.termNow).trim() : DEFAULTS.termNow
+      termNow: /^[12]\/\d{4}$/.test(String(raw.termNow || '').trim()) ? String(raw.termNow).trim() : DEFAULTS.termNow,
+      stepsPerMin: intOr(raw.stepsPerMin, DEFAULTS.stepsPerMin, 50, 200)
     };
     if (s.maxMinutesPerDay < s.maxMinutesPerLog) s.maxMinutesPerDay = s.maxMinutesPerLog;
     if (s.weekGoalMax < s.weekGoalStart) s.weekGoalMax = s.weekGoalStart;
@@ -2195,6 +2198,31 @@ var FQ = (function () {
    * เป้าเพิ่มทีละขั้นตาม goals แล้วต่อด้วย step · ขั้นที่ครบแล้วไม่ถอยกลับ (stored = { tier, at } ใน Script Properties) */
   var SCHOOL = { goals: [300, 600, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 25000, 30000, 40000, 50000], step: 10000, partyDays: 3 };
   function schoolGoalAt(i) { var G = SCHOOL.goals; return i < G.length ? G[i] : G[G.length - 1] + (i - G.length + 1) * SCHOOL.step; }
+  /* ===== 6B-26: ทั้งโรงเรียนเดินทางด้วยก้าว =====
+   * นาทีที่นับได้ทั้งโรงเรียน (ตามเพดานนาทีต่อวันของแต่ละคน ไม่นับรายการที่ครูใส่ ไม่นับ) แยกนาทีของวันนี้ไว้
+   * byCode = { รหัสนักเรียน: [บันทึก] } → { d: วันนี้, m: นาทีรวมถึงวันนี้, t: นาทีของวันนี้ } */
+  function tripCount(byCode, s, today) {
+    var m = 0, t = 0;
+    Object.keys(byCode || {}).forEach(function (code) {
+      var T = dayTotals(byCode[code] || [], s);
+      Object.keys(T).forEach(function (d) {
+        if (d > today) return;
+        m += T[d].counted;
+        if (d === today) t += T[d].counted;
+      });
+    });
+    return { d: today, m: m, t: t };
+  }
+  /* นาทีรวมตอนนี้: base = ที่นับไว้ล่าสุด (ทุกชั่วโมง) · live = นาทีของวันนี้แบบสด (จอใหญ่) ไม่ส่ง = ใช้ base */
+  function tripMinutes(base, today, live) {
+    var hasLive = typeof live === 'number' && isFinite(live) && live >= 0;
+    if (!base || typeof base.m !== 'number') return hasLive ? live : 0;
+    if (!hasLive) return Math.max(0, base.m);
+    if (base.d === today) return Math.max(0, base.m - (Number(base.t) || 0) + live);
+    if (base.d < today) return Math.max(0, base.m) + live;
+    return Math.max(0, base.m);
+  }
+
   function schoolGoal(sum, stored, today) {
     sum = Math.max(0, Math.floor(Number(sum)) || 0);
     stored = stored && typeof stored === 'object' ? stored : {};
@@ -2412,7 +2440,7 @@ var FQ = (function () {
     gameView: gameView, planGame: planGame, modelCenter: modelCenter, planLike: planLike, likesGiven: likesGiven, gameBoard: gameBoard, xpOf: xpOf,
     CENTER: CENTER, centerParse: centerParse, centerCost: centerCost, centerRoundCost: centerRoundCost, centerSpent: centerSpent, centerSteps: centerSteps, centerAt: centerAt, centerNext: centerNext,
     centerData: centerData, centerBrief: centerBrief, centerView: centerView, planCenter: planCenter, centerModel: centerModel, centerRoundName: centerRoundName, centerTheme: centerTheme,
-    SCHOOL: SCHOOL, schoolGoal: schoolGoal, schoolGoalAt: schoolGoalAt,
+    SCHOOL: SCHOOL, schoolGoal: schoolGoal, schoolGoalAt: schoolGoalAt, tripCount: tripCount, tripMinutes: tripMinutes,
     ACTIVITIES: ACTIVITIES, FEELINGS: FEELINGS, DEFAULTS: DEFAULTS, MINUTE_CHOICES: MINUTE_CHOICES,
     toKey: toKey, addDays: addDays, dayNum: dayNum, weekdayIdx: weekdayIdx, weekOf: weekOf,
     thaiDate: thaiDate, dayLetter: dayLetter, dayName: dayName, allowedDates: allowedDates,
@@ -2508,7 +2536,8 @@ var SETTING_ROWS = [
   ['อีเวนต์: ทำครบได้แต้ม', 'xpEvent', 50, 'ทำภารกิจอีเวนต์ครบทุกข้อ ได้แต้มนี้ + สติกเกอร์รุ่นพิเศษ อีเวนต์อยู่ในแท็บอีเวนต์'],
   ['โหมดครู: เด็กหายไปกี่วันจึงแจ้ง', 'missingDays', 7, 'ไม่ได้บันทึกติดกันตั้งแต่กี่วัน (คนที่สมัครแล้วยังไม่เคยบันทึก นับจากวันสมัคร)'],
   ['เลขประจำตัวนักเรียนมีกี่หลัก', 'sidLen', 4, 'สมัครใหม่ต้องใส่ให้ครบเท่านี้ กันพิมพ์ผิด (0 = ไม่จำกัด) เด็กที่สมัครไว้แล้วยังเข้าได้ ครูแก้เลขได้ที่ โหมดครู > ค้นหานักเรียน'],
-  ['ภาคเรียนปัจจุบัน (ผลสมรรถภาพ)', 'termNow', '2/2569', 'รูปแบบ ภาคเรียน/ปี พ.ศ. เช่น 2/2569 ใช้ตอนครูกรอกผลสมรรถภาพในแอป']
+  ['ภาคเรียนปัจจุบัน (ผลสมรรถภาพ)', 'termNow', '2/2569', 'รูปแบบ ภาคเรียน/ปี พ.ศ. เช่น 2/2569 ใช้ตอนครูกรอกผลสมรรถภาพในแอป'],
+  ['การเดินทางของโรงเรียน: ก้าวต่อ 1 นาที', 'stepsPerMin', 100, 'จอใหญ่และแอปเด็กแปลงนาทีที่ทั้งโรงเรียนขยับรวมกันเป็นก้าว (ก้าวละประมาณ 0.5 เมตร) แล้วพาเที่ยวไทย อาเซียน รอบโลก ใส่ 50–200']
 ];
 var TEXT_SETTINGS = ['programStart', 'levelXp', 'xpMissionDiff', 'diffUnlock', 'dayBadges', 'termNow', 'dustOn', 'dustFrom', 'dustPlace', 'dustStation'];
 /* ป้ายเก่าในแท็บตั้งค่าของชีตที่ติดตั้งก่อนเปลี่ยนเป็นคลิป: ยังอ่านค่าได้ ไม่ต้องแก้ชีต */
@@ -3276,7 +3305,45 @@ function schoolGoal_() {
 }
 function withSchool_(view) {
   try { if (view) view.school = schoolGoal_(); } catch (e) {}
+  try { if (view) view.trip = tripView_(); } catch (e) {}
   return view;
+}
+/* 6B-26: นาทีรวมทั้งโรงเรียน เก็บไว้ใน ScriptProperties (SCHOOL_TRIP) นับใหม่ทุกครั้งที่สรุปดาว (ทุกชั่วโมง)
+ * ยังไม่เคยนับ = นับจากแท็บบันทึกตอนนี้ */
+function tripBase_() {
+  var props = PropertiesService.getScriptProperties(), b = null, cache = null;
+  try { b = JSON.parse(props.getProperty('SCHOOL_TRIP') || 'null'); } catch (e) {}
+  var ok = b && typeof b.m === 'number';
+  /* ยอดเก่าเกิน 3 ชั่วโมงหรือข้ามวัน (ครูยังไม่ได้เปิด ให้ระบบทำงานเองทุกชั่วโมง) = นับใหม่ ทีละคำขอ */
+  if (ok && b.d === todayKey_() && Date.now() - (Number(b.ts) || 0) < 3 * 3600 * 1000) return b;
+  if (ok) {
+    try { cache = CacheService.getScriptCache(); if (cache.get('trip_busy')) return b; cache.put('trip_busy', '1', 120); } catch (e) {}
+  }
+  try { return tripSave_(tripCountNow_()); } catch (e) { if (ok) return b; throw e; }
+}
+function tripCountNow_() {
+  var s = readSettings_(), by = {}, who = {};
+  readRoster_().forEach(function (st) { if (st.active && st.classId) who[st.sid] = 1; });
+  logsFromTable_(table_(TAB.logs, H.logs)).forEach(function (l) { if (who[l.code]) (by[l.code] = by[l.code] || []).push(l); });
+  return FQ.tripCount(by, s, todayKey_());
+}
+function tripSave_(b) {
+  b.at = nowText_(); b.ts = Date.now();
+  try { PropertiesService.getScriptProperties().setProperty('SCHOOL_TRIP', JSON.stringify(b)); } catch (e) {}
+  try { CacheService.getScriptCache().remove('school_trip'); } catch (e) {}
+  return b;
+}
+/* สิ่งที่แอปเด็กเห็น: { min, spm, at } (แคช 5 นาที) · live = นาทีของวันนี้แบบสด (จอใหญ่ส่งมา) */
+function tripView_(live) {
+  var cache = null, hit = null, today = todayKey_();
+  if (live === undefined) {
+    try { cache = CacheService.getScriptCache(); hit = JSON.parse(cache.get('school_trip') || 'null'); } catch (e) {}
+    if (hit && hit.today === today) return hit.v;
+  }
+  var b = tripBase_(), s = readSettings_();
+  var v = { min: FQ.tripMinutes(b, today, live), spm: s.stepsPerMin, at: b.at || '' };
+  try { if (cache) cache.put('school_trip', JSON.stringify({ today: today, v: v }), 300); } catch (e) {}
+  return v;
 }
 function xpNow_(c, a, mine) {
   return FQ.xpOf({ settings: c.settings, klass: a.klass, student: a.student, logs: mine.logs, done: mine.done || [], extra: mine.extra || [], events: c.events || [], todayKey: todayKey_() });
@@ -3452,7 +3519,9 @@ function teacherBoard_(req) {
   var st = FQ.boardStats({ settings: s, todayKey: today, roster: readRoster_(), logs: logsFromTable_(tail_(TAB.logs, H.logs, lw)) });
   try { sc = schoolGoal_(); } catch (e) {}
   try { dust = dustForTeacher_(); } catch (e) {}
-  var out = { today: today, at: Utilities.formatDate(new Date(), TZ, 'HH:mm'), schoolName: s.schoolName, board: st, school: sc, dust: dust };
+  var trip = null;
+  try { var tb = tripBase_(); trip = { min: FQ.tripMinutes(tb, today, st.minutes), spm: s.stepsPerMin, at: tb.at || '' }; } catch (e) {}
+  var out = { today: today, at: Utilities.formatDate(new Date(), TZ, 'HH:mm'), schoolName: s.schoolName, board: st, school: sc, dust: dust, trip: trip };
   try { if (cache) cache.put('tboard', JSON.stringify(out), 60); } catch (e) {}
   return out;
 }
@@ -5077,6 +5146,11 @@ function rebuildSummary_() {
   if (rows.length) sh.getRange(3, 1, rows.length, head.length).setValues(rows);
   sh.setFrozenRows(2);
   writeCache_(people, snaps, cut, c.settings, today, teacherSummary_(tlist, c.settings, today, nowText_()));
+  try {
+    var tby = {};
+    tlist.forEach(function (x) { if (x.s.classId) tby[x.s.sid] = x.logs; });
+    tripSave_(FQ.tripCount(tby, c.settings, today));
+  } catch (e) {}
   return rows.length;
 }
 
