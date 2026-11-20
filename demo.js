@@ -54,7 +54,7 @@ var DemoSHA = (function () {
  * ข้อมูลทั้งหมดอยู่ในเครื่องนี้เท่านั้น ไม่ส่งไปไหน ใช้สาธิตและทดลองก่อนเชื่อมระบบจริง */
 (function () {
   'use strict';
-  var STORE = 'healthbook.demo.data', FSTORE = 'healthbook.demo.files', VERSION = 12;
+  var STORE = 'healthbook.demo.data', FSTORE = 'healthbook.demo.files', VERSION = 14;
   var sheets = {}, props = {}, files = {}, folders = {}, nId = 0;
 
   /* ---------- ชีต ---------- */
@@ -1481,6 +1481,85 @@ var FQ = (function () {
     };
   }
 
+  /* ---------- 6B-25 สรุปสัปดาห์ที่แล้วแบบสตอรี่ (ของเด็กคนเดียว ไม่มีข้อมูลเพื่อน) ----------
+   * สัปดาห์ = จันทร์–อาทิตย์ก่อนสัปดาห์นี้ · ใช้ข้อมูลที่มีอยู่แล้ว: บันทึก ภารกิจ คำถาม แต้ม เป้าสัปดาห์ ศูนย์ฝึก */
+  function storyView(o) {
+    var s = o.settings, k = o.klass, today = o.todayKey;
+    var mine = mineOf(o.logs || [], k, o.student), doneMine = missionsOf(o.done || [], o.student), exMine = extrasOf(o.extra || [], o.student);
+    var ws = addDays(today, -weekdayIdx(today)), from = addDays(ws, -7), to = addDays(ws, -1);
+    var totals = dayTotals(mine, s), days = [], minutes = 0, active = 0, best = -1, prev = 0, i;
+    for (i = 0; i < 7; i++) {
+      var d = addDays(from, i), m = totals[d] ? totals[d].counted : 0, pd = addDays(from, i - 7);
+      days.push(m); minutes += m;
+      if (m > 0) { active++; if (best < 0 || m > days[best]) best = i; }
+      prev += totals[pd] ? totals[pd].counted : 0;
+    }
+    var acts = {};
+    mine.forEach(function (l) {
+      if (!isCounted(l) || l.date < from || l.date > to) return;
+      var a = findActivity(l.activity), id = a ? a.id : 'other';
+      if (!acts[id]) acts[id] = { id: id, icon: a ? a.icon : '✨', label: a ? a.label : 'อื่น ๆ', count: 0, minutes: 0 };
+      acts[id].count++; acts[id].minutes += Number(l.minutes) || 0;
+    });
+    var actList = Object.keys(acts).map(function (x) { return acts[x]; }).sort(function (a, b) { return b.count - a.count || b.minutes - a.minutes; }).slice(0, 4);
+    var mis = doneMine.filter(function (x) { return x.date >= from && x.date <= to && x.check !== 'ไม่นับ'; }), misDays = {};
+    mis.forEach(function (x) { misDays[x.date] = 1; });
+    var quiz = exMine.filter(function (x) { return x.kind === 'quiz' && x.check !== 'ไม่นับ' && x.ok && x.date >= from && x.date <= to; }).length;
+    var L = xpLedger({ logs: mine, done: doneMine, extra: exMine, events: o.events, start: k.start, weeks: k.weeks, settings: s, today: today }), pts = 0, gl = null, gn = null;
+    Object.keys(L.byDate).forEach(function (x) { if (x >= from && x <= to) pts += L.byDate[x]; });
+    (L.goals || []).forEach(function (g) { if (g.start === from) gl = g; if (g.start === ws) gn = g; });
+    return {
+      from: from, to: to, minutes: minutes, prevMinutes: prev, days: days, activeDays: active,
+      best: best >= 0 ? { day: best, minutes: days[best] } : null,
+      acts: actList, missions: mis.length, missionDays: Object.keys(misDays).length, quizRight: quiz, points: pts,
+      streak: L.streak.current, bestStreak: L.streak.best,
+      goal: gl ? { goal: gl.goal, minutes: gl.minutes, reached: !!gl.reached } : null,
+      next: gn ? { goal: gn.goal, xp: s.xpWeekGoal, school: true } : { goal: Math.max(60, Math.min(420, Math.ceil((minutes + 30) / 10) * 10)), xp: 0, school: false },
+      center: storyCenter(o.center, today),
+      empty: !minutes && !mis.length && !quiz
+    };
+  }
+
+  /* ---------- 6B-25 จอใหญ่หน้าเสาธง (โหมดครู) มีแค่ห้องกับยอดรวม ไม่มีชื่อเด็ก ----------
+   * อันดับห้อง = นาทีที่นับได้ของสัปดาห์นี้ ÷ จำนวนนักเรียนในห้อง (ห้องเล็กห้องใหญ่สู้กันได้) */
+  function boardStats(o) {
+    var s = o.settings, today = o.todayKey, ws = addDays(today, -weekdayIdx(today)), lw = addDays(ws, -7), yd = addDays(today, -1);
+    var who = {}, rooms = {}, kids = 0, by = {};
+    (o.roster || []).forEach(function (st) {
+      if (!st || !st.active || !st.classId || !st.code || who[st.code]) return;
+      who[st.code] = st.classId; kids++;
+      (rooms[st.classId] || (rooms[st.classId] = { room: st.classId, kids: 0, week: 0, last: 0, today: 0 })).kids++;
+    });
+    (o.logs || []).forEach(function (l) { if (who[l.code] && l.date >= lw && l.date <= today) (by[l.code] = by[l.code] || []).push(l); });
+    var tMin = 0, yMin = 0, movers = 0, full = 0, acts = {}, actN = 0;
+    Object.keys(by).forEach(function (code) {
+      var T = dayTotals(by[code], s), R = rooms[who[code]];
+      Object.keys(T).forEach(function (d) {
+        var m = T[d].counted;
+        if (d === today) { tMin += m; if (m > 0) { movers++; R.today++; } if (m >= 60) full++; }
+        if (d === yd) yMin += m;
+        if (d >= ws) R.week += m; else R.last += m;
+      });
+      by[code].forEach(function (l) {
+        if (l.date !== today || !isCounted(l)) return;
+        var a = findActivity(l.activity), id = a ? a.id : 'other';
+        if (!acts[id]) acts[id] = { id: id, icon: a ? a.icon : '✨', label: a ? a.label : 'อื่น ๆ', n: 0 };
+        acts[id].n++; actN++;
+      });
+    });
+    var list = Object.keys(rooms).map(function (x) { var R = rooms[x]; return { room: R.room, kids: R.kids, avg: Math.round(R.week / R.kids), last: R.last / R.kids, today: R.today, all: R.today >= R.kids }; }), win = null;
+    list.forEach(function (R) { if (R.last > 0 && (!win || R.last > win.last)) win = R; });
+    list.sort(function (a, b) { return b.avg - a.avg || (a.room < b.room ? -1 : a.room > b.room ? 1 : 0); });
+    return {
+      today: today, kids: kids, minutes: tMin, movers: movers, full60: full, yesterday: yMin,
+      acts: Object.keys(acts).map(function (x) { return acts[x]; }).sort(function (a, b) { return b.n - a.n; }).slice(0, 4)
+        .map(function (a) { return { id: a.id, icon: a.icon, label: a.label, pct: Math.round(a.n * 100 / actN) }; }),
+      rooms: list.map(function (R) { return { room: R.room, kids: R.kids, avg: R.avg, today: R.today, all: R.all }; }),
+      allToday: list.filter(function (R) { return R.all; }).map(function (R) { return R.room; }),
+      lastWinner: win ? { room: win.room, avg: Math.round(win.last) } : null
+    };
+  }
+
   /* ตรวจรายการแล้วเตรียมแถวที่จะบันทึก พร้อมผลที่บอกเด็ก (ยังไม่เขียนลงที่เก็บ) */
   function planSubmit(o) {
     var mine = mineOf(o.logs, o.klass, o.student);
@@ -1940,9 +2019,9 @@ var FQ = (function () {
     var g = likesGiven(o.given, o.today);
     if (o.me === o.target) return fail('กดถูกใจศูนย์ฝึกของตัวเองไม่ได้นะ', 'SELF');
     if (g.indexOf(o.target) >= 0) return fail('วันนี้กดถูกใจศูนย์ฝึกนี้แล้ว พรุ่งนี้กดใหม่ได้', 'DONE');
-    if (g.length >= GAME.likesPerDay) return fail('วันนี้กดถูกใจครบ ' + GAME.likesPerDay + ' ครั้งแล้ว พรุ่งนี้กดใหม่ได้', 'LIMIT');
+    if (g.length >= CENTER.likesPerDay) return fail('วันนี้กดถูกใจครบ ' + CENTER.likesPerDay + ' ครั้งแล้ว พรุ่งนี้กดใหม่ได้', 'LIMIT');
     g.push(o.target);
-    return { ok: true, given: JSON.stringify({ d: o.today, to: g }), left: GAME.likesPerDay - g.length };
+    return { ok: true, given: JSON.stringify({ d: o.today, to: g }), left: CENTER.likesPerDay - g.length };
   }
 
   /* รายชื่อศูนย์ฝึก people = [{ c: เลขประจำตัว, k, n: ชื่อเล่นหรือ เลขที่ n, r: ห้อง, g: ชั้น, s: ดาว, h: ถูกใจ, b: จำนวนของ }]
@@ -1952,13 +2031,182 @@ var FQ = (function () {
     if (o.view === 'rank') list = people.filter(function (p) { return p.g === o.grade && p.s > 0; });
     else if (o.view === 'school') list = people.filter(function (p) { return p.b > 0; });
     else list = people.filter(function (p) { return p.r === o.classId && p.b > 0; });
-    list = list.map(function (p) { return { c: p.c, k: p.k, n: p.n, r: p.r, s: p.s, h: p.h, b: p.b }; })
+    list = list.map(function (p) { return { c: p.c, k: p.k, n: p.n, r: p.r, s: p.s, t: p.t || 0, h: p.h, b: p.b }; })
       .sort(function (a, b) { return b.s - a.s || b.h - a.h || b.b - a.b || (a.n < b.n ? -1 : a.n > b.n ? 1 : 0); });
     var rank = 0, prev = null, mine = null;
     list.forEach(function (p, i) { if (p.s !== prev) { rank = i + 1; prev = p.s; } p.i = rank; if (p.c === me) mine = p; });
     var top = list.slice(0, o.view === 'room' ? 60 : o.view === 'school' ? 50 : 30);
     if (mine && top.indexOf(mine) < 0) top.push(mine);
-    return top.map(function (p) { return { k: p.k, n: p.n, r: p.r, s: p.s, h: p.h, b: p.b, i: p.i, me: p.c === me, lk: liked.indexOf(p.c) >= 0 }; });
+    return top.map(function (p) { return { k: p.k, n: p.n, r: p.r, s: p.s, t: p.t || 0, h: p.h, b: p.b, i: p.i, me: p.c === me, lk: liked.indexOf(p.c) >= 0 }; });
+  }
+
+
+  /* ---------- 6B-23 ศูนย์ฝึกแบบใหม่: ปุ่มอัปเกรดปุ่มเดียว (ระดับศูนย์ฝึก) ----------
+   * ฉากเดียวตลอด 5 ชิ้น (ยิม อัฒจันทร์ ลู่วิ่ง สนามบอล สระว่ายน้ำ) ชิ้นละ 5 ขั้น
+   * ระดับ 0 = ลานโล่ง · กดอัปเกรด 1 ครั้ง = ขึ้น 1 ระดับ ได้ของเพิ่ม 1 อย่างตามลำดับที่กำหนด:
+   *   ทุกชิ้นขึ้นขั้น 1 ก่อน (ลู่วิ่ง → สนามบอล → อัฒจันทร์ → ยิม → สระ) แล้วค่อยขั้น 2 … ถึงขั้น 5
+   * ระดับ 25 = ศูนย์ฝึกเต็ม ได้ถ้วย 1 ใบ · ระดับ 26–50 ของประดับธีมทอง · 51–75 เพชร · สายรุ้ง · ทับทิม · มรกต · วนกลับทอง
+   * ราคา: ระดับ 1–5 = 20 · 6–10 = 35 · 11–15 = 50 · 16–20 = 70 · 21–25 = 95 (รวม 1,350) รอบถัดไปแพงขึ้นรอบละ 1.5 เท่า ปัดหลัก 5
+   * ข้อมูลในชีต (ช่องข้อมูลศูนย์ฝึก) = {"v":3,"lv":ระดับ} · ข้อมูลแบบ {"r","s"} อ่านเป็นระดับรวมได้ · ผังลานเดิม (อาร์เรย์) = ระดับ 0
+   * เหรียญ = แต้มรวม − ราคาทุกระดับที่อัปแล้ว − เหรียญที่ใช้กับน้องคู่หู */
+  var CENTER = {
+    parts: [
+      { id: 'gym', icon: '🏋️', label: 'ยิม' },
+      { id: 'stand', icon: '🏟️', label: 'อัฒจันทร์' },
+      { id: 'track', icon: '🏃', label: 'ลู่วิ่ง' },
+      { id: 'field', icon: '⚽', label: 'สนามบอล' },
+      { id: 'pool', icon: '🏊', label: 'สระว่ายน้ำ' }
+    ],
+    order: ['track', 'field', 'stand', 'gym', 'pool'],
+    steps: 5,
+    cost: [20, 35, 50, 70, 95],
+    mul: 1.5,
+    maxRound: 99,
+    themes: ['ทอง', 'เพชร', 'สายรุ้ง', 'ทับทิม', 'มรกต'],
+    /* สิ่งที่ได้ในแต่ละขั้น (รอบแรก) และของประดับแต่ละช่อง (รอบพิเศษ) */
+    names: {
+      track: ['ลู่วิ่งดิน', 'ลู่ยางสีแดง', 'ลู่ 4 เลน + เส้นออกตัว', 'เส้นชัย + รั้วกระโดด', 'ซุ้มเส้นชัย + ธงรอบลู่'],
+      field: ['สนามหญ้า + ลูกบอล', 'ประตูฟุตบอล', 'เส้นสนาม', 'หญ้าลายทาง + ตาข่ายประตู', 'นักฟุตบอลลงสนาม'],
+      stand: ['ม้านั่งไม้', 'อัฒจันทร์เหล็ก 3 แถว', 'อัฒจันทร์ 4 แถว + คนดู', 'หลังคา + ธงห้อย', 'ป้ายคะแนน + ไฟสนาม'],
+      gym: ['เต็นท์ยิม + ดัมเบล', 'บ้านไม้ยิม', 'อาคารยิม', 'ยิม 2 ชั้น', 'ดัมเบลยักษ์บนหลังคา + ธง'],
+      pool: ['สระเป่าลม + เป็ดยาง', 'สระว่ายน้ำเล็ก', 'สระใหญ่ + ทุ่นแบ่งลู่', 'สไลเดอร์', 'แป้นกระโดด + ร่ม + เก้าอี้']
+    },
+    deco: {
+      track: ['เส้นลู่', 'ขอบลู่', 'ซุ้มเส้นชัย', 'ธงรอบลู่', 'ประกายรอบลู่'],
+      field: ['เส้นสนาม', 'เสาประตู', 'วงกลางสนาม', 'ธงมุมสนาม', 'ถ้วยกลางสนาม'],
+      stand: ['หลังคาอัฒจันทร์', 'ธงห้อย', 'กรอบป้ายคะแนน', 'ธงบนหลังคา', 'มงกุฎบนป้ายคะแนน'],
+      gym: ['ขอบหลังคายิม', 'ป้ายชื่อยิม', 'ดัมเบลยักษ์', 'ธงยิม', 'มงกุฎบนยิม'],
+      pool: ['ขอบสระ', 'สไลเดอร์', 'ร่มริมสระ', 'แป้นกระโดด', 'น้ำพุในสระ']
+    },
+    likesPerDay: 3
+  };
+  var CENTER_N = CENTER.steps * CENTER.parts.length; /* ระดับต่อรอบ = 25 */
+  function centerMax() { return CENTER.maxRound * CENTER_N; }
+  function centerParse(raw) {
+    var x = raw, lv = 0;
+    if (typeof raw === 'string') { try { x = JSON.parse(raw || '{}'); } catch (e) { x = null; } }
+    if (x && typeof x === 'object' && !Array.isArray(x)) {
+      if (x.lv != null) lv = Math.floor(Number(x.lv)) || 0;
+      else if (Array.isArray(x.s)) { /* ข้อมูลแบบ 5 ชิ้น (ทดลองก่อนหน้า) → ระดับรวม */
+        lv = (Math.floor(Number(x.r)) || 0) * CENTER_N;
+        for (var i = 0; i < CENTER.parts.length; i++) lv += Math.max(0, Math.min(CENTER.steps, Math.floor(Number(x.s[i])) || 0));
+      }
+    }
+    var out = { lv: Math.max(0, Math.min(centerMax(), lv)) }, clamp = function (v) { return Math.max(0, Math.min(centerMax(), Math.floor(Number(v)) || 0)); };
+    /* จำระดับตอนต้นสัปดาห์ (wk, w0) และสัปดาห์ก่อนหน้า (pk: p0 → p1) ไว้ทำสรุปสัปดาห์ */
+    if (x && typeof x === 'object' && /^\d{4}-\d{2}-\d{2}$/.test(String(x.wk || ''))) {
+      out.wk = String(x.wk); out.w0 = clamp(x.w0);
+      if (/^\d{4}-\d{2}-\d{2}$/.test(String(x.pk || ''))) { out.pk = String(x.pk); out.p0 = clamp(x.p0); out.p1 = clamp(x.p1); }
+    }
+    return out;
+  }
+  function centerCost(r, k) { return Math.round(CENTER.cost[k] * Math.pow(CENTER.mul, Math.min(r || 0, 30)) / 5) * 5; }
+  function centerRoundCost(r) { var t = 0; for (var k = 0; k < CENTER.steps; k++) t += centerCost(r, k); return t * CENTER.parts.length; }
+  /* ระดับ lv → รอบ r, ระดับในรอบ k, ขั้นของแต่ละชิ้น s (เรียงตาม CENTER.parts) */
+  function centerAt(lv) {
+    var r = Math.floor(lv / CENTER_N), k = lv - r * CENTER_N, n = CENTER.order.length, full = Math.floor(k / n), rest = k - full * n;
+    var s = CENTER.parts.map(function (p) { var o = CENTER.order.indexOf(p.id); return full + (o < rest ? 1 : 0); });
+    return { r: r, k: k, s: s };
+  }
+  /* การอัปจาก lv ไป lv + 1: ได้ชิ้นไหน ขั้นไหน ราคาเท่าไร */
+  function centerNext(lv) {
+    var a = centerAt(lv), n = CENTER.order.length, stage = Math.floor(a.k / n), id = CENTER.order[a.k % n], p = null;
+    CENTER.parts.forEach(function (q) { if (q.id === id) p = q; });
+    return { level: lv + 1, r: a.r, part: id, icon: p.icon, label: p.label, stage: stage + 1, cost: centerCost(a.r, stage), deco: a.r >= 1,
+      name: a.r >= 1 ? CENTER.deco[id][stage] + 'ชุด' + centerTheme(a.r) : CENTER.names[id][stage] };
+  }
+  function centerSpent(c) {
+    var lv = c.lv, r = Math.floor(lv / CENTER_N), k = lv - r * CENTER_N, t = 0, i;
+    for (i = 0; i < r; i++) t += centerRoundCost(i);
+    for (i = 0; i < k; i++) t += centerCost(r, Math.floor(i / CENTER.order.length));
+    return t;
+  }
+  function centerSteps(c) { return c.lv; }
+  function centerData(c) {
+    var o = { v: 3, lv: c.lv };
+    if (c.wk) { o.wk = c.wk; o.w0 = c.w0 || 0; if (c.pk) { o.pk = c.pk; o.p0 = c.p0 || 0; o.p1 = c.p1 || 0; } }
+    return JSON.stringify(o);
+  }
+  /* หลังอัป 1 ระดับวันนี้: ถ้าเป็นสัปดาห์ใหม่ เลื่อนข้อมูลสัปดาห์เดิมไปเป็น "สัปดาห์ก่อน" */
+  function centerTrack(c, today) {
+    var t = {};
+    ['wk', 'w0', 'pk', 'p0', 'p1'].forEach(function (f) { if (c[f] !== undefined) t[f] = c[f]; });
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(String(today || ''))) return t;
+    var wk = addDays(today, -weekdayIdx(today));
+    if (t.wk === wk) return t;
+    if (t.wk) return { wk: wk, w0: c.lv, pk: t.wk, p0: t.w0, p1: c.lv };
+    return { wk: wk, w0: c.lv };
+  }
+  /* ศูนย์ฝึกในสัปดาห์ที่แล้ว: ระดับจาก → ถึง (ยังไม่เคยจำ = บอกแค่ระดับตอนนี้) */
+  function storyCenter(c, today) {
+    if (!c) return null;
+    var L = addDays(today, -weekdayIdx(today) - 7);
+    if (c.wk === L) return { from: c.w0, to: c.lv, now: c.lv };
+    if (c.pk === L) return { from: c.p0, to: c.p1, now: c.lv };
+    if (c.wk && c.wk > L) return { from: c.w0, to: c.w0, now: c.lv };
+    if (c.wk && c.wk < L) return { from: c.lv, to: c.lv, now: c.lv };
+    return { now: c.lv };
+  }
+  function centerTheme(r) { return r ? CENTER.themes[(r - 1) % CENTER.themes.length] : ''; }
+  function centerRoundName(r) { return r ? 'รอบ' + centerTheme(r) + ' ⭐' + r : 'รอบแรก'; }
+  /* ข้อมูลสำหรับวาดฉาก (ส่งให้เพื่อนที่มาเยี่ยมชมและการ์ดได้ ไม่มีเหรียญ) */
+  function centerBrief(c) { var a = centerAt(c.lv); return { level: c.lv, r: a.r, s: a.s, done: a.k, need: CENTER_N }; }
+  /* ศูนย์ฝึกของฉัน ex = { petSpent, pet, today } (น้องคู่หูใช้เหรียญกระเป๋าเดียวกัน) · lv = เลเวลเด็ก level = ระดับศูนย์ฝึก */
+  function centerView(c, xp, likes, ex) {
+    ex = ex || {};
+    var total = Number(xp && xp.total) || 0, plv = xp && xp.level ? xp.level.lv : 1, spent = centerSpent(c), ps = Number(ex.petSpent) || 0, b = centerBrief(c), left = 0;
+    for (var i = b.done; i < CENTER_N; i++) left += centerCost(b.r, Math.floor(i / CENTER.order.length));
+    return {
+      v: 3, coins: Math.max(0, total - spent - ps), total: total, spent: spent, petSpent: ps, lv: plv,
+      level: b.level, r: b.r, s: b.s, done: b.done, need: b.need, trophies: b.r, round: centerRoundName(b.r), nextRound: centerRoundName(b.r + 1), theme: centerTheme(b.r),
+      next: c.lv < centerMax() ? centerNext(c.lv) : null, left: left, roundCost: centerRoundCost(b.r),
+      parts: CENTER.parts.map(function (p, j) { return { id: p.id, icon: p.icon, label: p.label, s: b.s[j], max: CENTER.steps }; }),
+      likes: Number(likes) || 0, likesPerDay: CENTER.likesPerDay,
+      pet: petView(ex.pet, plv, ex.today, true), petCat: petCatalog()
+    };
+  }
+  /* อัปเกรด 1 ระดับ o = { data, xp, petSpent, op: 'up' } ครบรอบ (ทุก 25 ระดับ) = ได้ถ้วย */
+  function planCenter(o) {
+    var c = centerParse(o.data), op = String(o.op || '');
+    var coins = (Number(o.xp && o.xp.total) || 0) - centerSpent(c) - (Number(o.petSpent) || 0);
+    if (op !== 'up') return fail('ไม่รู้จักคำสั่งนี้', 'BAD');
+    if (c.lv >= centerMax()) return fail('ศูนย์ฝึกระดับสูงสุดแล้ว เก่งมาก!', 'MAX');
+    var nx = centerNext(c.lv);
+    if (coins < nx.cost) return fail('เหรียญยังไม่พอ ขาดอีก ' + (nx.cost - Math.max(0, coins)) + ' เหรียญ ไปทำภารกิจเก็บแต้มเพิ่มนะ', 'COINS');
+    var lv = c.lv + 1, res = { level: lv, part: nx.part, stage: nx.stage, name: nx.name, deco: nx.deco, paid: nx.cost, r: nx.r };
+    if (lv % CENTER_N === 0) { res.round = lv / CENTER_N; res.roundName = centerRoundName(nx.r); res.nextRound = centerRoundName(nx.r + 1); res.nextTheme = centerTheme(nx.r + 1); }
+    var cen = centerTrack(c, o.today);
+    cen.lv = lv;
+    return { ok: true, center: cen, result: res };
+  }
+  /* ฉากของครู (Script Properties ชื่อ TCENTER) ครูกด + / − ระดับได้ตามสะดวก ไม่ใช้เหรียญ
+   * show = ให้นักเรียนเห็นในหน้าเยี่ยมชม (ข้อมูลแบบลานเดิมที่เป็นผังลาน อ่านเป็นระดับ 0) */
+  function centerModel(raw) {
+    var x = raw;
+    if (typeof raw === 'string') { try { x = JSON.parse(raw || '{}'); } catch (e) { x = {}; } }
+    x = x && typeof x === 'object' && !Array.isArray(x) ? x : {};
+    var b = centerBrief(centerParse(x));
+    b.show = x.show === true; b.at = String(x.at || '');
+    return b;
+  }
+
+  /* ---------- 6B-24 เป้าหมายรวมทั้งโรงเรียน ----------
+   * รวมระดับศูนย์ฝึกของนักเรียนทุกคน ครบเป้าขั้นไหน ทุกคนได้งานพลุในศูนย์ฝึก 3 วัน (นับวันที่ครบเป็นวันแรก)
+   * เป้าเพิ่มทีละขั้นตาม goals แล้วต่อด้วย step · ขั้นที่ครบแล้วไม่ถอยกลับ (stored = { tier, at } ใน Script Properties) */
+  var SCHOOL = { goals: [300, 600, 1000, 1500, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 25000, 30000, 40000, 50000], step: 10000, partyDays: 3 };
+  function schoolGoalAt(i) { var G = SCHOOL.goals; return i < G.length ? G[i] : G[G.length - 1] + (i - G.length + 1) * SCHOOL.step; }
+  function schoolGoal(sum, stored, today) {
+    sum = Math.max(0, Math.floor(Number(sum)) || 0);
+    stored = stored && typeof stored === 'object' ? stored : {};
+    var tier = 0;
+    while (tier < 500 && sum >= schoolGoalAt(tier)) tier++;
+    var had = Math.max(0, Math.min(500, Math.floor(Number(stored.tier)) || 0)), at = /^\d{4}-\d{2}-\d{2}$/.test(String(stored.at || '')) ? String(stored.at) : '', save = null;
+    if (tier > had) { had = tier; at = String(today || ''); save = { tier: had, at: at }; }
+    var until = had && at ? addDays(at, SCHOOL.partyDays - 1) : '';
+    return {
+      sum: sum, tier: had, goal: schoolGoalAt(had), prev: had ? schoolGoalAt(had - 1) : 0, partyGoal: had ? schoolGoalAt(had - 1) : 0,
+      at: at, until: until, party: !!(until && today && at <= today && today <= until), save: save
+    };
   }
 
   /* ---------- สัตว์เลี้ยงคู่หู ----------
@@ -2146,7 +2394,7 @@ var FQ = (function () {
   }
 
   return {
-    mineOf: mineOf, buildStatus: buildStatus, calendarView: calendarView, planSubmit: planSubmit, planMission: planMission, planQuest: planQuest, planClip: planClip, clipDone: clipDone,
+    mineOf: mineOf, buildStatus: buildStatus, calendarView: calendarView, storyView: storyView, boardStats: boardStats, centerTrack: centerTrack, storyCenter: storyCenter, planSubmit: planSubmit, planMission: planMission, planQuest: planQuest, planClip: planClip, clipDone: clipDone,
     questOf: questOf,
     LEVELS: LEVELS, ARCS: ARCS, MISSION_TYPES: MISSION_TYPES, DEFAULT_MISSIONS: DEFAULT_MISSIONS,
     BADGE_ICONS: BADGE_ICONS, DIFF_STARS: DIFF_STARS, unlockedDiff: unlockedDiff, numList: numList, badgeList: badgeList,
@@ -2162,6 +2410,9 @@ var FQ = (function () {
     DUST: DUST, DUST_TASKS: DUST_TASKS, dustLevel: dustLevel, dustPick: dustPick, dustMerge: dustMerge, dustView: dustView, dustTaskFor: dustTaskFor, dustBlock: dustBlock, planDust: planDust,
     PETS: PETS, petPick: petPick, petChance: petChance, petParse: petParse, petData: petData, petView: petView, petStage: petStage, planPet: planPet, checkPetName: checkPetName, petCatalog: petCatalog,
     gameView: gameView, planGame: planGame, modelCenter: modelCenter, planLike: planLike, likesGiven: likesGiven, gameBoard: gameBoard, xpOf: xpOf,
+    CENTER: CENTER, centerParse: centerParse, centerCost: centerCost, centerRoundCost: centerRoundCost, centerSpent: centerSpent, centerSteps: centerSteps, centerAt: centerAt, centerNext: centerNext,
+    centerData: centerData, centerBrief: centerBrief, centerView: centerView, planCenter: planCenter, centerModel: centerModel, centerRoundName: centerRoundName, centerTheme: centerTheme,
+    SCHOOL: SCHOOL, schoolGoal: schoolGoal, schoolGoalAt: schoolGoalAt,
     ACTIVITIES: ACTIVITIES, FEELINGS: FEELINGS, DEFAULTS: DEFAULTS, MINUTE_CHOICES: MINUTE_CHOICES,
     toKey: toKey, addDays: addDays, dayNum: dayNum, weekdayIdx: weekdayIdx, weekOf: weekOf,
     thaiDate: thaiDate, dayLetter: dayLetter, dayName: dayName, allowedDates: allowedDates,
@@ -2203,7 +2454,7 @@ var H = {
     'ภารกิจ 3', 'นับจาก 3', 'เป้า 3', 'สติกเกอร์', 'ใช้งาน'],
   /* คำตอบคำถามสุขภาพ ภารกิจอีเวนต์ที่เด็กกดทำเอง กำลังใจ และคลิปที่ดูครบ */
   extra: ['รหัส', 'เวลาที่ส่ง', 'วันที่ทำ', 'ห้อง', SC.sid, 'ประเภท', 'เรื่อง', 'คำตอบ', 'ผล', 'ครูตรวจ', 'หมายเหตุ'],
-  game: [SC.sid, 'ห้อง', 'ผังศูนย์ฝึก', 'เหรียญที่ใช้สร้าง', 'ดาวอาคาร', 'ถูกใจที่ได้', 'กดถูกใจวันนี้', 'เลเวล', 'น้องคู่หู', 'ชื่อน้อง', 'ข้อมูลน้อง', 'เหรียญที่ใช้กับน้อง', 'อัปเดตล่าสุด'],
+  game: [SC.sid, 'ห้อง', 'ข้อมูลศูนย์ฝึก', 'เหรียญที่ใช้สร้าง', 'ระดับศูนย์ฝึก', 'ถูกใจที่ได้', 'กดถูกใจวันนี้', 'เลเวล', 'น้องคู่หู', 'ชื่อน้อง', 'ข้อมูลน้อง', 'เหรียญที่ใช้กับน้อง', 'อัปเดตล่าสุด'],
   fitness: [SC.sid, 'ห้อง', 'เลขที่', 'ภาคเรียน', 'นั่งงอตัว (ซม.)', 'ดันพื้น 30 วิ (ครั้ง)', 'ลุกนั่ง 60 วิ (ครั้ง)', 'ยืนยกเข่า 3 นาที (ครั้ง)', 'บันทึกเมื่อ']
 };
 /* ผลทดสอบสมรรถภาพ 4 รายการ (ไม่เก็บน้ำหนัก-ส่วนสูง) ค่ามากกว่า = ดีขึ้น */
@@ -2466,6 +2717,7 @@ function route_(req) {
     case 'photodel': return apiPhoto_(req, true);
     case 'myphoto': return apiMyPhoto_(req);
     case 'calendar': return apiCalendar_(req);
+    case 'story': return apiStory_(req);
     case 'card': return apiCard_(req, false);
     case 'cheer': return apiCard_(req, true);
     case 'game': return apiGame_(req);
@@ -2490,6 +2742,7 @@ function route_(req) {
     case 'tedit': return teacherApi_(req, teacherEdit_);
     case 'tcenter': return teacherApi_(req, teacherCenter_);
     case 'tcentersave': return teacherApi_(req, teacherCenterSave_);
+    case 'tboard': return teacherApi_(req, teacherBoard_);
     default: return FQ.fail('ไม่รู้จักคำสั่งนี้', 'BAD');
   }
 }
@@ -2871,6 +3124,21 @@ function apiCalendar_(req) {
   });
 }
 
+/* 6B-25 สรุปสัปดาห์ที่แล้วของฉัน (โหลดแยก เปิดตอนดูสตอรี่เท่านั้น) */
+function apiStory_(req) {
+  return safe_(function () {
+    var c = loadApi_();
+    var a = auth_(c, req);
+    if (!a.ok) return a;
+    var mine = loadMine_(c, a), r = null;
+    try { r = gameRowOf_(gameSheet_(false), a.student.sid); } catch (e) {}
+    return {
+      ok: true,
+      story: FQ.storyView({ settings: c.settings, klass: a.klass, student: a.student, logs: mine.logs, done: mine.done || [], extra: mine.extra || [], events: c.events || [], todayKey: todayKey_(), center: r ? FQ.centerParse(r.layout) : null })
+    };
+  });
+}
+
 /* รูปจริงของตัวเอง (แยกจากข้อมูลหลัก ไม่ให้หน้าแรกโหลดช้า) */
 function apiMyPhoto_(req) {
   return safe_(function () {
@@ -2924,8 +3192,8 @@ function apiCard_(req, cheer) {
     card.me = me;
     card.cheers = (ts.cheers && ts.cheers[0] === ws ? Number(ts.cheers[1]) || 0 : 0) + fresh;
     card.cheered = sent.some(function (x) { return x.ref === target.sid; });
-    var gr = gameRowOf_(gameSheet_(false), target.sid), gl = FQ.gameParse(gr ? gr.layout : '');
-    card.center = gl.length || (gr && gr.pet) ? { size: FQ.gameExtent(gl), cells: gl, stars: FQ.gameStars(gl), likes: gr.likes, lv: card.lv || gr.lv || 1, pet: FQ.petView(gr.pet, card.lv || gr.lv || 1, today, false) } : null;
+    var gr = gameRowOf_(gameSheet_(false), target.sid), gc = FQ.centerParse(gr ? gr.layout : ''), gb = FQ.centerBrief(gc);
+    card.center = gb.level || (gr && gr.pet) ? { c: { r: gb.r, s: gb.s }, level: gb.level, done: gb.done, trophies: gb.r, likes: gr.likes, lv: card.lv || gr.lv || 1, pet: FQ.petView(gr.pet, card.lv || gr.lv || 1, today, false) } : null;
     return { ok: true, card: card, result: cheer ? { kind: 'cheer' } : null };
   });
 }
@@ -2944,7 +3212,8 @@ function setupGame_(sh) {
   sh.getRange(1, 1, 1, H.game.length).setValues([H.game]);
   header_(sh, H.game.length);
   sh.getRange(2, GC.sid, 1000, 1).setNumberFormat('@');
-  sh.getRange(1, GC.layout).setNote('ระบบเขียนเองเมื่อเด็กสร้าง อัป ย้าย หรือรื้อของในเกมศูนย์ฝึกกีฬา ไม่ต้องแก้\nลบทั้งแถว = ศูนย์ฝึกและน้องคู่หูของเด็กคนนั้นเริ่มใหม่ (แต้มไม่หาย)\nเหรียญ = แต้มรวม − เหรียญที่ใช้สร้าง − เหรียญที่ใช้กับน้อง ใช้เหรียญแล้วแต้ม เลเวล และอันดับไม่ลด');
+  sh.getRange(1, GC.layout).setNote(GAME_NOTE_DATA);
+  sh.getRange(1, GC.stars).setNote(GAME_NOTE_STEPS);
   sh.getRange(1, GC.pname).setNote('ชื่อน้องที่เด็กตั้ง (เพื่อนเห็นตอนมาเยี่ยมชม)\nถ้าชื่อไม่เหมาะสม ลบช่องนี้ให้ว่าง น้องจะกลับไปใช้ชื่อตามชนิด แล้วเด็กตั้งใหม่ได้');
   [110, 60, 320, 90, 80, 80, 200, 60, 130, 110, 260, 90, 150].forEach(function (w, i) { sh.setColumnWidth(i + 1, w); });
   try { if (sh.getMaxColumns() > H.game.length) sh.deleteColumns(H.game.length + 1, sh.getMaxColumns() - H.game.length); } catch (e) {}
@@ -2964,22 +3233,56 @@ function gameRowOf_(sh, sid) {
  * เลเวล = เลเวลของเด็กตอนทำอะไรในเกมครั้งล่าสุด (ใช้เลือกฉากและร่างน้องตอนเพื่อนมาเยี่ยมชม) */
 function gameWrite_(sh, r, sid, room, x) {
   r = r || {};
-  var L = x.L || FQ.gameParse(r.layout || ''), pet = x.pet !== undefined ? x.pet : r.pet || null, sp = pet ? FQ.PETS.species.filter(function (q) { return q.id === pet.sp; })[0] : null;
-  var vals = ["'" + sid, room, JSON.stringify(L), FQ.gameSpent(L), FQ.gameStars(L), x.likes !== undefined ? x.likes : r.likes || 0, x.given !== undefined ? x.given : r.given || '',
+  var C = x.C || FQ.centerParse(r.layout || ''), pet = x.pet !== undefined ? x.pet : r.pet || null, sp = pet ? FQ.PETS.species.filter(function (q) { return q.id === pet.sp; })[0] : null;
+  var vals = ["'" + sid, room, FQ.centerData(C), FQ.centerSpent(C), FQ.centerSteps(C), x.likes !== undefined ? x.likes : r.likes || 0, x.given !== undefined ? x.given : r.given || '',
     x.lv || r.lv || '', sp ? sp.label : '', pet ? pet.name : '', pet ? FQ.petData(pet) : '', x.petSpent !== undefined ? x.petSpent : r.petSpent || 0, "'" + nowText_()];
   if (r.row) sh.getRange(r.row, 1, 1, vals.length).setValues([vals]);
   else sh.appendRow(vals);
+  gameHeader_(sh);
   try { CacheService.getScriptCache().remove('game_people'); } catch (e) {}
 }
+/* 6B-23: แท็บที่สร้างตอนเป็นลานแบบเดิม เปลี่ยนหัวคอลัมน์และคำอธิบายให้ตรงกับศูนย์ฝึกแบบใหม่ (ทำครั้งเดียว) */
+function gameHeader_(sh) {
+  var cache = null;
+  try { cache = CacheService.getScriptCache(); if (cache.get('game_hdr_v3')) return; } catch (e) {}
+  try {
+    var hd = sh.getRange(1, 1, 1, H.game.length).getValues()[0];
+    if (String(hd[GC.layout - 1]) !== H.game[GC.layout - 1] || String(hd[GC.stars - 1]) !== H.game[GC.stars - 1]) {
+      sh.getRange(1, GC.layout).setValue(H.game[GC.layout - 1]).setNote(GAME_NOTE_DATA);
+      sh.getRange(1, GC.stars).setValue(H.game[GC.stars - 1]).setNote(GAME_NOTE_STEPS);
+    }
+    if (cache) cache.put('game_hdr_v3', '1', 21600);
+  } catch (e) {}
+}
+var GAME_NOTE_DATA = 'ระบบเขียนเองเมื่อเด็กกดอัปเกรดศูนย์ฝึก ไม่ต้องแก้\nlv = ระดับศูนย์ฝึก (ทุก 25 ระดับได้ถ้วย 1 ใบ)\nลบทั้งแถว = ศูนย์ฝึกของเด็กคนนั้นกลับเป็นลานโล่ง แต้มไม่หาย';
+var GAME_NOTE_STEPS = 'ระดับศูนย์ฝึก (0 = ลานโล่ง · 25 = เต็ม ได้ถ้วย · 26 ขึ้นไป = ของประดับรอบพิเศษ) ใช้จัดอันดับ';
 function myGame_(sid, xp) {
   var r = gameRowOf_(gameSheet_(false), sid);
-  return FQ.gameView(FQ.gameParse(r ? r.layout : ''), xp, r ? r.likes : 0, { petSpent: r ? r.petSpent : 0, pet: r ? r.pet : null, today: todayKey_() });
+  return withSchool_(FQ.centerView(FQ.centerParse(r ? r.layout : ''), xp, r ? r.likes : 0, { petSpent: r ? r.petSpent : 0, pet: r ? r.pet : null, today: todayKey_() }));
+}
+/* 6B-24 เป้าหมายรวมทั้งโรงเรียน (แคช 5 นาที) ส่งแค่ยอดรวม ไม่มีชื่อใคร */
+function schoolGoal_() {
+  var cache = null, hit = null, today = todayKey_();
+  try { cache = CacheService.getScriptCache(); hit = JSON.parse(cache.get('school_goal') || 'null'); } catch (e) {}
+  if (hit && hit.today === today && hit.g) return hit.g;
+  var sum = 0, props = PropertiesService.getScriptProperties(), stored = null;
+  gamePeople_().forEach(function (p) { sum += Number(p.s) || 0; });
+  try { stored = JSON.parse(props.getProperty('SCHOOL_GOAL') || 'null'); } catch (e) {}
+  var g = FQ.schoolGoal(sum, stored, today);
+  if (g.save) { try { props.setProperty('SCHOOL_GOAL', JSON.stringify(g.save)); } catch (e) {} }
+  delete g.save;
+  try { if (cache) cache.put('school_goal', JSON.stringify({ today: today, g: g }), 300); } catch (e) {}
+  return g;
+}
+function withSchool_(view) {
+  try { if (view) view.school = schoolGoal_(); } catch (e) {}
+  return view;
 }
 function xpNow_(c, a, mine) {
   return FQ.xpOf({ settings: c.settings, klass: a.klass, student: a.student, logs: mine.logs, done: mine.done || [], extra: mine.extra || [], events: c.events || [], todayKey: todayKey_() });
 }
 
-/* สร้าง / อัปดาว / ย้าย / รื้อ */
+/* อัปเกรดศูนย์ฝึก 1 ระดับ (op = up) */
 function apiGame_(req) {
   return safe_(function () {
     var c = loadApi_();
@@ -2989,13 +3292,13 @@ function apiGame_(req) {
     var res = withLock_(function () {
       var sh = gameSheet_(true);
       r = gameRowOf_(sh, sid);
-      plan = FQ.planGame({ layout: r ? r.layout : '', xp: xp, op: req.op, p: req.p, to: req.to, item: req.item, petSpent: r ? r.petSpent : 0 });
+      plan = FQ.planCenter({ data: r ? r.layout : '', xp: xp, op: req.op, petSpent: r ? r.petSpent : 0, today: todayKey_() });
       if (!plan.ok) return plan;
-      gameWrite_(sh, r, sid, a.klass.id, { L: plan.layout, lv: xp.level ? xp.level.lv : 0 });
+      gameWrite_(sh, r, sid, a.klass.id, { C: plan.center, lv: xp.level ? xp.level.lv : 0 });
       return { ok: true };
     });
     if (!res.ok) return res;
-    return { ok: true, game: FQ.gameView(plan.layout, xp, r ? r.likes : 0, { petSpent: r ? r.petSpent : 0, pet: r ? r.pet : null, today: todayKey_() }), result: plan.result };
+    return { ok: true, game: withSchool_(FQ.centerView(plan.center, xp, r ? r.likes : 0, { petSpent: r ? r.petSpent : 0, pet: r ? r.pet : null, today: todayKey_() })), result: plan.result };
   });
 }
 
@@ -3005,19 +3308,19 @@ function apiPet_(req) {
     var c = loadApi_();
     var a = auth_(c, req);
     if (!a.ok) return a;
-    var xp = xpNow_(c, a, loadMine_(c, a)), sid = a.student.sid, today = todayKey_(), plan, r, L, ps;
+    var xp = xpNow_(c, a, loadMine_(c, a)), sid = a.student.sid, today = todayKey_(), plan, r, C, ps;
     var res = withLock_(function () {
       var sh = gameSheet_(true);
       r = gameRowOf_(sh, sid);
-      L = FQ.gameParse(r ? r.layout : '');
-      plan = FQ.planPet({ pet: r ? r.pet : null, xp: xp, spent: FQ.gameSpent(L), petSpent: r ? r.petSpent : 0, op: req.op, item: req.item, slot: req.slot, name: req.name, today: today });
+      C = FQ.centerParse(r ? r.layout : '');
+      plan = FQ.planPet({ pet: r ? r.pet : null, xp: xp, spent: FQ.centerSpent(C), petSpent: r ? r.petSpent : 0, op: req.op, item: req.item, slot: req.slot, name: req.name, today: today });
       if (!plan.ok) return plan;
       ps = (r ? r.petSpent : 0) + plan.paid;
       gameWrite_(sh, r, sid, a.klass.id, { pet: plan.pet, petSpent: ps, lv: xp.level ? xp.level.lv : 0 });
       return { ok: true };
     });
     if (!res.ok) return res;
-    return { ok: true, game: FQ.gameView(L, xp, r ? r.likes : 0, { petSpent: ps, pet: plan.pet, today: today }), result: plan.result };
+    return { ok: true, game: withSchool_(FQ.centerView(C, xp, r ? r.likes : 0, { petSpent: ps, pet: plan.pet, today: today })), result: plan.result };
   });
 }
 
@@ -3034,11 +3337,11 @@ function gamePeople_() {
     rows.forEach(function (v) {
       var st = who[normSid_(v[GC.sid - 1])];
       if (!st || !st.active || !st.classId) return;
-      var L = FQ.gameParse(String(v[GC.layout - 1] || ''));
+      var C = FQ.centerParse(String(v[GC.layout - 1] || '')), steps = FQ.centerSteps(C);
       list.push({
         c: st.sid, k: hex_(Utilities.computeHmacSha256Signature('card|' + st.sid, sec, Utilities.Charset.UTF_8)).slice(0, 12),
-        n: st.nick || ('เลขที่ ' + (st.no || '?')), r: st.classId, g: st.grade, s: FQ.gameStars(L), h: Number(v[GC.likes - 1]) || 0,
-        b: L.length + (FQ.petParse(v[GC.pet - 1], '', '') ? 1 : 0)
+        n: st.nick || ('เลขที่ ' + (st.no || '?')), r: st.classId, g: st.grade, s: steps, t: FQ.centerAt(C.lv).r, h: Number(v[GC.likes - 1]) || 0,
+        b: steps + (FQ.petParse(v[GC.pet - 1], '', '') ? 1 : 0)
       });
     });
   }
@@ -3057,7 +3360,7 @@ function apiGameBoard_(req) {
     if (grade < 1 || grade > 6) grade = a.student.grade;
     var mine = gameRowOf_(gameSheet_(false), a.student.sid), liked = FQ.likesGiven(mine ? mine.given : '', todayKey_());
     var list = FQ.gameBoard(gamePeople_(), { view: view, sid: a.student.sid, classId: a.student.classId, grade: grade, liked: liked });
-    return { ok: true, view: view, grade: grade, myGrade: a.student.grade, room: a.student.classId, list: list, likesLeft: Math.max(0, FQ.GAME.likesPerDay - liked.length), model: view === 'rank' ? null : modelBrief_() };
+    return { ok: true, view: view, grade: grade, myGrade: a.student.grade, room: a.student.classId, list: list, likesLeft: Math.max(0, FQ.CENTER.likesPerDay - liked.length), model: view === 'rank' ? null : modelBrief_() };
   });
 }
 
@@ -3089,11 +3392,11 @@ function apiGameVisit_(req, like) {
     };
     var res = like ? withLock_(run) : run();
     if (!res.ok) return res;
-    var L = FQ.gameParse(r.layout), given = FQ.likesGiven(mineR ? mineR.given : '', today);
+    var C = FQ.centerParse(r.layout), B = FQ.centerBrief(C), given = FQ.likesGiven(mineR ? mineR.given : '', today);
     return {
       ok: true,
-      center: { k: hit.k, n: hit.n, r: hit.r, me: me, lv: r.lv || 1, pet: FQ.petView(r.pet, r.lv || 1, today, false), size: Math.max(FQ.gameExtent(L), r.lv ? FQ.gameSize(r.lv) : 3), cells: L, stars: FQ.gameStars(L), likes: r.likes, liked: given.indexOf(hit.c) >= 0 },
-      likesLeft: Math.max(0, FQ.GAME.likesPerDay - given.length), result: like ? { kind: 'like' } : null
+      center: { k: hit.k, n: hit.n, r: hit.r, me: me, lv: r.lv || 1, pet: FQ.petView(r.pet, r.lv || 1, today, false), c: { r: B.r, s: B.s }, level: B.level, done: B.done, trophies: B.r, likes: r.likes, liked: given.indexOf(hit.c) >= 0 },
+      likesLeft: Math.max(0, FQ.CENTER.likesPerDay - given.length), result: like ? { kind: 'like' } : null
     };
   });
 }
@@ -3138,6 +3441,20 @@ function teacherApi_(req, fn) {
     if (res && res.ok !== false) res.ok = true;
     return res;
   });
+}
+
+/* 6B-25 จอใหญ่หน้าเสาธง: ยอดรวมวันนี้ + อันดับห้องสัปดาห์นี้ (แคช 1 นาที) ไม่มีชื่อเด็ก */
+function teacherBoard_(req) {
+  var cache = null, hit = null, today = todayKey_();
+  try { cache = CacheService.getScriptCache(); hit = JSON.parse(cache.get('tboard') || 'null'); } catch (e) {}
+  if (hit && hit.today === today) return hit;
+  var s = readSettings_(), lw = FQ.addDays(today, -FQ.weekdayIdx(today) - 7), sc = null, dust = null;
+  var st = FQ.boardStats({ settings: s, todayKey: today, roster: readRoster_(), logs: logsFromTable_(tail_(TAB.logs, H.logs, lw)) });
+  try { sc = schoolGoal_(); } catch (e) {}
+  try { dust = dustForTeacher_(); } catch (e) {}
+  var out = { today: today, at: Utilities.formatDate(new Date(), TZ, 'HH:mm'), schoolName: s.schoolName, board: st, school: sc, dust: dust };
+  try { if (cache) cache.put('tboard', JSON.stringify(out), 60); } catch (e) {}
+  return out;
 }
 
 /* ภาพรวม + เด็กที่หายไป: สร้างทุกชั่วโมงพร้อมอันดับ (ยังไม่มี = สร้างตอนนี้) */
@@ -3308,32 +3625,33 @@ function cleanupPhotos_() {
 }
 
 /* ---------- ศูนย์ฝึกต้นแบบของครู ---------- */
-function readModel_() { return FQ.modelCenter(PropertiesService.getScriptProperties().getProperty('TCENTER') || ''); }
+function readModel_() { return FQ.centerModel(PropertiesService.getScriptProperties().getProperty('TCENTER') || ''); }
 function modelBrief_() {
   var m = readModel_();
-  return m.show && m.n ? { k: 'model', s: m.stars, b: m.n, lv: m.lv } : null;
+  return m.show && m.level ? { k: 'model', s: m.level, t: m.r } : null;
 }
 function visitModel_(a, like) {
   if (like) return FQ.fail('ศูนย์ฝึกต้นแบบกดถูกใจไม่ได้ ไปกดให้เพื่อนแทนนะ', 'MODEL');
   var m = readModel_();
-  if (!m.show || !m.n) return FQ.fail('ตอนนี้ครูปิดศูนย์ฝึกต้นแบบอยู่', 'NOT_FOUND');
+  if (!m.show || !m.level) return FQ.fail('ตอนนี้ครูปิดศูนย์ฝึกต้นแบบอยู่', 'NOT_FOUND');
   var mr = gameRowOf_(gameSheet_(false), a.student.sid), given = FQ.likesGiven(mr ? mr.given : '', todayKey_());
   return {
     ok: true,
-    center: { k: 'model', model: true, n: 'ศูนย์ฝึกต้นแบบ', r: 'จากคุณครู', me: false, lv: m.lv, pet: null, size: 5, cells: m.cells, stars: m.stars, likes: 0, liked: false },
-    likesLeft: Math.max(0, FQ.GAME.likesPerDay - given.length), result: null
+    center: { k: 'model', model: true, n: 'ศูนย์ฝึกต้นแบบ', r: 'จากคุณครู', me: false, lv: 1, pet: null, c: { r: m.r, s: m.s }, level: m.level, done: m.done, trophies: m.r, likes: 0, liked: false },
+    likesLeft: Math.max(0, FQ.CENTER.likesPerDay - given.length), result: null
   };
 }
+/* 6B-23: ฉากของครู กด + / − ระดับได้ตามสะดวก (ไม่ใช้เหรียญ) */
 function teacherCenter_(req) {
-  return { center: readModel_(), items: FQ.GAME.items.map(function (it) { return { id: it.id, icon: it.icon, label: it.label, kind: it.kind, cost: it.cost.slice(), lv: it.lv, tile: it.tile }; }) };
+  var sc = null;
+  try { sc = schoolGoal_(); } catch (e) {}
+  return { center: readModel_(), perRound: FQ.CENTER.steps * FQ.CENTER.parts.length, max: FQ.CENTER.maxRound * FQ.CENTER.steps * FQ.CENTER.parts.length, school: sc };
 }
 function teacherCenterSave_(req) {
-  var cells = Array.isArray(req.cells) ? req.cells : [];
-  if (cells.length > 25) return FQ.fail('ของบนลานมากเกินไป', 'BAD');
-  var m = FQ.modelCenter({ cells: cells, scene: req.scene, show: req.show === true || req.show === 'true' });
+  var m = FQ.centerModel({ lv: req.lv, show: req.show === true || req.show === 'true' });
   var at = Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd HH:mm');
   return withLock_(function () {
-    PropertiesService.getScriptProperties().setProperty('TCENTER', JSON.stringify({ cells: m.cells, scene: m.scene, show: m.show, at: at }));
+    PropertiesService.getScriptProperties().setProperty('TCENTER', JSON.stringify({ v: 3, lv: m.level, show: m.show, at: at }));
     m.at = at;
     return { center: m };
   });
@@ -4857,9 +5175,7 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
     S.filter(function (x) { return x && x[0] === label('programStart'); })[0][1] = F.addDays(monday, -21);
     props.TEACHER_HASH = GS.teacherHash_('demo1234');
     /* ศูนย์ฝึกต้นแบบของครู (เปิดให้นักเรียนเยี่ยมชม) */
-    props.TCENTER = JSON.stringify({ scene: 4, show: true, at: today + ' 08:00', cells: [[0, 'tree', 1], [1, 'flag', 1], [2, 'light', 1], [3, 'flag', 1], [4, 'tree', 1],
-      [5, 'track', 3], [6, 'football', 3], [7, 'stand', 1], [8, 'basketball', 3], [9, 'track', 3], [10, 'light', 1], [11, 'gym', 3], [12, 'pool', 3], [13, 'boxing', 3], [14, 'light', 1],
-      [15, 'yoga', 3], [16, 'badminton', 3], [17, 'stand', 1], [18, 'football', 2], [19, 'tree', 1], [20, 'tree', 1], [21, 'flag', 1], [22, 'track', 2], [23, 'flag', 1], [24, 'tree', 1]] });
+    props.TCENTER = JSON.stringify({ v: 3, lv: 46, show: true, at: today + ' 08:00' });
     /* อีเวนต์: งานแรกกำลังจัด งานที่สองอีก 6 วันเริ่ม */
     var E = sheets['อีเวนต์'].cells, ec = headIdx('อีเวนต์');
     if (E[1]) { E[1][ec('เริ่ม')] = thDate(F.addDays(today, -2)); E[1][ec('จบ')] = thDate(F.addDays(today, 4)); }
@@ -4942,26 +5258,11 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
     if (!post({ action: 'clip', token: tokens['9999'], entry: { kind: 'habit', date: F.addDays(today, -1) } }).ok) post({ action: 'clip', token: tokens['9999'], entry: { kind: 'move', date: F.addDays(today, -1) } });
     post({ action: 'photo', token: tokens['1502'], mime: 'image/jpeg', data: img('face', 5) });
     /* เกมศูนย์ฝึก: เพื่อนหลายคนสร้างไว้แล้ว (ใช้เหรียญจากแต้มจริงของแต่ละคน ถ้าเหรียญไม่พอระบบไม่ให้สร้าง) + ถูกใจกันบ้าง */
-    var gbuild = function (sid, plan) {
-      plan.forEach(function (x) {
-        var r = post({ action: 'game', token: tokens[sid], op: 'build', p: x[0], item: x[1] });
-        for (var u = 1; r.ok && u < (x[2] || 1); u++) r = post({ action: 'game', token: tokens[sid], op: 'up', p: x[0] });
-      });
+    /* 6B-23: ศูนย์ฝึกปุ่มเดียว กดอัปเกรดตามจำนวนครั้ง (เหรียญหมดก็หยุด) */
+    var gup = function (sid, n) {
+      for (var i = 0; i < n; i++) if (!post({ action: 'game', token: tokens[sid], op: 'up' }).ok) break;
     };
-    gbuild('1401', [[6, 'football', 3], [0, 'track', 2], [2, 'basketball', 2], [12, 'badminton', 2], [1, 'track', 1], [5, 'tree', 1], [10, 'flag', 1], [7, 'light', 1], [11, 'stand', 1]]);
-    gbuild('1402', [[6, 'basketball', 2], [7, 'yoga', 1], [0, 'tree', 1], [2, 'light', 1], [12, 'tree', 1]]);
-    gbuild('1403', [[6, 'badminton', 1], [0, 'flag', 1], [8, 'tree', 1]]);
-    gbuild('1301', [[6, 'football', 2], [7, 'track', 2], [11, 'yoga', 1], [0, 'tree', 1], [2, 'tree', 1]]);
-    gbuild('1302', [[6, 'yoga', 2], [1, 'tree', 1]]);
-    gbuild('1501', [[6, 'football', 3], [12, 'boxing', 2], [0, 'track', 3], [2, 'gym', 1], [10, 'tree', 1], [18, 'stand', 1]]);
-    gbuild('1502', [[6, 'badminton', 2], [7, 'basketball', 1], [0, 'flag', 1]]);
-    gbuild('1601', [[6, 'basketball', 3], [7, 'football', 2], [11, 'track', 2], [0, 'light', 1], [2, 'light', 1]]);
-    gbuild('1602', [[6, 'track', 2], [12, 'yoga', 1], [5, 'tree', 1]]);
-    gbuild('1201', [[6, 'football', 2], [0, 'tree', 1], [2, 'flag', 1]]);
-    gbuild('1202', [[6, 'track', 1], [7, 'tree', 1]]);
-    gbuild('1101', [[6, 'badminton', 1], [0, 'tree', 1], [1, 'tree', 1]]);
-    gbuild('1102', [[6, 'yoga', 1]]);
-    gbuild('9999', [[6, 'football', 1], [0, 'track', 1], [2, 'tree', 1]]);
+    [['1401', 27], ['1402', 8], ['1403', 3], ['1301', 15], ['1302', 4], ['1501', 23], ['1502', 7], ['1601', 18], ['1602', 5], ['1201', 6], ['1202', 2], ['1101', 2], ['1102', 1], ['9999', 4]].forEach(function (x) { gup(x[0], x[1]); });
     /* สัตว์เลี้ยงคู่หูของเพื่อน (เด็กตัวอย่าง 9999 ยังไม่ฟัก จะได้ลองฟักไข่เอง) */
     /* ตัวเลขท้าย = ค่าสุ่มให้เพื่อนได้น้องใหม่ไว้โชว์ (นาก ฟลามิงโก แฮมสเตอร์ แกะ ฉลาม เสือขาว นกฮูก อุรังอุตัง นกอินทรี) */
     [['1401', 'โมจิ', ['cap'], 0.78412], ['1402', 'ข้าวปั้น', ['bow'], 0.93857], ['1403', 'ถั่วแดง', [], 0.23021], ['1301', 'ไข่ตุ๋น', ['beanie', 'scarf'], 0.39271], ['1501', 'เจ้าเหมียว', ['sun', 'whistle'], 0.93286],
