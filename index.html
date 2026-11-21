@@ -1466,6 +1466,144 @@ body.tropen { overflow:hidden; }
 .twleft b { color:var(--ink); }
 @media (min-width:600px) { .twgrid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 
+/* ===== 6B-32: การ์ดความรู้สัตว์จริง (หลังฟักไข่ / ปุ่มที่น้องคู่หู) ===== */
+.pkcard { position:fixed; inset:0; z-index:85; background:rgba(10,8,28,.92); display:flex; align-items:center; justify-content:center; padding:16px 14px calc(16px + env(safe-area-inset-bottom)); overflow:auto; animation:pkin .35s ease-out; }
+@keyframes pkin { from { opacity:0; } to { opacity:1; } }
+.pkin { width:min(420px,100%); background:var(--card); border:2px solid var(--line); border-radius:24px; padding:14px 14px 16px; display:flex; flex-direction:column; gap:10px; box-shadow:0 18px 50px rgba(0,0,0,.45); animation:pkpop .45s cubic-bezier(.2,1.4,.4,1); margin:auto; }
+@keyframes pkpop { from { transform:translateY(24px) scale(.94); } to { transform:none; } }
+.pkhead { display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.pktag { font-size:.8em; font-weight:800; color:var(--lime-ink); background:var(--lime); padding:3px 10px; border-radius:99px; }
+.pkrar { font-size:.8em; font-weight:800; padding:3px 10px; border-radius:99px; background:var(--card-2); color:var(--ink-2); white-space:nowrap; }
+.pkcard.t2 .pkrar { background:linear-gradient(135deg,#9B6BFF,#6A3FD6); color:#fff; }
+.pkcard.t3 .pkrar { background:linear-gradient(90deg,#FF6B6B,#FFB020,#FFE45C,#5EE07A,#46D6FF,#9B6BFF); color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.45); }
+.pkcard.t4 .pkrar { background:linear-gradient(135deg,#FFF0A0,#FFD84D 40%,#F5A524); color:#3A2200; }
+.pkcard.t2 .pkin { border-color:#9B6BFF; box-shadow:0 0 0 2px rgba(155,107,255,.3), 0 0 34px rgba(155,107,255,.35), 0 18px 50px rgba(0,0,0,.45); }
+.pkcard.t3 .pkin { border:3px solid transparent; background:linear-gradient(var(--card),var(--card)) padding-box, conic-gradient(#FF6B6B,#FFB020,#FFE45C,#5EE07A,#46D6FF,#9B6BFF,#FF6B6B) border-box; box-shadow:0 0 34px rgba(155,107,255,.35), 0 18px 50px rgba(0,0,0,.45); }
+.pkcard.t4 .pkin { border:3px solid transparent; background:linear-gradient(var(--card),var(--card)) padding-box, linear-gradient(135deg,#FFF6C9,#FFD84D 30%,#F5A524 55%,#FFE88A 75%,#C98A1E) border-box; box-shadow:0 0 38px rgba(255,216,77,.45), 0 18px 50px rgba(0,0,0,.45); }
+.pkpic { position:relative; border-radius:18px; overflow:hidden; border:2px solid var(--line); background:var(--card-2); isolation:isolate; }
+.pkpic::before { content:''; position:absolute; inset:0; z-index:-1; pointer-events:none; }
+.pkpic.r1 { background:radial-gradient(circle at 50% 44%,#F4FFF6,#B4F0C4 38%,#6BD08F 72%,#3FA96A); }
+.pkpic.r2 { background:radial-gradient(circle at 50% 46%,#5D4FC8,#2D2585 55%,#150F47); border-color:#9B6BFF; }
+.pkpic.r2::before { background:radial-gradient(circle at 50% 52%,rgba(205,170,255,.8),rgba(155,107,255,.28) 38%,transparent 62%); animation:pkglow 2.4s ease-in-out infinite alternate; }
+.pkpic.r3 { background:radial-gradient(circle at 50% 46%,#41318F,#1C1552 72%); border-color:#FFE45C; }
+.pkpic.r3::before { inset:-70%; background:conic-gradient(from 0deg,rgba(255,107,107,.6),rgba(255,176,32,.6),rgba(255,228,92,.6),rgba(94,224,122,.6),rgba(70,214,255,.6),rgba(155,107,255,.6),rgba(255,107,107,.6)); -webkit-mask:radial-gradient(circle,#000 12%,transparent 42%); mask:radial-gradient(circle,#000 12%,transparent 42%); animation:pkspin 10s linear infinite; }
+.pkpic.r4 { background:radial-gradient(circle at 50% 46%,#8A5512,#40250A 72%); border-color:#FFD84D; }
+.pkpic.r4::before { inset:-70%; background:repeating-conic-gradient(from 0deg,rgba(255,232,140,.75) 0 7deg,transparent 7deg 22deg); -webkit-mask:radial-gradient(circle,#000 10%,transparent 42%); mask:radial-gradient(circle,#000 10%,transparent 42%); animation:pkspin 16s linear infinite; }
+@keyframes pkspin { to { transform:rotate(360deg); } }
+@keyframes pkglow { from { opacity:.55; transform:scale(.92); } to { opacity:1; transform:scale(1.06); } }
+.pkform { position:absolute; left:8px; top:8px; font-size:.7em; font-weight:800; color:#fff; background:rgba(15,12,36,.72); padding:3px 9px; border-radius:99px; }
+.pkreal { position:absolute; right:8px; bottom:8px; width:68px; height:68px; padding:0; border-radius:50%; border:3px solid #fff; overflow:hidden; background:#000; box-shadow:0 4px 14px rgba(0,0,0,.4); cursor:pointer; }
+.pkreal img { width:100%; height:100%; object-fit:cover; display:block; }
+.pkreal b { position:absolute; left:0; right:0; bottom:0; font-size:.58em; color:#fff; background:rgba(15,12,36,.72); padding:1px 0 3px; }
+.pkphoto { position:absolute; inset:0; display:none; background:#000; }
+.pkphoto img { width:100%; height:100%; object-fit:cover; display:block; }
+.pkpic.showphoto .pkphoto { display:block; }
+.pkpic.showphoto .pkreal, .pkpic.showphoto .pkform { display:none; }
+.pkback { position:absolute; left:50%; bottom:8px; transform:translateX(-50%); border:0; border-radius:99px; padding:6px 14px; font:inherit; font-size:.8em; font-weight:800; color:#fff; background:rgba(15,12,36,.78); cursor:pointer; }
+.pkin h2 small { font-size:.6em; color:var(--ink-2); font-weight:700; }
+.pksvg { display:block; width:100%; height:auto; }
+.pkin h2 { font-size:1.4em; margin:2px 0 0; }
+.pkf { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; }
+.pkf li { position:relative; padding-left:26px; line-height:1.55; font-size:.95em; }
+.pkf li::before { content:'💡'; position:absolute; left:0; top:0; }
+.pkm { display:flex; flex-direction:column; gap:2px; background:color-mix(in srgb,var(--lime) 14%,var(--card-2)); border:1px solid color-mix(in srgb,var(--lime) 40%,var(--line)); border-radius:14px; padding:9px 12px; }
+.pkm b { font-size:.85em; color:var(--lime); }
+.pkm span { line-height:1.5; }
+.pkbtn { width:100%; }
+@media (prefers-reduced-motion: reduce) { .pkcard, .pkin, .pkpic::before { animation:none; } }
+
+/* 6B-34 อาหาร 5 หมู่ */
+.pfood { display:flex; flex-direction:column; gap:6px; }
+.pfg { display:grid; grid-template-columns:78px 1fr; gap:6px; align-items:stretch; border-radius:16px; padding:5px; background:color-mix(in srgb,var(--fg) 14%,var(--card)); }
+.pfg.g1 { --fg:#FF6B6B; } .pfg.g2 { --fg:#FFB020; } .pfg.g3 { --fg:#3FBF5F; } .pfg.g4 { --fg:#FF7AB8; } .pfg.g5 { --fg:#9B6BFF; } .pfg.g0 { --fg:#46A7F5; }
+.pfgh { display:flex; flex-direction:column; justify-content:center; gap:2px; padding:4px 6px; border-radius:12px; background:var(--fg); color:#fff; }
+.pfgh b { font:800 .92em var(--display); line-height:1.15; }
+.pfgh small { font:700 .7em var(--body); line-height:1.25; opacity:.95; }
+.pfg .psnacks button { background:var(--card); padding:6px 2px; }
+.pfgh small span { white-space:nowrap; }
+.pftip { display:flex; align-items:center; gap:8px; margin:0 0 8px; padding:10px 10px 10px 12px; border-radius:16px; background:color-mix(in srgb,var(--lime) 16%,var(--card)); border:2px solid color-mix(in srgb,var(--lime) 55%,transparent); font:700 .92em/1.45 var(--body); }
+.pftip.new { animation:pkpop .35s ease-out; }
+.pftip > span { font-size:1.5em; }
+.pftip > div { flex:1; }
+.pftip .psay { flex:none; margin:0; padding:8px 12px; }
+
+/* 6B-35 ท่าใหม่ตามเลเวล: ตัวทั้งตัว (svg) + แขน/เท้าหมุนรอบไหล่/ข้อเท้า (.parm/.pleg) */
+.parm, .pleg { transform-box:view-box; transform-origin:0 0; }
+.pbig .pbody { transform-box:fill-box; transform-origin:50% 100%; }
+.ptsec { display:flex; align-items:baseline; justify-content:space-between; gap:8px; margin:10px 2px 6px; }
+.ptsec:first-of-type { margin-top:2px; }
+.ptsec b { font:800 .95em var(--display); }
+.ptsec small { color:var(--ink-2); font-weight:700; }
+/* ไหว้สวัสดี */
+.a-wai .pbody { animation:pm-wai 1.6s ease-in-out; }
+.a-wai .parm-r { animation:pm-wai-r 1.6s ease-in-out; }
+.a-wai .parm-l { animation:pm-wai-l 1.6s ease-in-out; }
+@keyframes pm-wai { 0%,100% { transform:none; } 35%,70% { transform:translateY(6px) scale(1.03,.93); } }
+@keyframes pm-wai-r { 0%,100% { transform:rotate(0); } 25%,80% { transform:rotate(72deg); } }
+@keyframes pm-wai-l { 0%,100% { transform:rotate(0); } 25%,80% { transform:rotate(-72deg); } }
+/* โบกมือ */
+.a-wave .pbody { animation:pm-sway 1.8s ease-in-out; }
+.a-wave .parm-r { animation:pm-wave 1.8s ease-in-out; }
+@keyframes pm-sway { 0%,100% { transform:rotate(0); } 30% { transform:rotate(-4deg); } 70% { transform:rotate(4deg); } }
+@keyframes pm-wave { 0%,100% { transform:rotate(0); } 15% { transform:rotate(-170deg); } 30% { transform:rotate(-140deg); } 45% { transform:rotate(-172deg); } 60% { transform:rotate(-140deg); } 75%,85% { transform:rotate(-170deg); } }
+/* ยืดเหยียด */
+.a-stretch .pbody { animation:pm-stretch 2.2s ease-in-out; }
+.a-stretch .parm-r { animation:pm-up-r 2.2s ease-in-out; }
+.a-stretch .parm-l { animation:pm-up-l 2.2s ease-in-out; }
+@keyframes pm-stretch { 0%,100% { transform:none; } 20% { transform:scale(.96,1.07); } 40% { transform:scale(.96,1.07) rotate(-10deg); } 55% { transform:scale(.96,1.07); } 70% { transform:scale(.96,1.07) rotate(10deg); } 85% { transform:scale(.96,1.07); } }
+@keyframes pm-up-r { 0%,100% { transform:rotate(0); } 18%,88% { transform:rotate(-165deg); } }
+@keyframes pm-up-l { 0%,100% { transform:rotate(0); } 18%,88% { transform:rotate(165deg); } }
+/* กระโดดตบ */
+.a-jack .pbody { animation:pm-jump .8s ease-in-out 2; }
+.a-jack .parm-r { animation:pm-jack-r .8s ease-in-out 2; }
+.a-jack .parm-l { animation:pm-jack-l .8s ease-in-out 2; }
+.a-jack .pleg-r { animation:pm-spread-r .8s ease-in-out 2; }
+.a-jack .pleg-l { animation:pm-spread-l .8s ease-in-out 2; }
+@keyframes pm-jump { 0%,100% { transform:none; } 15% { transform:scale(1.05,.93); } 50% { transform:translateY(-26px); } 85% { transform:scale(1.05,.93); } }
+@keyframes pm-jack-r { 0%,100% { transform:rotate(0); } 50% { transform:rotate(-165deg); } }
+@keyframes pm-jack-l { 0%,100% { transform:rotate(0); } 50% { transform:rotate(165deg); } }
+@keyframes pm-spread-r { 0%,100% { transform:none; } 50% { transform:translateX(10px); } }
+@keyframes pm-spread-l { 0%,100% { transform:none; } 50% { transform:translateX(-10px); } }
+/* ส่ายก้น */
+.a-wiggle .pbody { animation:pm-wiggle .35s ease-in-out 4; }
+@keyframes pm-wiggle { 0%,100% { transform:none; } 25% { transform:translateX(-7px) rotate(-9deg); } 75% { transform:translateX(7px) rotate(9deg); } }
+/* สควอท */
+.a-squat .pbody { animation:pm-squat .7s ease-in-out 3; }
+.a-squat .parm-r { animation:pm-fwd-r .7s ease-in-out 3; }
+.a-squat .parm-l { animation:pm-fwd-l .7s ease-in-out 3; }
+@keyframes pm-squat { 0%,100% { transform:none; } 50% { transform:scale(1.08,.82); } }
+@keyframes pm-fwd-r { 0%,100% { transform:rotate(0); } 50% { transform:rotate(-115deg); } }
+@keyframes pm-fwd-l { 0%,100% { transform:rotate(0); } 50% { transform:rotate(115deg); } }
+/* วิ่งเหยาะ */
+.a-jog .pbody { animation:pm-jog .4s ease-in-out 5; }
+.a-jog .parm-r { animation:pm-swing-r .4s ease-in-out 5; }
+.a-jog .parm-l { animation:pm-swing-l .4s ease-in-out 5; }
+.a-jog .pleg-r { animation:pm-step-r .4s ease-in-out 5; }
+.a-jog .pleg-l { animation:pm-step-l .4s ease-in-out 5; }
+@keyframes pm-jog { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-7px); } }
+@keyframes pm-swing-r { 0%,100% { transform:rotate(-35deg); } 50% { transform:rotate(25deg); } }
+@keyframes pm-swing-l { 0%,100% { transform:rotate(-25deg); } 50% { transform:rotate(35deg); } }
+@keyframes pm-step-r { 0%,100% { transform:translateY(-9px); } 50% { transform:none; } }
+@keyframes pm-step-l { 0%,100% { transform:none; } 50% { transform:translateY(-9px); } }
+/* กลิ้งตัว */
+.a-roll .pbody { transform-origin:50% 55%; animation:pm-roll 1.6s ease-in-out; }
+@keyframes pm-roll { 0% { transform:none; } 15% { transform:translateX(-24px) rotate(-15deg); } 60%,80% { transform:translateX(36px) rotate(360deg); } 100% { transform:translateX(0) rotate(360deg); } }
+/* เตะบอล */
+.a-kick .pbody { animation:pm-lean 1.4s ease-in-out; }
+.a-kick .pleg-r { animation:pm-kick 1.4s ease-in-out; }
+.a-kick .parm-l { animation:pm-bal 1.4s ease-in-out; }
+@keyframes pm-lean { 0%,100% { transform:none; } 30% { transform:rotate(4deg); } 50%,70% { transform:rotate(-7deg); } }
+@keyframes pm-kick { 0%,100% { transform:none; } 30% { transform:translate(-6px,2px); } 50%,70% { transform:translate(16px,-26px) rotate(-35deg); } }
+@keyframes pm-bal { 0%,100% { transform:rotate(0); } 50%,70% { transform:rotate(70deg); } }
+/* ฉลองแชมป์ */
+.a-champ .pbody { animation:pm-champ 2.2s ease-in-out; }
+.a-champ .parm-r { animation:pm-cheer-r 2.2s ease-in-out; }
+.a-champ .parm-l { animation:pm-cheer-l 2.2s ease-in-out; }
+@keyframes pm-champ { 0%,100% { transform:none; } 15% { transform:translateY(3px) scale(1.06,.9); } 35% { transform:translateY(-44px) rotate(-4deg); } 55% { transform:none; } 65% { transform:scale(1.04,.95); } 78% { transform:translateY(-18px) rotate(4deg); } 90% { transform:none; } }
+@keyframes pm-cheer-r { 0%,100% { transform:rotate(0); } 25% { transform:rotate(-165deg); } 45% { transform:rotate(-145deg); } 60% { transform:rotate(-170deg); } 75% { transform:rotate(-145deg); } 90% { transform:rotate(-165deg); } }
+@keyframes pm-cheer-l { 0%,100% { transform:rotate(0); } 25% { transform:rotate(165deg); } 45% { transform:rotate(145deg); } 60% { transform:rotate(170deg); } 75% { transform:rotate(145deg); } 90% { transform:rotate(165deg); } }
+@media (prefers-reduced-motion: reduce) { .a-wai .pbody, .a-wave .pbody, .a-stretch .pbody, .a-jack .pbody, .a-wiggle .pbody, .a-squat .pbody, .a-jog .pbody, .a-roll .pbody, .a-kick .pbody, .a-champ .pbody, .pbig .parm, .pbig .pleg { animation:none !important; } }
+
 </style>
 </head>
 <body>
@@ -1864,7 +2002,7 @@ body.tropen { overflow:hidden; }
  * วางลิงก์เว็บแอป Apps Script (ลงท้ายด้วย /exec) ใน API_URL แล้วอัปโหลดไฟล์นี้ขึ้น GitHub Pages
  * ว่างไว้ = โหมดตัวอย่าง (ยังไม่เชื่อมระบบ) */
 var API_URL = 'https://script.google.com/macros/s/AKfycbzhykUt8ertRZqZT_gnBIvvjRWw6ygOSZsZm8aBZhm73RfhkVIDY16BuO3LZJM7wckV/exec';
-var APP_VER = '1.4';
+var APP_VER = '1.5';
 /* โหมดตัวอย่าง: ยังไม่ใส่ลิงก์ หรือเปิดด้วย ?demo=1 → ใช้ระบบจำลองในเครื่อง (ไฟล์ demo.js) ข้อมูลแยกจากของจริง */
 var API_OK = /^https:\/\/\S+\/exec$/.test(API_URL);
 var DEMO = !API_OK || /[?&]demo=1(&|#|$)/.test(location.search);
@@ -6022,12 +6160,14 @@ var PETART = (function () {
       out += '<ellipse cx="' + r1(hx + d * hr * 0.92) + '" cy="' + r1(hy + hr * 0.02) + '" rx="' + r1(hr * 0.56) + '" ry="' + r1(hr * 0.62) + '" fill="' + p.body + '"' + st(3) + '/>' +
         '<ellipse cx="' + r1(hx + d * hr * 0.98) + '" cy="' + r1(hy + hr * 0.04) + '" rx="' + r1(hr * 0.36) + '" ry="' + r1(hr * 0.44) + '" fill="#F3B6C8"/>';
     });
+    out += backGear(wear, hx, hy, hr, by, brx, bry, g.fy);
     /* เท้า */
     var shoe = (id === 'dog' || id === 'rabbit') && s >= 3;
     [-1, 1].forEach(function (d) {
-      var fx = 100 + d * brx * 0.5;
-      out += '<ellipse cx="' + r1(fx) + '" cy="' + g.fy + '" rx="' + r1(brx * 0.36) + '" ry="' + r1(brx * 0.22) + '" fill="' + (shoe ? (legend ? GOLD : p.acc) : (id === 'turtle' ? p.body : p.dark)) + '"' + st(3) + '/>';
-      if (shoe) out += '<path d="M' + r1(fx - brx * 0.33) + ' ' + (g.fy + 3) + ' h' + r1(brx * 0.66) + '" stroke="#fff" stroke-width="3" stroke-linecap="round"/>';
+      var fx = 100 + d * brx * 0.5, f = '';
+      f += '<ellipse cx="' + r1(fx) + '" cy="' + g.fy + '" rx="' + r1(brx * 0.36) + '" ry="' + r1(brx * 0.22) + '" fill="' + (shoe ? (legend ? GOLD : p.acc) : (id === 'turtle' ? p.body : p.dark)) + '"' + st(3) + '/>';
+      if (shoe) f += '<path d="M' + r1(fx - brx * 0.33) + ' ' + (g.fy + 3) + ' h' + r1(brx * 0.66) + '" stroke="#fff" stroke-width="3" stroke-linecap="round"/>';
+      out += piv('pleg pleg-' + (d < 0 ? 'l' : 'r'), fx, g.fy - brx * 0.22, f);
     });
     /* ตัว */
     out += '<ellipse cx="100" cy="' + by + '" rx="' + brx + '" ry="' + bry + '" fill="' + p.body + '"' + st(3.2) + '/>';
@@ -6042,11 +6182,13 @@ var PETART = (function () {
     if (id === 'turtle' && s >= 3) out += '<ellipse cx="100" cy="' + r1(by + bry * 0.35) + '" rx="' + (brx + 12) + '" ry="13" fill="none" stroke="' + OL + '" stroke-width="13"/><ellipse cx="100" cy="' + r1(by + bry * 0.35) + '" rx="' + (brx + 12) + '" ry="13" fill="none" stroke="' + (legend ? GOLD : '#fff') + '" stroke-width="9"/><ellipse cx="100" cy="' + r1(by + bry * 0.35) + '" rx="' + (brx + 12) + '" ry="13" fill="none" stroke="#F0503D" stroke-width="9" stroke-dasharray="14 14"/>';
     if (legend) out += '<path d="M88 ' + r1(by - bry * 0.75) + ' l12 18 l12 -18" stroke="#F0503D" stroke-width="6" fill="none"/><circle cx="100" cy="' + r1(by - bry * 0.75 + 26) + '" r="11" fill="' + GOLD + '"' + st(2.5) + '/><text x="100" y="' + r1(by - bry * 0.75 + 31) + '" font-size="12" text-anchor="middle" font-weight="900" fill="#B8770B">★</text>';
     /* แขน */
-    var up = (id === 'rabbit' && s >= 3) || (id === 'elephant' && s >= 3);
+    var up = !opt.armsDown && ((id === 'rabbit' && s >= 3) || (id === 'elephant' && s >= 3));
     [-1, 1].forEach(function (d) {
-      var ax = 100 + d * (brx - 3), ay = by - bry * (up ? 0.5 : 0.12), rot = d * (up ? -40 : 28);
+      var ax = 100 + d * (brx - 3), ay = by - bry * (up ? 0.5 : 0.12), rot = d * (up ? -40 : 28), out0 = out, sh = shoulder(ax, ay, bry * 0.42, rot, up);
+      out = '';
       out += '<ellipse cx="' + r1(ax) + '" cy="' + r1(ay) + '" rx="' + r1(brx * 0.25) + '" ry="' + r1(bry * 0.42) + '" fill="' + p.body + '"' + st(3) + ' transform="rotate(' + rot + ' ' + r1(ax) + ' ' + r1(ay) + ')"/>';
       if ((id === 'cat' && s >= 2) || (id === 'rabbit' && s === 2)) out += '<ellipse cx="' + r1(ax + d * 4) + '" cy="' + r1(ay + bry * 0.2) + '" rx="' + r1(brx * 0.2) + '" ry="5" fill="' + (legend ? GOLD : p.acc) + '"' + st(2) + ' transform="rotate(' + rot + ' ' + r1(ax) + ' ' + r1(ay) + ')"/>';
+      out = out0 + piv('parm parm-' + (d < 0 ? 'l' : 'r') + (up ? ' up' : ''), sh[0], sh[1], out);
     });
     /* หัว */
     out += '<circle cx="' + hx + '" cy="' + hy + '" r="' + hr + '" fill="' + p.body + '"' + st(3.4) + '/>';
@@ -6114,7 +6256,11 @@ var PETART = (function () {
   }
   /* ===== 6B-10: สัตว์เลี้ยงเพิ่มอีก 10 แบบ (วาดแบบแยกชิ้นส่วน) =====
    * แต่ละตัวบอกแค่ส่วนที่ต่าง: ข้างหลัง (หาง แผงคอ หู) ลายบนหัว หน้า ชุด ของบนหัว ของในมือ */
+  /* 6B-35: ห่อแขน/เท้าเป็นกลุ่มที่หมุนรอบไหล่/ข้อเท้าได้ (ใช้กับท่าพิเศษ) · จุดหมุนอยู่ที่ 0 0 ของกลุ่มกลาง */
+  function piv(cls, x, y, inner) { return '<g transform="translate(' + r1(x) + ' ' + r1(y) + ')"><g class="' + cls + '"><g transform="translate(' + r1(-x) + ' ' + r1(-y) + ')">' + inner + '</g></g></g>'; }
+  function shoulder(ax, ay, ry, rot, up) { var a = rot * Math.PI / 180, k = up ? -0.8 : 0.8; return [ax + ry * Math.sin(a) * k, ay - ry * Math.cos(a) * k]; }
   function P(d) { return '<path d="' + d + '"'; }
+  function star5(x, y, r, f) { var a = []; for (var k = 0; k < 10; k++) { var t = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? r * 0.45 : r; a.push([x + Math.cos(t) * rr, y + Math.sin(t) * rr]); } return '<polygon points="' + a.map(function (q) { return r1(q[0]) + ',' + r1(q[1]); }).join(' ') + '" fill="' + f + '"/>'; }
   function C(x, y, r, f, k) { return '<circle cx="' + r1(x) + '" cy="' + r1(y) + '" r="' + r1(r) + '" fill="' + f + '"' + (k === 0 ? '' : st(k || 3)) + '/>'; }
   function E(x, y, rx, ry, f, k, rot) { return '<ellipse cx="' + r1(x) + '" cy="' + r1(y) + '" rx="' + r1(rx) + '" ry="' + r1(ry) + '" fill="' + f + '"' + (k === 0 ? '' : st(k || 3)) + (rot ? ' transform="rotate(' + rot + ' ' + r1(x) + ' ' + r1(y) + ')"' : '') + '/>'; }
   function ball(x, y, r, kind) {
@@ -6241,13 +6387,16 @@ var PETART = (function () {
     out += E(100, g.fy + 8, g.brx + 14, 7, '#000', 0).replace('fill="#000"', 'fill="#000" opacity=".15"');
     if (L) out += P('M' + r1(100 - g.brx * 0.7) + ' ' + r1(g.by - g.bry * 0.8) + ' Q' + r1(100 - g.brx - 30) + ' ' + r1(g.by + 10) + ' ' + r1(100 - g.brx - 22) + ' ' + r1(g.fy + 2) + ' L' + r1(100 + g.brx + 22) + ' ' + r1(g.fy + 2) + ' Q' + r1(100 + g.brx + 30) + ' ' + r1(g.by + 10) + ' ' + r1(100 + g.brx * 0.7) + ' ' + r1(g.by - g.bry * 0.8) + 'Z') + ' fill="#7E3BEF"' + st(3) + '/>' + P('M' + r1(100 - g.brx - 22) + ' ' + r1(g.fy + 2) + ' L' + r1(100 + g.brx + 22) + ' ' + r1(g.fy + 2)) + ' stroke="' + GOLD + '" stroke-width="5"/>';
     if (D.back) out += D.back(g);
+    out += backGear(wear, g.hx, g.hy, g.hr, g.by, g.brx, g.bry, g.fy);
     /* เท้า (ขาเตะ = ยกเท้าขวา) */
     [-1, 1].forEach(function (d) {
       var fx = 100 + d * g.brx * 0.5, fy = g.fy, shoe = D.shoes && D.shoes(g), sock = D.socks && D.socks(g);
       if (D.kick && D.kick(g) && d > 0) { fx += 14; fy -= 22; }
-      if (sock) out += '<rect x="' + r1(fx - 7) + '" y="' + r1(fy - 18) + '" width="14" height="16" fill="' + sock + '"' + st(2.5) + '/>';
-      out += E(fx, fy, g.brx * 0.36, g.brx * 0.22, shoe || D.feet || D.dark, 3);
-      if (shoe) out += P('M' + r1(fx - g.brx * 0.33) + ' ' + (fy + 3) + ' h' + r1(g.brx * 0.66)) + ' stroke="#fff" stroke-width="3" stroke-linecap="round"/>';
+      var f = '';
+      if (sock) f += '<rect x="' + r1(fx - 7) + '" y="' + r1(fy - 18) + '" width="14" height="16" fill="' + sock + '"' + st(2.5) + '/>';
+      f += E(fx, fy, g.brx * 0.36, g.brx * 0.22, shoe || D.feet || D.dark, 3);
+      if (shoe) f += P('M' + r1(fx - g.brx * 0.33) + ' ' + (fy + 3) + ' h' + r1(g.brx * 0.66)) + ' stroke="#fff" stroke-width="3" stroke-linecap="round"/>';
+      out += piv('pleg pleg-' + (d < 0 ? 'l' : 'r'), fx, fy - g.brx * 0.22, f);
     });
     out += E(100, g.by, g.brx, g.bry, D.body, 3.2);
     out += '<g clip-path="url(#' + uid + 'b)">' + E(100, g.by + g.bry * 0.28, g.brx * 0.62, g.bry * 0.66, D.belly, 0);
@@ -6258,16 +6407,19 @@ var PETART = (function () {
     if (D.knot && D.knot(g)) out += P('M100 ' + r1(g.by + g.bry * 0.25) + ' l-10 18 M100 ' + r1(g.by + g.bry * 0.25) + ' l10 18') + ' stroke="' + D.knot(g) + '" stroke-width="7" stroke-linecap="round"/>';
     if (L) out += P('M88 ' + r1(g.by - g.bry * 0.75) + ' l12 18 l12 -18') + ' stroke="#F0503D" stroke-width="6" fill="none"/>' + C(100, g.by - g.bry * 0.75 + 26, 11, GOLD, 2.5) + '<text x="100" y="' + r1(g.by - g.bry * 0.75 + 31) + '" font-size="12" text-anchor="middle" font-weight="900" fill="#B8770B">★</text>';
     /* แขน */
-    var up = D.armsUp && D.armsUp(g), armCol = D.whiteArms && D.whiteArms(g) ? '#FFFFFF' : D.arms || D.body;
+    var up = !opt.armsDown && D.armsUp && D.armsUp(g), armCol = D.whiteArms && D.whiteArms(g) ? '#FFFFFF' : D.arms || D.body;
     [-1, 1].forEach(function (d) {
       var ax = 100 + d * (g.brx - 3), ay = g.by - g.bry * (up ? 0.55 : 0.12), rot = d * (up ? -150 : 28);
       if (up) { ax = 100 + d * (g.brx * 0.55); ay = g.by - g.bry * 0.95; }
+      var out0 = out, sh = shoulder(ax, ay, g.bry * 0.42, up ? d * -20 : rot, up);
+      out = '';
       out += E(ax, ay, g.brx * 0.25, g.bry * 0.42, armCol, 3, up ? d * -20 : rot);
       var band = D.armband && D.armband(g);
       if (band) out += E(ax + d * 2, ay - g.bry * 0.12, g.brx * 0.24, 5, band, 2, rot);
       if (D.wrist && D.wrist(g)) out += E(ax + d * 4, ay + g.bry * 0.22, g.brx * 0.2, 5, g.L ? GOLD : D.acc, 2, rot);
       var glove = D.gloves && D.gloves(g);
       if (glove) out += C(ax + d * 4, ay + g.bry * 0.32, g.brx * 0.24, glove, 3);
+      out = out0 + piv('parm parm-' + (d < 0 ? 'l' : 'r') + (up ? ' up' : ''), sh[0], sh[1], out);
     });
     /* คอยาว (ยีราฟ) */
     if (D.neck) {
@@ -7200,6 +7352,47 @@ var PETART = (function () {
   Object.keys(S6).forEach(function (k) { S2[k] = S6[k]; });
   Object.keys(S2).forEach(function (k) { SP[k] = { name: S2[k].name, body: S2[k].body, dark: S2[k].dark, egg: S2[k].egg }; });
 
+  /* 6B-36 ของช่อง "หลัง": วาดก่อนเท้า/ตัว/หัว จึงอยู่ด้านหลังน้อง */
+  function backGear(w, hx, hy, hr, by, brx, bry, fy) {
+    var b = w && w.back, o = '', u = hr / 40;
+    if (!b) return '';
+    if (b === 'cape') {
+      o += P('M' + r1(hx - brx * 0.55) + ' ' + r1(by - bry * 0.85) + ' Q' + r1(hx - brx - 30) + ' ' + r1(by + 6) + ' ' + r1(hx - brx - 22) + ' ' + r1(fy + 2) + ' Q' + hx + ' ' + r1(fy + 14) + ' ' + r1(hx + brx + 22) + ' ' + r1(fy + 2) + ' Q' + r1(hx + brx + 30) + ' ' + r1(by + 6) + ' ' + r1(hx + brx * 0.55) + ' ' + r1(by - bry * 0.85) + 'Z') + ' fill="#F0503D"' + st(3) + '/>';
+      [-1, 1].forEach(function (d) { o += P('M' + r1(hx + d * (brx + 4)) + ' ' + r1(by - bry * 0.3) + ' Q' + r1(hx + d * (brx + 16)) + ' ' + r1(by + bry * 0.4) + ' ' + r1(hx + d * (brx + 12)) + ' ' + r1(fy + 4)) + ' stroke="#B8302A" stroke-width="2.5" fill="none" opacity=".7"/>'; });
+    } else if (b === 'angel' || b === 'butterfly') {
+      [-1, 1].forEach(function (d) {
+        var ax = hx + d * brx * 0.45, ay = by - bry * 0.45, X = function (v) { return r1(ax + d * v * u); }, Y = function (v) { return r1(ay + v * u); };
+        if (b === 'angel') {
+          o += P('M' + X(0) + ' ' + Y(0) + ' C' + X(20) + ' ' + Y(-44) + ' ' + X(64) + ' ' + Y(-50) + ' ' + X(70) + ' ' + Y(-28) + ' Q' + X(60) + ' ' + Y(-20) + ' ' + X(64) + ' ' + Y(-10) + ' Q' + X(52) + ' ' + Y(-4) + ' ' + X(54) + ' ' + Y(7) + ' Q' + X(40) + ' ' + Y(9) + ' ' + X(38) + ' ' + Y(20) + ' Q' + X(20) + ' ' + Y(18) + ' ' + X(0) + ' ' + Y(10) + 'Z') + ' fill="#FFFFFF"' + st(2.5) + '/>';
+          [[14, -6, 52, -22], [12, 2, 40, -4], [10, 8, 30, 12]].forEach(function (q) { o += P('M' + X(q[0]) + ' ' + Y(q[1]) + ' Q' + X((q[0] + q[2]) / 2) + ' ' + Y(Math.min(q[1], q[3]) - 6) + ' ' + X(q[2]) + ' ' + Y(q[3])) + ' stroke="#BFD6F2" stroke-width="2.5" fill="none" stroke-linecap="round"/>'; });
+        } else {
+          o += E(ax + d * 24 * u, ay + 16 * u, 20 * u, 15 * u, '#9B6BFF', 2.5, d * 25);
+          o += E(ax + d * 32 * u, ay - 20 * u, 30 * u, 22 * u, '#FF8AD8', 2.5, d * -25);
+          o += C(ax + d * 36 * u, ay - 22 * u, 8 * u, '#FFD84D', 0) + C(ax + d * 22 * u, ay - 12 * u, 4 * u, '#FFFFFF', 0) + C(ax + d * 28 * u, ay + 18 * u, 5 * u, '#FFE3F5', 0);
+        }
+      });
+    } else if (b === 'bag') {
+      o += '<rect x="' + r1(hx - brx - 9) + '" y="' + r1(by - bry * 0.95) + '" width="' + r1(2 * brx + 18) + '" height="' + r1(bry * 1.55) + '" rx="' + r1(14 * u) + '" fill="#3D7BF0"' + st(3) + '/>';
+      [-1, 1].forEach(function (d) { o += '<rect x="' + r1(hx + d * (brx + 5) - 6) + '" y="' + r1(by - bry * 0.1) + '" width="12" height="' + r1(bry * 0.5) + '" rx="4" fill="#FFD84D"' + st(2) + '/>'; });
+    } else if (b === 'umbrella') {
+      var cx = hx + hr * 0.8, cy = hy - hr * 0.7, R = hr * 1.0, rot = 15;
+      o += P('M' + r1(cx) + ' ' + r1(cy) + ' L' + r1(hx + brx + 2) + ' ' + r1(by + bry * 0.15)) + ' stroke="#8A5A35" stroke-width="' + r1(4.5 * u) + '" stroke-linecap="round"/>';
+      o += '<g transform="rotate(' + rot + ' ' + r1(cx) + ' ' + r1(cy) + ')">';
+      o += P('M' + r1(cx - R) + ' ' + r1(cy) + ' A' + r1(R) + ' ' + r1(R * 0.82) + ' 0 0 1 ' + r1(cx + R) + ' ' + r1(cy) + reverseScallop(cx, cy, R)) + ' fill="#E8473B"' + st(3) + '/>';
+      for (var k = 1; k < 6; k++) { var xx = cx - R + (2 * R) * k / 6; o += P('M' + r1(cx) + ' ' + r1(cy - R * 0.82) + ' Q' + r1((cx + xx) / 2) + ' ' + r1(cy - R * 0.45) + ' ' + r1(xx) + ' ' + r1(cy)) + ' stroke="#B8302A" stroke-width="1.6" fill="none" opacity=".75"/>'; }
+      var fx0 = cx - R * 0.32, fy0 = cy - R * 0.38;
+      for (var m = 0; m < 5; m++) { var a = m * Math.PI * 2 / 5; o += C(fx0 + Math.cos(a) * R * 0.11, fy0 + Math.sin(a) * R * 0.11, R * 0.09, '#FFFFFF', 0); }
+      o += C(fx0, fy0, R * 0.06, '#FFD84D', 0) + E(fx0 + R * 0.24, fy0 + R * 0.12, R * 0.1, R * 0.045, '#5FB277', 0, -30);
+      o += C(cx, cy - R * 0.82, 3.5 * u, '#8A5A35', 1.5) + '</g>';
+    }
+    return o;
+  }
+  /* ขอบหยักด้านล่างของร่ม (วาดย้อนจากขวาไปซ้าย ให้ปิดรูปได้) */
+  function reverseScallop(cx, cy, R) {
+    var sc = '';
+    for (var i = 6; i > 0; i--) { var x1 = cx - R + (2 * R) * i / 6, x0 = cx - R + (2 * R) * (i - 1) / 6; sc += ' Q' + r1((x0 + x1) / 2) + ' ' + r1(cy + R * 0.16) + ' ' + r1(x0) + ' ' + r1(cy); }
+    return sc + 'Z';
+  }
   /* ของแต่งตัว */
   function gear(w, hx, hy, hr, by, brx, bry, id) {
     var o = '', nk = hy + hr * 0.93;
@@ -7211,7 +7404,38 @@ var PETART = (function () {
     } else if (w.neck === 'whistle') {
       o += '<path d="M' + r1(hx - hr * 0.42) + ' ' + r1(nk - 4) + ' L' + r1(hx - 4) + ' ' + r1(by - bry * 0.2) + ' M' + r1(hx + hr * 0.42) + ' ' + r1(nk - 4) + ' L' + r1(hx + 4) + ' ' + r1(by - bry * 0.2) + '" stroke="#3D7BF0" stroke-width="3"/>';
       o += '<rect x="' + r1(hx - 10) + '" y="' + r1(by - bry * 0.22) + '" width="22" height="12" rx="6" fill="#D9DCE8"' + st(2.5) + '/><circle cx="' + r1(hx - 3) + '" cy="' + r1(by - bry * 0.22 + 6) + '" r="3" fill="' + OL + '"/>';
+    } else if (w.neck === 'medal') {
+      var my0 = by - bry * 0.12 + hr * 0.12;
+      [-1, 1].forEach(function (d) { o += P('M' + r1(hx + d * hr * 0.42) + ' ' + r1(nk - 6) + ' L' + r1(hx + d * 3) + ' ' + r1(my0 - hr * 0.16)) + ' stroke="' + OL + '" stroke-width="9" stroke-linecap="round"/>' + P('M' + r1(hx + d * hr * 0.42) + ' ' + r1(nk - 6) + ' L' + r1(hx + d * 3) + ' ' + r1(my0 - hr * 0.16)) + ' stroke="' + (d < 0 ? '#F0503D' : '#3D7BF0') + '" stroke-width="5.5" stroke-linecap="round"/>'; });
+      o += C(hx, my0, hr * 0.21, GOLD, 2.5) + C(hx, my0, hr * 0.14, GOLD2, 0) + star5(hx, my0, hr * 0.11, '#FFF3A6');
+    } else if (w.neck === 'towel') {
+      o += P('M' + r1(hx - hr * 0.64) + ' ' + r1(nk - 7) + ' Q' + hx + ' ' + r1(nk + 12) + ' ' + r1(hx + hr * 0.64) + ' ' + r1(nk - 7) + ' L' + r1(hx + hr * 0.62) + ' ' + r1(nk + 5) + ' Q' + hx + ' ' + r1(nk + 22) + ' ' + r1(hx - hr * 0.62) + ' ' + r1(nk + 5) + 'Z') + ' fill="#FFFFFF"' + st(2.5) + '/>';
+      [-1, 1].forEach(function (d) {
+        var x0 = hx + d * hr * 0.36 - hr * 0.13, L = by - nk + bry * 0.15;
+        o += '<rect x="' + r1(x0) + '" y="' + r1(nk) + '" width="' + r1(hr * 0.26) + '" height="' + r1(L) + '" rx="4" fill="#FFFFFF"' + st(2.5) + '/>';
+        [0.72, 0.84].forEach(function (k) { o += P('M' + r1(x0 + 2) + ' ' + r1(nk + L * k) + ' h' + r1(hr * 0.26 - 4)) + ' stroke="#46A7F5" stroke-width="3"/>'; });
+      });
+    } else if (w.neck === 'pakama') {
+      var cid = 'pk' + (++UID), band = 'M' + r1(hx - hr * 0.64) + ' ' + r1(nk - 7) + ' Q' + hx + ' ' + r1(nk + 12) + ' ' + r1(hx + hr * 0.64) + ' ' + r1(nk - 7) + ' L' + r1(hx + hr * 0.62) + ' ' + r1(nk + 6) + ' Q' + hx + ' ' + r1(nk + 24) + ' ' + r1(hx - hr * 0.62) + ' ' + r1(nk + 6) + 'Z',
+        tail = 'M' + r1(hx - hr * 0.42) + ' ' + r1(nk + 4) + ' l' + r1(-hr * 0.06) + ' ' + r1(hr * 0.62) + ' l' + r1(hr * 0.28) + ' ' + r1(hr * 0.04) + ' l' + r1(-hr * 0.02) + ' ' + r1(-hr * 0.6) + 'Z';
+      o += '<defs><clipPath id="' + cid + '"><path d="' + band + '"/><path d="' + tail + '"/></clipPath></defs>';
+      o += P(tail) + ' fill="#E8473B"' + st(2.5) + '/>' + P(band) + ' fill="#E8473B"' + st(2.5) + '/>';
+      var lines = '';
+      for (var xx = hx - hr * 0.7; xx < hx + hr * 0.7; xx += hr * 0.16) lines += 'M' + r1(xx) + ' ' + r1(nk - 12) + ' v' + r1(hr * 0.9) + ' ';
+      var lines2 = '';
+      for (var yy = nk - 8; yy < nk + hr * 0.7; yy += hr * 0.16) lines2 += 'M' + r1(hx - hr * 0.7) + ' ' + r1(yy) + ' h' + r1(hr * 1.4) + ' ';
+      o += '<g clip-path="url(#' + cid + ')"><path d="' + lines + '" stroke="#3D7BF0" stroke-width="' + r1(hr * 0.05) + '" opacity=".85"/><path d="' + lines2 + '" stroke="#FFFFFF" stroke-width="' + r1(hr * 0.035) + '" opacity=".75"/></g>';
+      o += C(hx - hr * 0.42, nk + 4, hr * 0.09, '#C93A2A', 2);
+    } else if (w.neck === 'malai') {
+      var ly = nk - 6, cy2 = by + bry * 0.15, n = 13;
+      for (var t = 0; t <= n; t++) { var q = t / n, bx = (1 - q) * (1 - q) * (hx - hr * 0.56) + 2 * (1 - q) * q * hx + q * q * (hx + hr * 0.56), byy = (1 - q) * (1 - q) * ly + 2 * (1 - q) * q * cy2 + q * q * ly; o += C(bx, byy, hr * 0.075, '#FFFFFF', 1.5); }
+      var mY = 0.5 * ly + 0.5 * cy2;
+      [-1, 1].forEach(function (d) { o += E(hx + d * hr * 0.15, mY + 2, hr * 0.1, hr * 0.05, '#5FB277', 0, d * 30); });
+      [[-0.07, 0.42, '#FFD84D'], [0, 0.48, '#FF6FB1'], [0.07, 0.42, '#FFD84D']].forEach(function (k) { o += P('M' + r1(hx + hr * k[0]) + ' ' + r1(mY + hr * 0.1) + ' v' + r1(hr * k[1] - hr * 0.08)) + ' stroke="#5FB277" stroke-width="2"/>' + C(hx + hr * k[0], mY + hr * k[1], hr * 0.05, k[2], 1.5); });
+      o += C(hx, mY, hr * 0.13, '#FF4D6D', 2) + C(hx, mY, hr * 0.06, '#FFD84D', 0);
     }
+    if (w.back === 'bag') [-1, 1].forEach(function (d) { o += P('M' + r1(hx + d * brx * 0.5) + ' ' + r1(nk - 3) + ' Q' + r1(hx + d * brx * 0.64) + ' ' + r1(by - bry * 0.2) + ' ' + r1(hx + d * brx * 0.52) + ' ' + r1(by + bry * 0.42)) + ' stroke="' + OL + '" stroke-width="9" fill="none" stroke-linecap="round"/>' + P('M' + r1(hx + d * brx * 0.5) + ' ' + r1(nk - 3) + ' Q' + r1(hx + d * brx * 0.64) + ' ' + r1(by - bry * 0.2) + ' ' + r1(hx + d * brx * 0.52) + ' ' + r1(by + bry * 0.42)) + ' stroke="#2A5BC9" stroke-width="6" fill="none" stroke-linecap="round"/><rect x="' + r1(hx + d * brx * 0.6 - 5) + '" y="' + r1(by - bry * 0.05) + '" width="10" height="7" rx="2" fill="#FFD84D"' + st(1.5) + '/>'; });
+    if (w.back === 'cape') { [-1, 1].forEach(function (d) { o += P('M' + r1(hx + d * hr * 0.6) + ' ' + r1(nk - 4) + ' L' + r1(hx + d * 5) + ' ' + r1(nk + 3)) + ' stroke="#F0503D" stroke-width="5" stroke-linecap="round"/>'; }); o += C(hx, nk + 3, hr * 0.1, GOLD, 2); }
     var ey = hy + hr * (id === 'elephant' ? -0.02 : 0.06);
     if (w.face === 'sun') {
       [-1, 1].forEach(function (d) { o += '<rect x="' + r1(hx + d * hr * 0.36 - hr * 0.24) + '" y="' + r1(ey - hr * 0.17) + '" width="' + r1(hr * 0.48) + '" height="' + r1(hr * 0.32) + '" rx="' + r1(hr * 0.1) + '" fill="' + OL + '"/><path d="M' + r1(hx + d * hr * 0.36 - hr * 0.15) + ' ' + r1(ey - hr * 0.08) + ' l' + r1(hr * 0.12) + ' ' + r1(-hr * 0.06) + '" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>'; });
@@ -7219,6 +7443,10 @@ var PETART = (function () {
     } else if (w.face === 'round') {
       [-1, 1].forEach(function (d) { o += '<circle cx="' + r1(hx + d * hr * 0.36) + '" cy="' + r1(ey) + '" r="' + r1(hr * 0.21) + '" fill="#fff" fill-opacity=".25" stroke="#8A5A35" stroke-width="3.5"/>'; });
       o += '<path d="M' + r1(hx - hr * 0.15) + ' ' + r1(ey) + ' h' + r1(hr * 0.3) + '" stroke="#8A5A35" stroke-width="3"/>';
+    } else if (w.face === 'goggles') {
+      o += P('M' + r1(hx - hr * 0.98) + ' ' + r1(ey - 2) + ' Q' + hx + ' ' + r1(ey - hr * 0.1) + ' ' + r1(hx + hr * 0.98) + ' ' + r1(ey - 2)) + ' stroke="#3D7BF0" stroke-width="' + r1(hr * 0.13) + '" fill="none"/>';
+      [-1, 1].forEach(function (d) { o += '<ellipse cx="' + r1(hx + d * hr * 0.36) + '" cy="' + r1(ey) + '" rx="' + r1(hr * 0.24) + '" ry="' + r1(hr * 0.19) + '" fill="#46D6FF" fill-opacity=".55" stroke="#2257C9" stroke-width="3.5"/>' + P('M' + r1(hx + d * hr * 0.36 - hr * 0.12) + ' ' + r1(ey - hr * 0.05) + ' q' + r1(hr * 0.06) + ' ' + r1(-hr * 0.08) + ' ' + r1(hr * 0.15) + ' ' + r1(-hr * 0.08)) + ' stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".9"/>'; });
+      o += P('M' + r1(hx - hr * 0.12) + ' ' + r1(ey - 2) + ' q' + r1(hr * 0.12) + ' -5 ' + r1(hr * 0.24) + ' 0') + ' stroke="#2257C9" stroke-width="3" fill="none"/>';
     } else if (w.face === 'star') {
       [-1, 1].forEach(function (d) {
         var cx = hx + d * hr * 0.36, pts = [];
@@ -7243,6 +7471,30 @@ var PETART = (function () {
       o += '<path d="M' + r1(hx - hr * 0.42) + ' ' + r1(hy - hr * 0.72) + ' L' + r1(hx + hr * 0.2) + ' ' + r1(top - hr * 0.75) + ' L' + r1(hx + hr * 0.45) + ' ' + r1(hy - hr * 0.8) + 'Z" fill="#FF6FB1"' + st(3) + '/>';
       [[0.0, 0.35], [0.12, 0.62], [0.24, 0.92]].forEach(function (q) { o += '<circle cx="' + r1(hx + hr * q[0]) + '" cy="' + r1(top - hr * q[1] + hr * 0.1) + '" r="3.5" fill="#FFD84D"/>'; });
       o += '<circle cx="' + r1(hx + hr * 0.2) + '" cy="' + r1(top - hr * 0.78) + '" r="' + r1(hr * 0.12) + '" fill="#7CFFCB"' + st(2) + '/>';
+    } else if (w.hat === 'headband') {
+      o += P('M' + r1(hx - hr * 0.95) + ' ' + r1(hy - hr * 0.38) + ' Q' + hx + ' ' + r1(hy - hr * 0.64) + ' ' + r1(hx + hr * 0.95) + ' ' + r1(hy - hr * 0.38) + ' L' + r1(hx + hr * 0.99) + ' ' + r1(hy - hr * 0.16) + ' Q' + hx + ' ' + r1(hy - hr * 0.42) + ' ' + r1(hx - hr * 0.99) + ' ' + r1(hy - hr * 0.16) + 'Z') + ' fill="#FF4D6D"' + st(3) + '/>';
+      o += P('M' + r1(hx - hr * 0.95) + ' ' + r1(hy - hr * 0.27) + ' Q' + hx + ' ' + r1(hy - hr * 0.53) + ' ' + r1(hx + hr * 0.95) + ' ' + r1(hy - hr * 0.27)) + ' stroke="#fff" stroke-width="' + r1(hr * 0.06) + '" fill="none" opacity=".9"/>';
+      o += P('M' + r1(hx + hr * 0.92) + ' ' + r1(hy - hr * 0.3) + ' l' + r1(hr * 0.36) + ' ' + r1(-hr * 0.12) + ' l' + r1(-hr * 0.02) + ' ' + r1(hr * 0.16) + 'z M' + r1(hx + hr * 0.92) + ' ' + r1(hy - hr * 0.24) + ' l' + r1(hr * 0.3) + ' ' + r1(hr * 0.2) + ' l' + r1(-hr * 0.1) + ' ' + r1(hr * 0.1) + 'z') + ' fill="#FF4D6D"' + st(2.5) + '/>';
+    } else if (w.hat === 'helmet') {
+      o += P('M' + r1(hx - hr * 0.97) + ' ' + r1(hy - hr * 0.2) + ' Q' + r1(hx - hr * 1.0) + ' ' + r1(top - hr * 0.22) + ' ' + hx + ' ' + r1(top - hr * 0.22) + ' Q' + r1(hx + hr * 1.0) + ' ' + r1(top - hr * 0.22) + ' ' + r1(hx + hr * 0.97) + ' ' + r1(hy - hr * 0.2) + ' Q' + hx + ' ' + r1(hy - hr * 0.44) + ' ' + r1(hx - hr * 0.97) + ' ' + r1(hy - hr * 0.2) + 'Z') + ' fill="#46D6FF"' + st(3) + '/>';
+      o += P('M' + hx + ' ' + r1(top - hr * 0.2) + ' L' + hx + ' ' + r1(hy - hr * 0.4)) + ' stroke="#fff" stroke-width="' + r1(hr * 0.1) + '" stroke-linecap="round" opacity=".9"/>';
+      [[-0.5, -0.05, 25], [0.5, -0.05, -25], [-0.26, -0.16, 10], [0.26, -0.16, -10]].forEach(function (q) { o += E(hx + q[0] * hr, top + hr * 0.12 - q[1] * hr, hr * 0.06, hr * 0.15, OL, 0, q[2]).replace('/>', ' opacity=".35"/>'); });
+      o += P('M' + r1(hx - hr * 0.55) + ' ' + r1(hy - hr * 0.34) + ' Q' + hx + ' ' + r1(hy - hr * 0.2) + ' ' + r1(hx + hr * 0.55) + ' ' + r1(hy - hr * 0.34)) + ' stroke="#2257C9" stroke-width="' + r1(hr * 0.11) + '" fill="none" stroke-linecap="round"/>';
+      [-1, 1].forEach(function (d) { o += P('M' + r1(hx + d * hr * 0.9) + ' ' + r1(hy - hr * 0.2) + ' L' + r1(hx + d * hr * 0.5) + ' ' + r1(hy + hr * 0.9)) + ' stroke="' + OL + '" stroke-width="2" opacity=".7"/>'; });
+    } else if (w.hat === 'ngob') {
+      o += P('M' + r1(hx - hr * 1.3) + ' ' + r1(hy - hr * 0.4) + ' C' + r1(hx - hr * 0.9) + ' ' + r1(hy - hr * 0.55) + ' ' + r1(hx - hr * 0.35) + ' ' + r1(top - hr * 0.22) + ' ' + hx + ' ' + r1(top - hr * 0.55) + ' C' + r1(hx + hr * 0.35) + ' ' + r1(top - hr * 0.22) + ' ' + r1(hx + hr * 0.9) + ' ' + r1(hy - hr * 0.55) + ' ' + r1(hx + hr * 1.3) + ' ' + r1(hy - hr * 0.4) + ' Q' + hx + ' ' + r1(hy - hr * 0.16) + ' ' + r1(hx - hr * 1.3) + ' ' + r1(hy - hr * 0.4) + 'Z') + ' fill="#E9C27A"' + st(3) + '/>';
+      [0.3, 0.55, 0.78].forEach(function (k) { var yb = hy - hr * 0.4 - (hr * 0.95) * k * 0.9, xw = hr * 1.3 * (1 - k * 0.78); o += P('M' + r1(hx - xw) + ' ' + r1(yb + hr * 0.1) + ' Q' + hx + ' ' + r1(yb + hr * 0.24 * (1 - k)) + ' ' + r1(hx + xw) + ' ' + r1(yb + hr * 0.1)) + ' stroke="#B8893F" stroke-width="2" fill="none" opacity=".75"/>'; });
+      [-0.7, -0.3, 0.3, 0.7].forEach(function (k) { o += P('M' + hx + ' ' + r1(top - hr * 0.5) + ' L' + r1(hx + k * hr * 1.2) + ' ' + r1(hy - hr * 0.36 - Math.abs(k) * hr * 0.05)) + ' stroke="#B8893F" stroke-width="1.6" opacity=".6"/>'; });
+      o += P('M' + r1(hx - hr * 1.22) + ' ' + r1(hy - hr * 0.38) + ' Q' + hx + ' ' + r1(hy - hr * 0.2) + ' ' + r1(hx + hr * 1.22) + ' ' + r1(hy - hr * 0.38)) + ' stroke="#8A5A35" stroke-width="3" fill="none" opacity=".55"/>' + C(hx, top - hr * 0.52, hr * 0.06, '#B8893F', 1.5);
+    } else if (w.hat === 'chada') {
+      var bY = hy - hr * 0.48, tY = top - hr * 0.02;
+      o += '<polygon points="' + pts([[hx - hr * 0.8, bY], [hx - hr * 0.44, tY], [hx + hr * 0.44, tY], [hx + hr * 0.8, bY]]) + '" fill="' + GOLD + '"' + st(2.5) + '/>';
+      o += P('M' + r1(hx - hr * 0.8) + ' ' + r1(bY) + ' Q' + hx + ' ' + r1(bY - hr * 0.16) + ' ' + r1(hx + hr * 0.8) + ' ' + r1(bY)) + ' stroke="' + GOLD2 + '" stroke-width="' + r1(hr * 0.09) + '" fill="none"/>';
+      var tiers = [[0.38, 0.27, 0], [0.3, 0.2, 0.15], [0.22, 0.14, 0.29], [0.15, 0.08, 0.42]];
+      tiers.forEach(function (t, i) { var y0 = tY - hr * t[2], y1 = tY - hr * (t[2] + 0.16); o += '<polygon points="' + pts([[hx - hr * t[0], y0], [hx - hr * t[1], y1], [hx + hr * t[1], y1], [hx + hr * t[0], y0]]) + '" fill="' + (i % 2 ? GOLD : GOLD2) + '"' + st(2) + '/>' + E(hx, y0, hr * t[0] * 1.02, hr * 0.04, GOLD, 1.5); });
+      o += '<polygon points="' + pts([[hx - hr * 0.08, tY - hr * 0.58], [hx, tY - hr * 0.74], [hx + hr * 0.08, tY - hr * 0.58]]) + '" fill="' + GOLD + '"' + st(2) + '/>';
+      o += C(hx, bY - hr * 0.26, hr * 0.09, '#FF4D6D', 2) + C(hx - hr * 0.42, bY - hr * 0.14, hr * 0.05, '#22B89A', 1.5) + C(hx + hr * 0.42, bY - hr * 0.14, hr * 0.05, '#22B89A', 1.5);
+      [-1, 1].forEach(function (d) { o += E(hx + d * hr * 0.9, hy - hr * 0.12, hr * 0.09, hr * 0.26, GOLD, 2, d * -18) + C(hx + d * hr * 0.92, hy - hr * 0.2, hr * 0.04, '#FF4D6D', 0); });
     } else if (w.hat === 'flower') {
       for (var k = 0; k < 5; k++) {
         var a = Math.PI * (1.15 + k * 0.175), fx = hx + Math.cos(a) * hr * 0.9, fy = hy + Math.sin(a) * hr * 0.9, col = ['#FF6FB1', '#FFD84D', '#fff', '#FF8A5B', '#B9A6FF'][k];
@@ -7268,7 +7520,7 @@ var PETART = (function () {
   function svg(id, s, size, opt) {
     var vb = opt && opt.fit ? (s === 1 ? '22 48 156 156' : s === 2 ? '12 26 176 176' : '0 0 200 200') : '0 0 200 200';
     var fx = opt && opt.fx && s > 0 && window.PETFX ? PETFX.layers(opt.fx.tier, id, opt.fx) : null;
-    return '<svg class="petsvg' + (fx && fx.back ? ' fxon' : '') + '" viewBox="' + vb + '" width="' + (size || 160) + '" height="' + (size || 160) + '" role="img" aria-label="' + (SP[id] ? SP[id].name : '') + '">' + (fx ? '<g aria-hidden="true">' + fx.back + '</g>' : '') + group(id, s, opt) + (fx ? '<g aria-hidden="true">' + fx.front + '</g>' : '') + '</svg>';
+    return '<svg class="petsvg' + (fx && fx.back ? ' fxon' : '') + '" viewBox="' + vb + '" width="' + (size || 160) + '" height="' + (size || 160) + '" role="img" aria-label="' + (SP[id] ? SP[id].name : '') + '">' + (fx ? '<g aria-hidden="true">' + fx.back + '</g>' : '') + '<g class="pbody">' + group(id, s, opt) + '</g>' + (fx ? '<g aria-hidden="true">' + fx.front + '</g>' : '') + '</svg>';
   }
   return { svg: svg, group: group, SP: SP };
 })();
@@ -7372,6 +7624,92 @@ var PETFX = (function () {
   return { layers: layers, star4: star4, RAIN: RAIN };
 })();
 window.PETFX = PETFX;
+
+/* ===== 6B-33: น้องคู่หูแบบเสมือนจริง (แต่งภาพการ์ตูนเดิม ไม่ต้องวาดใหม่) · ใช้แทนภาพน้องทั้งแอป =====
+ * ส่วนที่เป็นขน: ไล่แสงนูน + เงาด้านในแบบตุ๊กตาขนนุ่ม + ลายเส้นขนละเอียด + ขอบฟูนิด ๆ
+ * เสื้อผ้า/ของ: ไล่แสงนูน ไม่มีขน · เส้นขอบบางลงเป็นสีเข้มของสีชิ้นนั้น · เงาใต้ตัวนุ่ม */
+var PETREAL = (function () {
+  var N = 0;
+  function hx(c) { c = c.replace('#', ''); if (c.length === 3) c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2]; return [parseInt(c.slice(0, 2), 16), parseInt(c.slice(2, 4), 16), parseInt(c.slice(4, 6), 16)]; }
+  function mix(c, a) { var r = hx(c), t = a < 0 ? 0 : 255, k = Math.abs(a); return '#' + r.map(function (v) { var x = Math.round(v + (t - v) * k); return (x < 16 ? '0' : '') + x.toString(16); }).join(''); }
+  function lum(c) { var r = hx(c); return (0.299 * r[0] + 0.587 * r[1] + 0.114 * r[2]) / 255; }
+  function furCols(id) {
+    var p = PETART.SP[id] || {}, o = {};
+    ['body', 'belly', 'dark', 'feet', 'arms', 'mane', 'stripe', 'spot'].forEach(function (k) { if (typeof p[k] === 'string' && /^#/.test(p[k])) o[p[k].toLowerCase()] = 1; });
+    return o;
+  }
+  function filters(u, k) {
+    return '<filter id="' + u + 'f" x="-8%" y="-8%" width="116%" height="116%">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.95 0.32" numOctaves="2" seed="4" result="n"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="n" scale="' + (1.7 * k) + '" xChannelSelector="R" yChannelSelector="G" result="d"/>' +
+      '<feGaussianBlur in="SourceAlpha" stdDeviation="' + (3.2 * k) + '" result="b"/><feOffset in="b" dx="' + (-2.4 * k) + '" dy="' + (-3.2 * k) + '" result="o"/>' +
+      '<feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#1A0F2E" flood-opacity=".30"/><feComposite in2="edge" operator="in" result="sh"/>' +
+      '<feTurbulence type="fractalNoise" baseFrequency="2.4 0.55" numOctaves="1" seed="9" result="g"/>' +
+      '<feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.7 1.15" result="ga"/>' +
+      '<feComposite in="ga" in2="SourceAlpha" operator="in" result="gr"/><feComponentTransfer in="gr" result="gs"><feFuncA type="linear" slope=".2"/></feComponentTransfer>' +
+      '<feMerge><feMergeNode in="d"/><feMergeNode in="sh"/><feMergeNode in="gs"/></feMerge></filter>' +
+      '<filter id="' + u + 'c" x="-5%" y="-5%" width="110%" height="110%">' +
+      '<feGaussianBlur in="SourceAlpha" stdDeviation="' + (2.4 * k) + '" result="b"/><feOffset in="b" dx="' + (-1.8 * k) + '" dy="' + (-2.4 * k) + '" result="o"/>' +
+      '<feComposite in="SourceAlpha" in2="o" operator="out" result="edge"/><feFlood flood-color="#1A0F2E" flood-opacity=".22"/><feComposite in2="edge" operator="in" result="sh"/>' +
+      '<feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="sh"/></feMerge></filter>';
+  }
+  function real(g, id, opt) {
+    opt = opt || {};
+    var u = 'pr' + (++N), defs = '', made = {}, fc = furCols(id), lite = !!opt.lite;
+    function grad(col) {
+      var key = col.toLowerCase();
+      if (!made[key]) {
+        made[key] = u + 'g' + Object.keys(made).length;
+        var L = lum(col), hi = L > 0.88 ? 0.1 : 0.3, lo = L > 0.88 ? -0.14 : -0.24;
+        defs += '<radialGradient id="' + made[key] + '" cx="40%" cy="32%" r="75%" fx="32%" fy="24%">' +
+          '<stop offset="0" stop-color="' + mix(col, hi) + '"/><stop offset=".55" stop-color="' + col + '"/><stop offset="1" stop-color="' + mix(col, lo) + '"/></radialGradient>';
+      }
+      return 'url(#' + made[key] + ')';
+    }
+    var out = g.replace(/<(circle|ellipse|path|rect|polygon)([^>]*?)fill="(#[0-9A-Fa-f]{6})"([^>]*?)stroke="#2A1A4E" stroke-width="([\d.]+)"/g, function (m, tag, a, col, b, w) {
+      var isFur = fc[col.toLowerCase()];
+      return '<' + tag + a + 'fill="' + grad(col) + '"' + b + (lite ? '' : 'filter="url(#' + u + (isFur ? 'f' : 'c') + ')" ') + 'stroke="' + mix(col, -0.5) + '" stroke-opacity="' + (isFur ? '.35' : '.6') + '" stroke-width="' + Math.max(0.9, Math.min(1.6, w * 0.45)) + '"';
+    });
+    out = out.replace(/stroke="#2A1A4E" stroke-width="([\d.]+)"/g, function (m, w) { return 'stroke="#3A2A50" stroke-opacity=".85" stroke-width="' + Math.max(1, w * 0.65) + '"'; });
+    return { defs: defs + (lite ? '' : filters(u, 1)), body: out };
+  }
+  var G0 = PETART.group, S0 = PETART.svg;
+  /* ชิ้นส่วนสำหรับวางในภาพอื่น (กรอบ 200×200 เดียวกับ PETART.group): defs + ตัวน้อง (เงาใต้ตัวเบลออยู่ในที่เดิม)
+   * opt.lite = ไล่แสง + เส้นบางอย่างเดียว ไม่มีขนและเงาด้านใน (ภาพเล็ก / ภาพที่มีหลายตัวในหน้าเดียว) */
+  function parts(id, st, opt) {
+    opt = opt || {};
+    var r = real(G0(id, st, opt), id, opt), body = r.body, defs = r.defs;
+    if (!opt.lite) {
+      var sid = 'sb' + (++N);
+      defs += '<filter id="' + sid + '" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>';
+      body = body.replace(/(<ellipse cx="100" cy="1[89]\d"[^>]*fill="#000")([^>]*)\/>/, function (m, a1, a2) { return a1 + a2.replace(/opacity="[^"]*"/, 'opacity=".25"') + ' filter="url(#' + sid + ')"/>'; });
+    }
+    return { defs: defs, shadow: '', body: body };
+  }
+  /* แทนภาพน้องทั้งแอป: ภาพใหญ่ (≥ 120 px) = เต็มรูปแบบ · ภาพเล็ก = แบบเบา · opt.flat = แบบการ์ตูนเดิม */
+  function svg(id, st, size, opt) {
+    opt = opt || {};
+    if (opt.flat) return S0(id, st, size, opt);
+    size = size || 160;
+    var o = {}; for (var k in opt) o[k] = opt[k];
+    if (o.lite === undefined) o.lite = size < 120;
+    var vb = opt.fit ? (st === 1 ? '22 48 156 156' : st === 2 ? '12 26 176 176' : '0 0 200 200') : '0 0 200 200';
+    var fx = opt.fx && st > 0 && window.PETFX ? PETFX.layers(opt.fx.tier, id, opt.fx) : null, p = parts(id, st, o);
+    return '<svg class="petsvg' + (fx && fx.back ? ' fxon' : '') + '" viewBox="' + vb + '" width="' + size + '" height="' + size + '" role="img" aria-label="' + (PETART.SP[id] ? PETART.SP[id].name : '') + '"><defs>' + p.defs + '</defs>' +
+      (fx ? '<g aria-hidden="true">' + fx.back + '</g>' : '') + '<g class="pbody">' + p.body + '</g>' + (fx ? '<g aria-hidden="true">' + fx.front + '</g>' : '') + '</svg>';
+  }
+  /* ภาพน้องที่วางในฉากอื่น (ศูนย์ฝึก ฯลฯ) = แบบเบา */
+  function group(id, st, opt) {
+    opt = opt || {};
+    if (opt.flat) return G0(id, st, opt);
+    var o = {}; for (var k in opt) o[k] = opt[k];
+    if (o.lite === undefined) o.lite = true;
+    var p = parts(id, st, o);
+    return '<g><defs>' + p.defs + '</defs>' + p.body + '</g>';
+  }
+  PETART.svg = svg; PETART.group = group;
+  return { real: real, parts: parts, svg: svg, group: group, flatSvg: S0, flatGroup: G0 };
+})();
 
 /* ===== 6B-7 → 6B-23: ศูนย์ฝึกกีฬา (ปุ่มอัปเกรดปุ่มเดียว) =====
  * ฉากเดียว 5 ชิ้น (ยิม อัฒจันทร์ ลู่วิ่ง สนามบอล สระว่ายน้ำ) · ระดับ 0 = ลานโล่ง กดอัปเกรด 1 ครั้ง = +1 ระดับ ได้ของ 1 อย่าง
@@ -7826,6 +8164,21 @@ var TRICKS = [
   { id: 'spin', icon: '🌀', label: 'หมุนตัว', days: 14 },
   { id: 'flip', icon: '🤸', label: 'ตีลังกา', days: 30 }
 ];
+/* 6B-35: ท่าใหม่ ปลดล็อกตามเลเวล (arms = ขยับแขน → วาดแขนลงก่อนเริ่มท่า) · say = ชวนเด็กทำตาม */
+var MOVES = [
+  { id: 'wai', icon: '🙏', label: 'ไหว้สวัสดี', lv: 1, ms: 1700, fx: '🙏', arms: 1, say: 'สวัสดีจ้า! ไหว้สวย ๆ แบบน้องเลย 🙏' },
+  { id: 'wave', icon: '👋', label: 'โบกมือ', lv: 2, ms: 1900, fx: '👋', arms: 1 },
+  { id: 'stretch', icon: '🙆', label: 'ยืดเหยียด', lv: 3, ms: 2300, fx: '✨', arms: 1, say: 'ยืดแขนขึ้นสูง ๆ ค้างไว้ นับ 1 ถึง 10 ตามน้องนะ' },
+  { id: 'jack', icon: '🦘', label: 'กระโดดตบ', lv: 4, ms: 1700, fx: '⭐', arms: 1, say: 'ลองกระโดดตบตามน้อง 10 ครั้ง!' },
+  { id: 'wiggle', icon: '🍑', label: 'ส่ายก้น', lv: 5, ms: 1500, fx: '🎵' },
+  { id: 'squat', icon: '🏋️', label: 'สควอท', lv: 6, ms: 2200, fx: '💪', arms: 1, say: 'ย่อเข่า หลังตรง ทำตามน้อง 10 ครั้ง!' },
+  { id: 'jog', icon: '🏃', label: 'วิ่งเหยาะ', lv: 7, ms: 2100, fx: '💨', arms: 1, say: 'วิ่งเหยาะอยู่กับที่ 30 วินาทีกัน!' },
+  { id: 'roll', icon: '🔄', label: 'กลิ้งตัว', lv: 8, ms: 1700, fx: '💫' },
+  { id: 'kick', icon: '⚽', label: 'เตะบอล', lv: 9, ms: 1500, fx: '⚽', arms: 1, say: 'ไปเตะบอลกับเพื่อน ๆ กันนะ!' },
+  { id: 'champ', icon: '🏆', label: 'ฉลองแชมป์', lv: 10, ms: 2300, fx: '🎉', arms: 1, say: 'แชมป์! เก่งที่สุดเลย 🏆' }
+];
+function pMove(id) { return MOVES.filter(function (m) { return m.id === id; })[0] || null; }
+function petLv() { return (ST && ST.game && ST.game.lv) || 1; }
 
 function petNow() { return ST && ST.game ? ST.game.pet : null; }
 function petCat() { return (ST && ST.game && ST.game.petCat) || { species: [], snacks: [], wear: [], names: [] }; }
@@ -7837,7 +8190,7 @@ function petPic(p, size, opt) {
   var wear = Object.assign({}, p.wear || {});
   if (opt.tryOn) { var t = pWear(opt.tryOn); if (t) wear[t.slot] = t.id; }
   if (window.dustOn && dustOn() && !opt.noMask) wear.mask = 1;
-  return PETART.svg(p.sp, p.stage || 1, size, { wear: wear, mood: opt.mood || '', fit: opt.fit, fx: opt.fx && p.tier >= 2 ? { tier: p.tier } : null });
+  return PETART.svg(p.sp, p.stage || 1, size, { wear: wear, mood: opt.mood || '', fit: opt.fit, armsDown: !!opt.armsDown, fx: opt.fx && p.tier >= 2 ? { tier: p.tier } : null });
 }
 
 /* ---------- หลอดพลังวันนี้ (จากข้อมูลที่มีอยู่แล้ว) ---------- */
@@ -7981,14 +8334,14 @@ function oddsHtml() {
 function petHtml(p) {
   var h = [], bars = petBars(), sleepy = petSleepy(bars) && !PT.mood && !PT.anim && !PT.awake, arc = GART.arcOf(ST.game.lv);
   h.push('<div class="pstage pst' + arc + ' rar' + (p.tier || 1) + (p.tier === 4 ? ' sp-' + p.sp : '') + '">' + tierChip(p.tier) + (p.tier === 4 ? '<span class="psparks" aria-hidden="true"><b>✦</b><b>✧</b><b>✦</b><b>✧</b><b>✦</b></span>' : '') + '<button type="button" class="pbig' + (PT.anim ? ' a-' + PT.anim : ' pbob') + (sleepy ? ' dim' : '') + '" data-pa="pet" aria-label="เล่นกับ' + esc(p.name) + '">' +
-    petPic(p, 230, { tryOn: PT.tryOn, mood: PT.mood || (sleepy ? 'sleep' : ''), fx: true }) + '</button>' +
+    petPic(p, 230, { tryOn: PT.tryOn, mood: PT.mood || (sleepy ? 'sleep' : ''), fx: true, armsDown: !!(pMove(PT.anim) && pMove(PT.anim).arms) }) + '</button>' +
     (PT.reveal ? '<div class="preveal t' + (p.tier || 1) + '">' + tierWow(p.tier || 1) + 'ได้' + esc(p.label) + '!</div>' : '') + '<div id="pt-fx" aria-hidden="true"></div></div>');
   h.push('<div class="pwho"><b>' + esc(p.label) + ' · ' + PSTAGE[p.stage] + (p.tier >= 2 ? ' ' + PTIER[p.tier].icon : '') + '</b>' + (PNEXT[p.stage] ? 'ถึง Lv.' + PNEXT[p.stage] + ' โตเป็นร่าง' + PSTAGE[p.stage + 1] + (p.stage === 3 ? ' 👑' : ' ✨') : 'ร่างสุดท้ายแล้ว เก่งที่สุด! 👑') + '</div>');
-  var msg = petSay(bars);
+  var msg = (petTip() && PT.panel !== 'snack') ? PT.tip.t : petSay(bars);
   h.push('<div class="card pcoach"><span>💬</span><div>' + esc(msg) + '</div><button type="button" class="psay" data-say="' + esc(msg) + '" aria-label="ฟังเสียงน้อง">🔊</button></div>');
-  var cat = petCat(), fed = p.fedToday || 0, best = (ST.xp && ST.xp.streak && ST.xp.streak.best) || 0, open = TRICKS.filter(function (t) { return best >= t.days; }).length;
+  var cat = petCat(), fed = p.fedToday || 0, best = (ST.xp && ST.xp.streak && ST.xp.streak.best) || 0, open = TRICKS.filter(function (t) { return best >= t.days; }).length + MOVES.filter(function (m) { return petLv() >= m.lv; }).length;
   var act = function (id, icon, label, sub) { return '<button type="button" class="pact' + (PT.panel === id ? ' on' : '') + '" data-pp="' + id + '" aria-expanded="' + (PT.panel === id) + '"><span aria-hidden="true">' + icon + '</span><div><b>' + label + '</b><small>' + sub + '</small></div></button>'; };
-  h.push('<div class="pacts">' + act('snack', '🍎', 'ให้ขนม', 'วันนี้ ' + fed + '/' + cat.snacksPerDay + ' · ' + cat.snackCost + ' 🪙') + act('wear', '🎩', 'แต่งตัว', 'มี ' + (p.own || []).length + ' ชิ้น') +
+  h.push('<div class="pacts">' + act('snack', '🍚', 'ให้อาหาร', 'วันนี้ ' + fed + '/' + cat.snacksPerDay + ' · ' + cat.snackCost + ' 🪙') + act('wear', '🎩', 'แต่งตัว', 'มี ' + (p.own || []).length + ' ชิ้น') +
     act('trick', '🎪', 'ท่าพิเศษ', open ? 'ได้แล้ว ' + open + ' ท่า' : 'ไฟต่อเนื่อง 7 วัน') + act('name', '✏️', 'เปลี่ยนชื่อ', esc(p.name)) + '</div>');
   if (PT.panel && PT.panel !== 'reroll') h.push(panelHtml(p));
   h.push(barsMini(bars));
@@ -7998,15 +8351,46 @@ function petHtml(p) {
   h.push('<p class="ghint">ใช้เหรียญกระเป๋าเดียวกับศูนย์ฝึก · ไม่ได้ทำอะไรหลายวัน น้องแค่งีบรอ ไม่ป่วยไม่หนีไปไหน</p>');
   return h.join('');
 }
+/* 6B-34 อาหาร 5 หมู่: เรียกชื่อหมู่ตามชนิดอาหาร (แบบที่ใช้สอนในโรงเรียน) */
+var FOODG = {
+  1: { n: 'หมู่ 1', d: 'นม ไข่ เนื้อสัตว์ ถั่ว', u: 'ช่วยให้เติบโต' },
+  2: { n: 'หมู่ 2', d: 'ข้าว แป้ง เผือก มัน', u: 'ให้พลังงาน' },
+  3: { n: 'หมู่ 3', d: 'ผัก', u: 'ช่วยให้ร่างกายทำงานปกติ' },
+  4: { n: 'หมู่ 4', d: 'ผลไม้', u: 'ช่วยต้านทานโรค' },
+  5: { n: 'หมู่ 5', d: 'ไขมัน น้ำมัน', u: 'ให้พลังงานและความอบอุ่น' },
+  0: { n: '💧 น้ำ', d: 'ดื่มทุกวัน', u: 'ร่างกายขาดไม่ได้' }
+};
+function foodBtn(s, off) { return '<button type="button" data-feed="' + s.id + '"' + (off ? ' disabled' : '') + '><span aria-hidden="true">' + s.icon + '</span>' + esc(s.label) + '</button>'; }
+function foodHtml(list, off) {
+  if (!list.some(function (s) { return typeof s.g === 'number'; })) return '<div class="psnacks">' + list.map(function (s) { return foodBtn(s, off); }).join('') + '</div>';
+  return '<div class="pfood">' + [1, 2, 3, 4, 5, 0].map(function (g) {
+    var row = list.filter(function (s) { return s.g === g; });
+    if (!row.length) return '';
+    return '<div class="pfg g' + g + '"><div class="pfgh"><b>' + FOODG[g].n + '</b><small>' + FOODG[g].d.split(' ').map(function (w) { return '<span>' + w + '</span>'; }).join(' ') + '</small></div><div class="psnacks">' + row.map(function (s) { return foodBtn(s, off); }).join('') + '</div></div>';
+  }).join('') + '</div>';
+}
+/* หลังป้อน: ถ้าการ์ดเกร็ดอยู่นอกจอ (หรือถูกแถบด้านบนบัง) เลื่อนให้เห็น */
+function tipShow() {
+  var el = $('pt-tip'); if (!el) return;
+  var bn = document.querySelector('.banners'), top = (bn ? Math.max(0, bn.getBoundingClientRect().bottom) : 0) + 10, r = el.getBoundingClientRect();
+  if (r.top >= top && r.bottom <= innerHeight) return;
+  try { window.scrollTo({ top: Math.max(0, scrollY + r.top - top), behavior: 'smooth' }); } catch (e) { window.scrollTo(0, Math.max(0, scrollY + r.top - top)); }
+}
+function petTip() { return PT.tip && Date.now() - PT.tip.at < 60000 ? PT.tip : null; }
+function foodTip(s) {
+  var G = FOODG[s.g];
+  return s.icon + ' ' + s.label + (s.g ? ' อยู่' + G.n + ' (' + G.d + ')' : '') + ' ' + s.tip;
+}
 function panelHtml(p) {
   var cat = petCat(), coins = ST.game.coins, busy = PT.busy, h = '';
   if (PT.panel === 'snack') {
     var fed = p.fedToday || 0, full = fed >= cat.snacksPerDay;
-    h = '<div class="card ppanel"><div class="gih"><div class="gtx"><b>ให้ขนมสุขภาพ</b><small>' + (full ? 'วันนี้น้องอิ่มแล้ว พรุ่งนี้ให้ใหม่ได้' : 'ชิ้นละ ' + cat.snackCost + ' 🪙 · วันนี้ให้ได้อีก ' + (cat.snacksPerDay - fed) + ' ชิ้น') + '</small></div><button class="gx" type="button" data-pp="" aria-label="ปิด">✕</button></div>' +
-      '<div class="psnacks">' + cat.snacks.map(function (s) { return '<button type="button" data-feed="' + s.id + '"' + (full || busy || coins < cat.snackCost ? ' disabled' : '') + '><span aria-hidden="true">' + s.icon + '</span>' + esc(s.label) + '</button>'; }).join('') + '</div>' +
-      (!full && coins < cat.snackCost ? '<p class="gpoor">เหรียญไม่พอ ไปทำภารกิจเก็บแต้มก่อนนะ</p>' : '') + '<p class="gpoor">🍎 ผลไม้ ผัก นม ดีต่อร่างกายทั้งเราและน้อง</p></div>';
+    h = '<div class="card ppanel"><div class="gih"><div class="gtx"><b>อาหาร 5 หมู่</b><small>' + (full ? 'วันนี้น้องอิ่มแล้ว พรุ่งนี้ให้ใหม่ได้' : 'ครั้งละ ' + cat.snackCost + ' 🪙 · วันนี้ให้ได้อีก ' + (cat.snacksPerDay - fed) + ' ครั้ง') + '</small></div><button class="gx" type="button" data-pp="" aria-label="ปิด">✕</button></div>' +
+      (petTip() ? '<div class="pftip' + (Date.now() - PT.tip.at < 900 ? ' new' : '') + '" id="pt-tip"><span aria-hidden="true">💡</span><div>' + esc(PT.tip.t) + '</div><button type="button" class="psay" data-say="' + esc(PT.tip.t) + '" aria-label="ฟังเกร็ดความรู้">🔊</button></div>' : '') +
+      foodHtml(cat.snacks, full || busy || coins < cat.snackCost) +
+      (!full && coins < cat.snackCost ? '<p class="gpoor">เหรียญไม่พอ ไปทำภารกิจเก็บแต้มก่อนนะ</p>' : '') + '<p class="gpoor">🍽️ กินให้ครบ 5 หมู่ทุกวัน ร่างกายแข็งแรงทั้งเราและน้อง</p></div>';
   } else if (PT.panel === 'wear') {
-    var tabs = [['hat', '🎩 หมวก'], ['face', '🕶️ แว่น'], ['neck', '🎀 คอ']], sel = PT.tryOn ? pWear(PT.tryOn) : null;
+    var tabs = [['hat', '🎩 หมวก'], ['face', '🕶️ แว่น'], ['neck', '🎀 คอ'], ['back', '🎒 หลัง']], sel = PT.tryOn ? pWear(PT.tryOn) : null;
     h = '<div class="card ppanel"><div class="gih"><div class="gtx"><b>แต่งตัวน้อง</b><small>ซื้อครั้งเดียวใส่ได้ตลอด ใช้กับน้องทุกตัว · แตะเพื่อลองใส่</small></div><button class="gx" type="button" data-pp="" aria-label="ปิด">✕</button></div>' +
       '<div class="league" role="tablist">' + tabs.map(function (t) { return '<button type="button" role="tab" class="' + (PT.wtab === t[0] ? 'on' : '') + '" aria-selected="' + (PT.wtab === t[0]) + '" data-wt="' + t[0] + '">' + t[1] + '</button>'; }).join('') + '</div>' +
       '<div class="pwear">' + cat.wear.filter(function (w) { return w.slot === PT.wtab; }).map(function (w) {
@@ -8022,8 +8406,14 @@ function panelHtml(p) {
     }
     h += '</div>';
   } else if (PT.panel === 'trick') {
-    var best = (ST.xp && ST.xp.streak && ST.xp.streak.best) || 0;
-    h = '<div class="card ppanel"><div class="gih"><div class="gtx"><b>ท่าพิเศษ</b><small>ไฟต่อเนื่องดีที่สุดของเรา ' + best + ' วัน · ทำภารกิจทุกวันเพื่อปลดล็อกท่าใหม่</small></div><button class="gx" type="button" data-pp="" aria-label="ปิด">✕</button></div>' +
+    var best = (ST.xp && ST.xp.streak && ST.xp.streak.best) || 0, lv = petLv();
+    h = '<div class="card ppanel"><div class="gih"><div class="gtx"><b>ท่าพิเศษ</b><small>เลเวลขึ้น หรือทำภารกิจต่อเนื่องทุกวัน ได้ท่าใหม่ · แตะท่าแล้วลองทำตามน้องนะ</small></div><button class="gx" type="button" data-pp="" aria-label="ปิด">✕</button></div>' +
+      '<div class="ptsec"><b>⭐ ท่าตามเลเวล</b><small>ตอนนี้ Lv.' + lv + '</small></div>' +
+      '<div class="ptricks">' + MOVES.map(function (m) {
+        var open = lv >= m.lv;
+        return '<button type="button" data-trick="' + m.id + '"' + (open ? '' : ' disabled') + '><span aria-hidden="true">' + (open ? m.icon : '🔒') + '</span><b>' + m.label + '</b><small>' + (open ? 'แตะเพื่อดู' : 'ถึง Lv.' + m.lv) + '</small></button>';
+      }).join('') + '</div>' +
+      '<div class="ptsec"><b>🔥 ท่าจากไฟต่อเนื่อง</b><small>ดีที่สุด ' + best + ' วัน</small></div>' +
       '<div class="ptricks">' + TRICKS.map(function (t) {
         var open = best >= t.days;
         return '<button type="button" data-trick="' + t.id + '"' + (open ? '' : ' disabled') + '><span aria-hidden="true">' + (open ? t.icon : '🔒') + '</span><b>' + t.label + '</b><small>' + (open ? 'แตะเพื่อดู' : 'ไฟ ' + t.days + ' วัน (อีก ' + (t.days - best) + ')') + '</small></button>';
@@ -8074,7 +8464,12 @@ $('pt-body').onclick = function (e) {
   if ((x = t.closest('[data-try]'))) { PT.tryOn = PT.tryOn === x.getAttribute('data-try') ? '' : x.getAttribute('data-try'); renderPet(); return; }
   if ((x = t.closest('[data-nm]'))) { PT.draft = x.getAttribute('data-nm'); renderPet(); return; }
   if ((x = t.closest('[data-feed]'))) { petDo('feed', { item: x.getAttribute('data-feed') }); return; }
-  if ((x = t.closest('[data-trick]'))) { var tr = x.getAttribute('data-trick'); unlockAudio(); ding('trick'); petAnim(tr, 'happy', 1500); return; }
+  if ((x = t.closest('[data-trick]'))) {
+    var tr = x.getAttribute('data-trick'), mv = pMove(tr); unlockAudio(); ding('trick');
+    if (mv) { if (petLv() < mv.lv) return; petAnim(tr, 'happy', mv.ms); petFx(mv.fx, mv.id === 'kick' ? 2 : 5); if (mv.say) toast(mv.icon + ' ' + mv.say); }
+    else petAnim(tr, 'happy', 1500);
+    return;
+  }
   if (!(x = t.closest('[data-pa]'))) return;
   var a = x.getAttribute('data-pa'), p = petNow();
   if (a === 'tap') {
@@ -8122,7 +8517,7 @@ function petDo(op, extra) {
         toast(tierWow(p.tier || 1) + 'ได้' + p.label + '!');
       }
     } else if (op === 'name') { PT.panel = ''; toast('ชื่อ ' + p.name + ' น่ารักมาก! 🐾'); petAnim('hop', 'happy', 1000); }
-    else if (op === 'feed') { var sn = pSnack(r.item); petAnim('eat', 'happy', 1300); petFx(sn ? sn.icon : '🍎', 3); toast((sn ? sn.icon + ' ' : '') + p.name + 'ชอบมาก! −' + petCat().snackCost + ' 🪙'); ding('feed'); }
+    else if (op === 'feed') { var sn = pSnack(r.item); if (sn && sn.tip) { PT.tip = { t: foodTip(sn), at: Date.now() }; setTimeout(tipShow, 80); } petAnim('eat', 'happy', 1300); petFx(sn ? sn.icon : '🍎', 3); toast((sn ? sn.icon + ' ' : '') + p.name + 'ชอบมาก! −' + petCat().snackCost + ' 🪙'); ding('feed'); }
     else if (op === 'buy') { var w = pWear(r.item); PT.tryOn = ''; petAnim('hop', 'happy', 1100); petFx('✨', 5); toast('ใส่' + (w ? w.label : '') + 'แล้ว! −' + (w ? w.cost : 0) + ' 🪙'); ding('wear'); }
     else if (op === 'wear') { PT.tryOn = ''; renderPet(); }
     if (current === 's-pet' && op !== 'wear' && !PT.anim) renderPet();
@@ -8286,7 +8681,7 @@ window.hatchShow = hatchShow;
  * ทำงานในเครื่องอย่างเดียว ไม่บันทึกลงชีต ไม่ขึ้นอันดับ (ไว้ทดลองและโชว์เด็กหน้าห้อง) */
 var TL = { sp: 'dragon', stage: 3, mood: '', mask: false, wear: {}, tier: 0, anim: '', t: 0 };
 var TL_STAGE = [['🥚', 'ไข่'], ['🐣', 'ลูก'], ['🐥', 'วัยรุ่น'], ['🦁', 'ตัวเต็มวัย'], ['👑', 'ร่างตำนาน']];
-var TL_SLOT = { hat: '🎩 หมวก', face: '🕶️ แว่น', neck: '🧣 คอ' };
+var TL_SLOT = { hat: '🎩 หมวก', face: '🕶️ แว่น', neck: '🧣 คอ', back: '🎒 หลัง' };
 function tlCat() { return (window.TD && TD.petCat) || (ST && ST.game && ST.game.petCat) || null; }
 function openTPet() {
   show('s-tpet');
@@ -8313,7 +8708,7 @@ function renderTPet() {
   h.push('<div class="pair"><button type="button" class="cta" data-tl="hatch">🎬 ดูฉากฟัก</button><button type="button" class="ghost" data-tl="roll">🎲 สุ่มแบบเด็ก</button></div>');
   if (TL.stage) {
     h.push('<section class="card"><div style="display:flex;justify-content:space-between;align-items:center"><b>แต่งตัว (ฟรีทุกชิ้น)</b>' + (Object.keys(TL.wear).length ? '<button type="button" class="linkbtn" data-tl="strip">ถอดหมด</button>' : '') + '</div>' +
-      ['hat', 'face', 'neck'].map(function (slot) {
+      ['hat', 'face', 'neck', 'back'].map(function (slot) {
         return '<div class="tlslot"><small>' + TL_SLOT[slot] + '</small><div class="pwear">' + cat.wear.filter(function (w) { return w.slot === slot; }).map(function (w) {
           var on = TL.wear[slot] === w.id;
           return '<button type="button" class="' + (on ? 'on' : '') + '" aria-pressed="' + on + '" data-tlw="' + w.id + '">' + PETART.svg(sp.id, 2, 56, { wear: (function () { var o = {}; o[slot] = w.id; return o; })(), fit: true }) + '<small>' + esc(w.label) + '</small></button>';
@@ -9847,18 +10242,22 @@ var TRIP = (function () {
   };
 
   /* ภาพสถานที่ (svg) · opt.cls = class เพิ่ม · opt.label = aria-label */
+  /* 6B-31 ภาพถ่ายสมจริงที่ครูทำ (ไฟล์ trip/<id>.jpg กว้าง 960 · trip/<id>-s.jpg กว้าง 480) วางทับภาพการ์ตูน
+   * ยังไม่มีไฟล์ / ไม่มีเน็ต / โหลดไม่ขึ้น = ยังเห็นภาพการ์ตูนข้างใต้ · ตัวเลข = รุ่นของภาพ (เปลี่ยนภาพเมื่อไรเพิ่มเลข) */
+  var PHOTO = { angkor: 1, antarctica: 1, arun: 1, ayut: 1, bagan: 1, bigben: 1, bohol: 1, borobudur: 1, brunei: 1, canyon: 1, chanta: 1, colosseum: 1, eiffel: 1, fuji: 1, golden: 1, halong: 1, home: 1, huahin: 1, inthanon: 1, khaoyai: 1, kili: 1, kl: 1, kradueng: 1, kuangsi: 1, liberty: 1, lipe: 1, machu: 1, nongkhai: 1, phanomrung: 1, phuket: 1, phuwiang: 1, pyramid: 1, reef: 1, samui: 1, sg: 1, sukho: 1, taj: 1, tapu: 1, wall: 1 };
   function art(id, opt) {
     opt = opt || {};
     var s = BY[id] || STOPS[0], fn = ART[s.id] || ART.home;
     SEQ++;
     X = { id: 'tp' + SEQ, defs: '', g: {} };
     var body = fn();
+    if (PHOTO[s.id] && !opt.cartoon) body += '<image href="trip/' + s.id + (opt.slice && !opt.big ? '-s' : '') + '.jpg?v=' + PHOTO[s.id] + '" x="0" y="0" width="320" height="200" preserveAspectRatio="xMidYMid slice"/>';
     var out = '<svg class="tpart' + (opt.cls ? ' ' + opt.cls : '') + '" viewBox="0 0 320 200" preserveAspectRatio="' + (opt.slice ? 'xMidYMid slice' : 'xMidYMid meet') + '" role="img" aria-label="' + (opt.label || s.name) + '"><defs>' + X.defs + '</defs>' + body + '</svg>';
     X = null;
     return out;
   }
 
-  return { STOPS: STOPS, BY: BY, LOOP: LOOP, REG: REG, km: km, steps: steps, where: where, key: key, art: art };
+  return { STOPS: STOPS, BY: BY, LOOP: LOOP, REG: REG, PHOTO: PHOTO, km: km, steps: steps, where: where, key: key, art: art };
 })();
 
 /* ===== 6B-26: ทั้งโรงเรียนเดินทางด้วยก้าว =====
@@ -9979,7 +10378,7 @@ function tbTripHtml(w) {
     }
     h += '<span class="tbstop ' + st + '"><b aria-hidden="true">' + s.e + '</b><small>' + esc(s.name) + '</small></span>';
   });
-  return '<section class="tbc tbtrip"><div class="tbtpic">' + TRIP.art(w.cur.id, { slice: true }) + '<span>' + (w.start ? '🏁 จุดเริ่มต้น' : '📍 ตอนนี้อยู่ที่') + '</span></div>' +
+  return '<section class="tbc tbtrip"><div class="tbtpic">' + TRIP.art(w.cur.id, { slice: true, big: true }) + '<span>' + (w.start ? '🏁 จุดเริ่มต้น' : '📍 ตอนนี้อยู่ที่') + '</span></div>' +
     '<div class="tbtin"><p class="tbk">🗺️ ทั้งโรงเรียนเดินทางด้วยก้าว' + (w.round > 1 ? ' · รอบโลกรอบที่ ' + w.round : '') + '</p>' +
       '<div class="tbtnum"><span><b>' + fmt(w.min) + '</b><small>นาทีที่ขยับรวม</small></span><i>=</i><span><b>' + tpBig(w.steps) + '</b><small>ก้าว</small></span><i>≈</i><span><b>' + tpKm(w.kmAll) + '</b><small>กิโลเมตร</small></span></div>' +
       '<p class="tbtnow"><b>' + w.cur.e + ' ' + esc(w.cur.name) + '</b> <small>' + esc(w.cur.at) + '</small> · ' + esc(w.cur.fact) + '</p>' +
@@ -10463,6 +10862,166 @@ show = function (id) { if (id !== 's-tpet' && $('tw-pop')) twClose(); _show_tw(i
   var b = $('btn-tlogout'), _lo = b && b.onclick;
   if (!b || !_lo) return;
   b.onclick = function () { TW.trip = null; TW.tried = false; return _lo.apply(this, arguments); };
+})();
+
+/* ===== 6B-32: การ์ดความรู้สัตว์จริง (ขึ้นหลังฟักไข่ + เปิดดูซ้ำได้ที่น้องคู่หู) =====
+ * ภาพใหญ่ = น้องแบบเสมือนจริง ร่างสุดท้าย + ฉากหลังตามความหายาก · ภาพสัตว์จริงที่ครูทำ (pets/<id>.jpg 16:10) = ปุ่มวงกลม "ตัวจริง" แตะดูใหญ่ ยังไม่มีไฟล์ / โหลดไม่ได้ = ไม่มีปุ่ม
+ * PCARD.PHOTO = ชนิดที่มีภาพแล้ว (ตัวเลข = รุ่นของภาพ) · n = ชื่อสัตว์จริง · f = เกร็ดความรู้ 3 ข้อ · m = ลองขยับแบบน้อง */
+var PCARD = {
+  PHOTO: {},
+  D: {
+    dog: { n: 'สุนัข', e: '🐕', f: ['ดมกลิ่นเก่งกว่าคนหลายพันเท่า ตำรวจจึงใช้สุนัขช่วยค้นหาของ', 'สุนัขระบายความร้อนด้วยการหอบและแลบลิ้น เพราะเหงื่อออกได้น้อย', 'สุนัขพันธุ์เกรย์ฮาวด์วิ่งได้เร็วประมาณ 70 กิโลเมตรต่อชั่วโมง'], m: 'วิ่งเหยาะ ๆ อยู่กับที่ 1 นาที' },
+    cat: { n: 'แมว', e: '🐈', f: ['แมวนอนวันละ 12–16 ชั่วโมง พอตื่นจะยืดตัวทุกครั้ง', 'หนวดแมวช่วยกะว่าช่องแคบแค่ไหนลอดผ่านได้', 'แมวตกจากที่สูงจะบิดตัวกลางอากาศ เอาเท้าลงก่อน'], m: 'ท่าแมวโก่งหลัง ยืดหลังช้า ๆ 5 ครั้ง' },
+    turtle: { n: 'เต่าทะเล', e: '🐢', f: ['เต่าทะเลว่ายน้ำเดินทางได้ไกลหลายพันกิโลเมตร', 'แม่เต่าทะเลกลับมาวางไข่ที่ชายหาดใกล้ที่ตัวเองเกิด', 'กระดองเต่าเป็นส่วนหนึ่งของกระดูก ถอดออกไม่ได้'], m: 'ท่าว่ายน้ำบนบก กางแขนวาดเป็นวงกลม 10 ครั้ง' },
+    rabbit: { n: 'กระต่าย', e: '🐇', f: ['ฟันกระต่ายงอกยาวตลอดชีวิต จึงต้องแทะหญ้าทุกวัน', 'หูใหญ่ช่วยฟังเสียงไกล และช่วยระบายความร้อน', 'กระต่ายที่ดีใจจะกระโดดบิดตัวกลางอากาศ'], m: 'กระโดดเท้าคู่เบา ๆ 10 ครั้ง' },
+    frog: { n: 'กบ', e: '🐸', f: ['กบกระโดดได้ไกลกว่าความยาวตัวเองมากกว่า 10 เท่า', 'กบหายใจทางผิวหนังได้ด้วย ผิวจึงต้องชุ่มชื้นเสมอ', 'ลูกกบตอนเกิดคือลูกอ๊อด มีหางและอยู่ในน้ำ'], m: 'ย่อตัวแล้วกระโดดไปข้างหน้าแบบกบ 5 ครั้ง' },
+    chick: { n: 'ไก่', e: '🐔', f: ['ไข่ไก่ใช้เวลาฟักประมาณ 21 วัน', 'ลูกไก่จำแม่ได้ตั้งแต่ฟักออกมา และเดินตามแม่ไปทุกที่', 'ไก่คุ้ยดินหาอาหารด้วยเท้าวันละหลายชั่วโมง'], m: 'ท่ากางปีก ยกแขนขึ้นลง 10 ครั้ง' },
+    penguin: { n: 'เพนกวิน', e: '🐧', f: ['เพนกวินบินไม่ได้ แต่ใช้ปีกเป็นครีบว่ายน้ำได้เก่งมาก', 'พ่อเพนกวินจักรพรรดิกกไข่ไว้บนเท้านานหลายสัปดาห์', 'เพนกวินยืนเบียดกันเป็นกลุ่มเพื่อให้ตัวอุ่น'], m: 'เดินเตาะแตะแบบเพนกวิน 20 ก้าว' },
+    bear: { n: 'หมี', e: '🐻', f: ['หมีหมาที่พบในป่าไทยเป็นหมีตัวเล็กที่สุดในโลก', 'หมีดมกลิ่นเก่งมาก หาอาหารได้จากที่ไกล ๆ', 'หมีบางชนิดนอนจำศีลตลอดฤดูหนาว'], m: 'ท่าหมีคลาน คลานสี่ขาไปข้างหน้า 10 ก้าว' },
+    hamster: { n: 'หนูแฮมสเตอร์', e: '🐹', f: ['แฮมสเตอร์วิ่งในวงล้อได้คืนละหลายกิโลเมตร', 'มีกระพุ้งแก้มไว้เก็บอาหารไปซ่อนในรัง', 'แฮมสเตอร์ตื่นตัวตอนกลางคืน กลางวันชอบนอน'], m: 'วิ่งยกเข่าอยู่กับที่ 30 วินาที' },
+    squirrel: { n: 'กระรอก', e: '🐿️', f: ['หางพุ่มช่วยทรงตัวตอนกระโดดข้ามกิ่งไม้', 'กระรอกฝังเมล็ดเก็บไว้ เมล็ดที่ลืมจะงอกเป็นต้นไม้ใหม่', 'ฟันหน้ากระรอกยาวขึ้นตลอด ต้องแทะของแข็งบ่อย ๆ'], m: 'โยนลูกบอลรับด้วยสองมือ 10 ครั้ง' },
+    parrot: { n: 'นกแก้ว', e: '🦜', f: ['นกแก้วเลียนเสียงพูดของคนได้', 'นกแก้วใช้เท้าจับอาหารเข้าปากเหมือนใช้มือ', 'นกแก้วมาคอว์บางตัวมีอายุยืนกว่า 50 ปี'], m: 'กระโดดตบ 10 ครั้ง' },
+    mouse: { n: 'หนู', e: '🐭', f: ['หนูลอดรูเล็กแค่ประมาณ 6 มิลลิเมตรได้', 'หนูใช้หนวดคลำทางในที่มืด', 'หนูปีนป่ายและกระโดดได้คล่องมาก'], m: 'ท่าเดินกะลา เดินเขย่งปลายเท้า 20 ก้าว' },
+    cow: { n: 'วัว', e: '🐄', f: ['กระเพาะของวัวแบ่งเป็น 4 ส่วน', 'วัวเคี้ยวเอื้อง คือเอาอาหารขึ้นมาเคี้ยวซ้ำ', 'วัวกินหญ้าและเคี้ยวอาหารรวมกันวันละหลายชั่วโมง'], m: 'แอโรบิกก้าวซ้ายขวาตามจังหวะ 1 นาที' },
+    goat: { n: 'แพะ', e: '🐐', f: ['แพะภูเขาปีนหน้าผาสูงชันได้ เพราะทรงตัวเก่งมาก', 'กีบเท้าแพะแยกเป็นสองส่วน ช่วยเกาะก้อนหิน', 'ตาแพะมีรูม่านตาเป็นแนวนอน มองเห็นได้กว้าง'], m: 'ยืนขาเดียว ข้างละ 15 วินาที' },
+    sheep: { n: 'แกะ', e: '🐑', f: ['ขนแกะตัดได้ปีละครั้ง แกะไม่เจ็บ แล้วขนจะงอกใหม่', 'แกะจำหน้าเพื่อนแกะได้หลายสิบตัว', 'แกะชอบอยู่เป็นฝูง ไม่ชอบอยู่ตัวเดียว'], m: 'หมุนสะโพกเหมือนเล่นฮูลาฮูป 20 รอบ' },
+    horse: { n: 'ม้า', e: '🐎', f: ['ม้าล็อกขาได้ จึงยืนงีบหลับได้', 'ม้ามีดวงตาใหญ่ที่สุดในบรรดาสัตว์บกที่เลี้ยงลูกด้วยนม', 'ม้าแข่งวิ่งได้เร็วประมาณ 60–70 กิโลเมตรต่อชั่วโมง'], m: 'กระโดดยกเข่าสลับแบบม้าวิ่ง 20 ครั้ง' },
+    ant: { n: 'มด', e: '🐜', f: ['มดยกของหนักได้หลายสิบเท่าของน้ำหนักตัว', 'มดสื่อสารกันด้วยกลิ่นที่ทิ้งไว้ตามทาง', 'มดทำงานเป็นทีม แบ่งหน้าที่กันชัดเจน'], m: 'วิ่งเก็บของเป็นทีมกับเพื่อน' },
+    ladybug: { n: 'เต่าทอง', e: '🐞', f: ['เต่าทองกินเพลี้ย ช่วยให้ต้นไม้ไม่โดนแมลงกัดกิน', 'สีแดงและจุดดำเตือนศัตรูว่าตัวมันรสไม่อร่อย', 'เต่าทองกระพือปีกเร็วมาก หลายสิบครั้งต่อวินาที'], m: 'โยนห่วงหรือโยนถุงทรายลงเป้า 10 ครั้ง' },
+    crab: { n: 'ปู', e: '🦀', f: ['ปูเดินข้างได้เร็ว เพราะขางอไปทางด้านข้าง', 'ปูต้องลอกคราบเปลือกเก่าออกถึงจะโตขึ้นได้', 'ปูมี 10 ขา รวมก้ามคู่หน้าด้วย'], m: 'ท่าเดินปู หงายตัวเดินด้วยมือและเท้า 10 ก้าว' },
+    gecko: { n: 'จิ้งจก', e: '🦎', f: ['ใต้เท้าจิ้งจกมีขนเล็ก ๆ จำนวนมาก ช่วยเกาะเพดานได้', 'หางจิ้งจกหลุดได้เพื่อหนีศัตรู แล้วงอกใหม่', 'กิ้งก่าบางชนิดทำท่าวิดพื้นเพื่ออวดความแข็งแรง'], m: 'วิดพื้นแบบเข่าแตะพื้น 5–10 ครั้ง' },
+    seal: { n: 'แมวน้ำ', e: '🦭', f: ['แมวน้ำกลั้นหายใจดำน้ำได้นานหลายสิบนาที', 'ใต้ผิวหนังมีไขมันหนาช่วยให้อุ่นในน้ำเย็น', 'บนบกแมวน้ำเคลื่อนตัวด้วยการกระดึ๊บไปข้างหน้า'], m: 'ทรงตัวถือลูกบอลไว้บนฝ่ามือ เดิน 10 ก้าว' },
+    sparrow: { n: 'นกกระจอก', e: '🐦', f: ['นกกระจอกอาบฝุ่นเพื่อทำความสะอาดขน', 'นกกระจอกอาศัยอยู่ใกล้คนแทบทุกที่ทั่วโลก', 'นกกระจอกกินทั้งเมล็ดพืชและแมลง'], m: 'วิ่งเหยาะ ๆ กางแขนเหมือนนกบิน 30 วินาที' },
+    alpaca: { n: 'อัลปาก้า', e: '🦙', f: ['อัลปาก้ามาจากเทือกเขาแอนดีสในอเมริกาใต้', 'ขนอัลปาก้านุ่มและอุ่น ใช้ทำเสื้อกันหนาว', 'อัลปาก้าส่งเสียงคุยกันเบา ๆ คล้ายเสียงฮัมเพลง'], m: 'ย่อเข่าแล้วเหวี่ยงแขนแบบโยนโบว์ลิ่ง 10 ครั้ง' },
+    armadillo: { n: 'ตัวนิ่ม (อาร์มาดิลโล)', e: '🛡️', f: ['ตัวนิ่มสามแถบม้วนตัวเป็นลูกบอลได้เมื่อกลัว', 'เกราะของตัวนิ่มเป็นแผ่นกระดูกที่หุ้มด้วยผิวหนัง', 'ตัวนิ่มบางชนิดกลั้นหายใจเดินใต้น้ำข้ามลำธารได้'], m: 'ท่าม้วนตัว นั่งกอดเข่าโยกหน้าหลัง 10 ครั้ง' },
+    elephant: { n: 'ช้าง', e: '🐘', f: ['ช้างเป็นสัตว์ประจำชาติไทย', 'ช้างใช้งวงทั้งหายใจ ดมกลิ่น ดูดน้ำ และหยิบของ', 'ช้างเอเชียกินอาหารวันละประมาณ 150 กิโลกรัม'], m: 'ยกขวดน้ำเหนือหัวขึ้นลง 10 ครั้ง' },
+    panda: { n: 'แพนด้า', e: '🐼', f: ['แพนด้ากินไผ่วันละ 10 กว่าชั่วโมง', 'แพนด้ามีกระดูกข้อมือยื่นออกมาเหมือนนิ้วที่ 6 ช่วยจับไผ่', 'ลูกแพนด้าแรกเกิดหนักแค่ประมาณ 100 กรัม'], m: 'ท่าตีแบดลม เหวี่ยงแขนตีลูกในอากาศ 20 ครั้ง' },
+    monkey: { n: 'ลิง', e: '🐒', f: ['ลิงแสมในไทยกินปูได้ จึงมีชื่ออังกฤษว่าลิงกินปู', 'ลิงช่วยกันแต่งขนให้เพื่อน เป็นการดูแลกันและกัน', 'ลิงบางชนิดใช้หางจับกิ่งไม้ได้เหมือนมือที่ห้า'], m: 'เดาะลูกบอลด้วยเข่าสลับซ้ายขวา 10 ครั้ง' },
+    fox: { n: 'จิ้งจอก', e: '🦊', f: ['จิ้งจอกแดงได้ยินเสียงหนูที่อยู่ใต้หิมะได้', 'จิ้งจอกกระโดดพุ่งลงจับเหยื่อจากด้านบน', 'จิ้งจอกใช้หางพุ่มห่มตัวกันหนาวตอนนอน'], m: 'เลี้ยงลูกบอลด้วยเท้าอ้อมกรวย 1 รอบ' },
+    giraffe: { n: 'ยีราฟ', e: '🦒', f: ['ยีราฟเป็นสัตว์ที่สูงที่สุดในโลก สูงได้ราว 5 เมตรครึ่ง', 'คอยีราฟยาวมาก แต่มีกระดูกคอ 7 ชิ้นเท่ากับคน', 'ลิ้นยีราฟยาวประมาณ 45 เซนติเมตร'], m: 'เขย่งปลายเท้ายืดแขนสูงสุด ค้างไว้ 10 วินาที' },
+    buffalo: { n: 'ควาย', e: '🐃', f: ['ควายชอบแช่น้ำและโคลนเพื่อคลายร้อนและกันแมลง', 'ควายไทยช่วยชาวนาไถนามานานหลายร้อยปี', 'ควายแข็งแรงมาก ลากของหนักได้'], m: 'ท่าดันกำแพง ดันค้างไว้ 15 วินาที' },
+    hedgehog: { n: 'เม่นแคระ (เฮดจ์ฮอก)', e: '🦔', f: ['เม่นแคระมีหนามบนหลังหลายพันเส้น', 'เมื่อกลัว เม่นแคระจะม้วนตัวกลมให้หนามตั้งขึ้น', 'เม่นแคระตื่นตอนกลางคืนและกินแมลง'], m: 'ท่าม้วนหน้า (มีครูดูแลและมีเบาะรอง) หรือก้มแตะปลายเท้า 10 ครั้ง' },
+    koala: { n: 'โคอาล่า', e: '🐨', f: ['โคอาล่านอนวันละประมาณ 18–22 ชั่วโมง', 'โคอาล่าไม่ใช่หมี แต่เป็นสัตว์ที่มีกระเป๋าหน้าท้อง', 'โคอาล่ากินใบยูคาลิปตัสเป็นอาหารหลัก'], m: 'ท่ากอดต้นไม้ ย่อเข่าค้างกำแขนแน่น 15 วินาที' },
+    kangaroo: { n: 'จิงโจ้', e: '🦘', f: ['จิงโจ้กระโดดได้ไกลถึงประมาณ 8 เมตรในครั้งเดียว', 'หางใหญ่ช่วยทรงตัว และใช้ค้ำพื้นเหมือนขาที่ห้า', 'ลูกจิงโจ้อาศัยอยู่ในกระเป๋าหน้าท้องของแม่'], m: 'กระโดดไกลเท้าคู่ วัดดูว่าไกลกี่ก้าว' },
+    otter: { n: 'นาก', e: '🦦', f: ['นากทะเลจับมือกันตอนนอนลอยน้ำ จะได้ไม่ลอยหายไป', 'ขนนากแน่นมาก ช่วยให้ตัวอุ่นในน้ำ', 'นากทะเลใช้ก้อนหินทุบเปลือกหอยกิน'], m: 'ท่าโต้คลื่น ยืนกางแขนย่อเข่าทรงตัว 15 วินาที' },
+    pig: { n: 'หมู', e: '🐖', f: ['หมูเป็นสัตว์ที่ฉลาดและเรียนรู้ได้เร็ว', 'หมูเหงื่อออกน้อย จึงกลิ้งโคลนเพื่อคลายร้อน', 'จมูกหมูไวมาก ใช้ดมและขุดหาอาหาร'], m: 'โยนรับบอลกับเพื่อนแบบแชร์บอล 10 ครั้ง' },
+    zebra: { n: 'ม้าลาย', e: '🦓', f: ['ลายม้าลายแต่ละตัวไม่ซ้ำกันเลย เหมือนลายนิ้วมือคน', 'นักวิทยาศาสตร์พบว่าลายช่วยให้แมลงวันเกาะยาก', 'ม้าลายวิ่งซิกแซกเพื่อหลบหนีศัตรู'], m: 'นอนปั่นจักรยานอากาศ 30 วินาที' },
+    raccoon: { n: 'แรคคูน', e: '🦝', f: ['แรคคูนมีอุ้งมือไวมาก ชอบจับและคลำอาหารในน้ำ', 'แรคคูนมีขนสีดำรอบตาคล้ายสวมหน้ากาก', 'แรคคูนฉลาด เปิดฝาภาชนะได้'], m: 'ทรงตัวยืนบนขาข้างเดียวแล้วสลับข้าง 10 ครั้ง' },
+    hippo: { n: 'ฮิปโปโปเตมัส', e: '🦛', f: ['ฮิปโปว่ายน้ำไม่เป็นจริง ๆ แต่เดินและวิ่งไปตามพื้นใต้น้ำ', 'ผิวฮิปโปขับของเหลวสีแดงออกมา ช่วยกันแดด', '"หมูเด้ง" ที่สวนสัตว์เปิดเขาเขียวเป็นฮิปโปแคระ'], m: 'ย่อตัวกระโดดขึ้นสูงแบบกระโดดน้ำ 5 ครั้ง' },
+    owl: { n: 'นกฮูก', e: '🦉', f: ['นกฮูกหมุนคอได้ประมาณ 270 องศา', 'ขนปีกพิเศษทำให้นกฮูกบินได้แทบไม่มีเสียง', 'นกฮูกกลอกตาไม่ได้ จึงต้องหมุนหัวแทน'], m: 'หันศีรษะช้า ๆ ซ้าย-ขวา ยืดคอ 5 รอบ' },
+    deer: { n: 'กวาง', e: '🦌', f: ['เขากวางตัวผู้หลุดแล้วงอกใหม่ทุกปี', 'กวางกระโดดได้ทั้งสูงและไกล', 'หูกวางหมุนไปฟังเสียงรอบตัวได้'], m: 'ตีเทนนิสลม เหวี่ยงแขนหน้ามือหลังมือ 20 ครั้ง' },
+    duck: { n: 'เป็ด', e: '🦆', f: ['ขนเป็ดมีน้ำมันเคลือบ จึงไม่เปียกน้ำ', 'เท้าเป็ดมีพังผืดช่วยพายน้ำ', 'ลูกเป็ดเดินตามตัวแรกที่เห็นหลังฟักออกจากไข่'], m: 'ท่าพายเรือ นั่งบิดตัวซ้ายขวา 20 ครั้ง' },
+    lion: { n: 'สิงโต', e: '🦁', f: ['สิงโตอยู่กันเป็นฝูง เป็นแมวใหญ่ชนิดเดียวที่ทำแบบนี้', 'เสียงคำรามของสิงโตได้ยินไกลประมาณ 8 กิโลเมตร', 'สิงโตนอนพักวันละประมาณ 16–20 ชั่วโมง'], m: 'ชู้ตบาสลม กระโดดชู้ต 10 ครั้ง' },
+    tiger: { n: 'เสือโคร่ง', e: '🐅', f: ['เสือโคร่งเป็นแมวที่ใหญ่ที่สุดในโลก', 'ลายเสือแต่ละตัวไม่ซ้ำกัน และมีลายบนผิวหนังด้วย', 'เสือโคร่งชอบน้ำและว่ายน้ำเก่ง ไทยยังมีเสือโคร่งในป่าห้วยขาแข้ง'], m: 'ท่ามวยไทย ต่อยหมัดตรงสลับ 20 ครั้ง' },
+    gaur: { n: 'กระทิง', e: '🐂', f: ['กระทิงเป็นวัวป่าที่ตัวใหญ่ที่สุดในโลก', 'กระทิงตัวโตเต็มที่หนักได้เกิน 1 ตัน', 'ในไทยพบกระทิงได้ในป่า เช่น อุทยานแห่งชาติกุยบุรี'], m: 'วิ่งสลับทิศเร็ว ๆ แบบหลบคู่แข่ง 30 วินาที' },
+    peacock: { n: 'นกยูง', e: '🦚', f: ['นกยูงตัวผู้รำแพนหางเพื่ออวดตัวเมีย', 'แพนหางนกยูงยาวกว่าลำตัวหลายเท่า', 'นกยูงไทยคือนกยูงเขียว เป็นนกที่หายาก'], m: 'ยืนขาเดียวกางแขนแบบรำแพน 15 วินาที' },
+    panther: { n: 'เสือดำ', e: '🐆', f: ['เสือดำคือเสือดาวที่มีขนสีดำ ถ้าดูใกล้ ๆ ยังเห็นลายจุด', 'เสือดาวปีนต้นไม้เก่ง ลากอาหารขึ้นไปกินบนต้นไม้ได้', 'เสือดาววิ่งได้เร็วเกือบ 60 กิโลเมตรต่อชั่วโมง'], m: 'วิ่งเร็วระยะสั้น 20 เมตร แล้วเดินพัก' },
+    polarbear: { n: 'หมีขั้วโลก', e: '🐻‍❄️', f: ['ขนหมีขั้วโลกจริง ๆ ใสไม่มีสี แต่ผิวหนังเป็นสีดำ', 'หมีขั้วโลกว่ายน้ำได้ไกลหลายสิบกิโลเมตร', 'ไขมันหนาใต้ผิวช่วยให้อุ่นในที่หนาวจัด'], m: 'สไลด์เท้าซ้ายขวาแบบเล่นสเกต 20 ครั้ง' },
+    whitetiger: { n: 'เสือขาว', e: '🐯', f: ['เสือขาวคือเสือโคร่งที่มีสีขาวจากยีนพิเศษ ไม่ใช่อีกชนิดหนึ่ง', 'เสือขาวส่วนใหญ่มีตาสีฟ้า', 'เสือขาวในธรรมชาติหายากมาก'], m: 'ท่ากระบี่กระบอง ก้าวหน้าแล้วยกแขนรำ 10 ครั้ง' },
+    shark: { n: 'ฉลาม', e: '🦈', f: ['ฟันฉลามมีหลายแถว ซี่ไหนหลุดจะมีซี่ใหม่ขึ้นมาแทน', 'ฉลามวาฬเป็นปลาที่ใหญ่ที่สุดในโลก และพบได้ในทะเลไทย', 'ฉลามบางชนิดต้องว่ายน้ำตลอดเวลาเพื่อให้น้ำผ่านเหงือก'], m: 'ท่าว่ายผีเสื้อบนบก หมุนแขนสองข้างพร้อมกัน 10 ครั้ง' },
+    flamingo: { n: 'ฟลามิงโก', e: '🦩', f: ['ฟลามิงโกเป็นสีชมพูเพราะกินกุ้งและสาหร่ายที่มีสีชมพู', 'ฟลามิงโกยืนขาเดียวได้นานมาก', 'ลูกฟลามิงโกเกิดมามีขนสีเทา'], m: 'ยืนขาเดียว ข้างละ 20 วินาที' },
+    orangutan: { n: 'อุรังอุตัง', e: '🦧', f: ['ชื่ออุรังอุตังแปลว่า "คนแห่งป่า" ในภาษามลายู', 'ช่วงแขนของอุรังอุตังกว้างได้ประมาณ 2 เมตร', 'อุรังอุตังสร้างรังนอนบนต้นไม้ใหม่แทบทุกคืน'], m: 'ห้อยตัวบนราวโหน (มีครูดูแล) หรือยืดแขนสูงค้าง 15 วินาที' },
+    rhino: { n: 'แรด', e: '🦏', f: ['นอแรดทำจากเคราติน ชนิดเดียวกับเล็บของคน', 'แรดตัวใหญ่หนักได้หลายตัน', 'แรดชอบแช่โคลนเพื่อกันแดดและกันแมลง'], m: 'ย่อขาค้างแบบนักยูโด 15 วินาที' },
+    wolf: { n: 'หมาป่า', e: '🐺', f: ['หมาป่าอยู่กันเป็นฝูง และหอนเพื่อคุยกัน', 'หมาป่าเดินทางหาอาหารได้วันละหลายสิบกิโลเมตร', 'หมาป่าเป็นบรรพบุรุษของสุนัขบ้าน'], m: 'ย่อเข่าโยกตัวซ้ายขวาแบบเล่นสกี 20 ครั้ง' },
+    eagle: { n: 'นกอินทรี', e: '🦅', f: ['นกอินทรีสายตาดีมาก มองเห็นเหยื่อจากที่สูงได้', 'นกอินทรีร่อนลมร้อนขึ้นสูงได้โดยไม่ต้องกระพือปีก', 'รังนกอินทรีบางรังใหญ่มากจนคนเข้าไปนั่งได้'], m: 'กางแขนเอียงตัวซ้ายขวาแบบร่อนลม 20 วินาที' },
+    snowleopard: { n: 'เสือดาวหิมะ', e: '🐆', f: ['หางเสือดาวหิมะยาวเกือบเท่าตัว ใช้ทรงตัวและห่มกันหนาว', 'อุ้งเท้ากว้างช่วยให้เดินบนหิมะได้ไม่จม', 'เสือดาวหิมะกระโดดข้ามหน้าผาได้ไกลหลายเมตร'], m: 'กระโดดข้างซ้ายขวาแบบสโนว์บอร์ด 20 ครั้ง' },
+    dragon: { n: 'มังกร', e: '🐉', legend: true, f: ['มังกรจีนเป็นสัตว์ในตำนาน หมายถึงพลังและความโชคดี', 'การแข่งเรือมังกรเป็นประเพณีในเทศกาลไหว้บ๊ะจ่าง', 'สัตว์จริงที่ชื่อมังกร คือมังกรโคโมโด กิ้งก่าตัวใหญ่ที่สุดในโลก อยู่ที่อินโดนีเซีย'], m: 'ท่าพายเรือมังกร นั่งพายเป็นจังหวะ 30 วินาที' },
+    phoenix: { n: 'ฟีนิกซ์', e: '🔥', legend: true, f: ['ฟีนิกซ์เป็นนกในตำนาน เชื่อกันว่าเกิดใหม่จากเถ้าถ่านได้', 'ฟีนิกซ์จึงหมายถึงการไม่ยอมแพ้ ล้มแล้วลุกขึ้นใหม่', 'ไฟคบเพลิงโอลิมปิกจุดจากแสงอาทิตย์ที่เมืองโอลิมเปีย ประเทศกรีซ'], m: 'ชูแขนเดินเร็วแบบวิ่งคบเพลิง 1 นาที' },
+    unicorn: { n: 'ยูนิคอร์น', e: '🦄', legend: true, f: ['ยูนิคอร์นคือม้าเขาเดียวในตำนานของยุโรป', 'ยูนิคอร์นเป็นสัตว์ประจำชาติของสกอตแลนด์', 'สัตว์จริงที่มี "เขา" ยาวเดียว คือวาฬนาร์วาล เขานั้นคือฟัน'], m: 'เต้นเชียร์ ยกแขนสลับกับเตะขาเบา ๆ 20 ครั้ง' },
+    qilin: { n: 'กิเลน', e: '🐲', legend: true, f: ['กิเลนเป็นสัตว์มงคลในตำนานจีน พบรูปปั้นได้ในวัดและศาลเจ้าในไทยด้วย', 'คนจีนโบราณเชื่อว่ากิเลนปรากฏตัวเมื่อบ้านเมืองสงบสุข', 'ไทเก๊กเป็นการเคลื่อนไหวช้า ๆ ช่วยเรื่องการทรงตัวและสมาธิ'], m: 'ท่าไทเก๊ก ก้าวช้า ๆ วาดแขนเป็นวงกลม 1 นาที' },
+    griffin: { n: 'กริฟฟิน', e: '🦅', legend: true, f: ['กริฟฟินมีตัวเป็นสิงโต แต่มีหัวและปีกเป็นนกอินทรี', 'ในตำนานกรีกโบราณ กริฟฟินเฝ้าสมบัติทองคำ', 'การยิงธนูต้องใช้สมาธิและกล้ามเนื้อหลังกับไหล่'], m: 'ท่าน้าวคันธนู ดึงแขนไปด้านหลังค้าง 5 วินาที 10 ครั้ง' },
+    pegasus: { n: 'เพกาซัส', e: '🐴', legend: true, f: ['เพกาซัสคือม้ามีปีกในตำนานกรีก', 'บนท้องฟ้ามีกลุ่มดาวชื่อเพกาซัสด้วย', 'การกระโดดสูงช่วยให้กล้ามเนื้อขาและกระดูกแข็งแรง'], m: 'กระโดดตัวตรงให้สูงที่สุด 10 ครั้ง' }
+  }
+};
+/* ความหายากของชนิดนี้ (จากรายการน้องของระบบ) */
+function pcTier(sp) {
+  var L = (window.ST && ST.game && ST.game.petCat && ST.game.petCat.species) || (window.TL && TL.cat && TL.cat.species) || [], t = 0;
+  L.forEach(function (x) { if (x.id === sp) t = x.tier; });
+  return t || (PCARD.D[sp] && PCARD.D[sp].legend ? 4 : 1);
+}
+var PK_TIER = { 1: 'ธรรมดา', 2: '✨ หายาก', 3: '🌈 หายากมาก', 4: '👑 สัตว์ในตำนาน' };
+/* ภาพบนการ์ด: น้องแบบเสมือนจริง ร่างสุดท้าย (ร่างตำนาน) + เอฟเฟกต์ตามความหายาก · ฉากหลังมาจาก CSS (.pkpic.r1–r4) */
+function pcPic(sp, tier) {
+  var P = window.PETREAL ? PETREAL.parts(sp, 4, { mood: 'happy' }) : { defs: '', shadow: '', body: PETART.group(sp, 4, { mood: 'happy' }) };
+  var fx = tier >= 2 && window.PETFX ? PETFX.layers(tier, sp, { tier: tier }) : { back: '', front: '' };
+  return '<svg class="pksvg" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid meet" role="img" aria-label="' + esc((PCARD.D[sp] || {}).n || '') + ' ร่างตำนาน">' +
+    '<defs>' + P.defs + '</defs><g transform="translate(45 -22) scale(1.15)">' + (fx.back || '') + P.shadow + P.body + (fx.front || '') + '</g></svg>';
+}
+var PCX = { done: null };
+function pcShow(sp, done, btn, tier) {
+  var d = PCARD.D[sp];
+  if (!d) { if (done) done(); return; }
+  pcClose(true);
+  PCX.done = done || null;
+  tier = tier || pcTier(sp);
+  var ph = PCARD.PHOTO[sp];
+  var el = document.createElement('div');
+  el.id = 'pkcard'; el.className = 'pkcard t' + tier;
+  el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'การ์ดความรู้ ' + d.n);
+  el.innerHTML = '<div class="pkin"><div class="pkhead"><span class="pktag">📖 การ์ดความรู้</span><span class="pkrar">' + PK_TIER[tier] + '</span></div>' +
+    '<div class="pkpic r' + tier + (tier === 4 ? ' sp-' + sp : '') + '">' + pcPic(sp, tier) +
+      '<span class="pkform">👑 ร่างสุดท้ายของน้อง · เลี้ยงถึง Lv.10</span>' +
+      (ph ? '<button type="button" class="pkreal" data-pkreal="1" aria-label="ดูภาพ' + esc(d.n) + 'ตัวจริง"><img src="pets/' + sp + '.jpg?v=' + ph + '" alt=""><b>📷 ตัวจริง</b></button>' +
+        '<div class="pkphoto"><img src="pets/' + sp + '.jpg?v=' + ph + '" alt="' + esc(d.n) + ' ตัวจริง"><button type="button" class="pkback" data-pkreal="1">กลับไปดูน้อง</button></div>' : '') +
+    '</div>' +
+    '<h2>' + d.e + ' ' + esc(d.n) + (d.legend ? ' <small>(ในตำนาน)</small>' : '') + '</h2>' +
+    '<ul class="pkf">' + d.f.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>' +
+    '<div class="pkm"><b>💪 ลองขยับแบบน้อง</b><span>' + esc(d.m) + '</span></div>' +
+    '<button type="button" class="cta pkgo">' + esc(btn || 'ปิด') + '</button></div>';
+  document.body.appendChild(el);
+  document.body.classList.add('tropen');
+  /* ภาพตัวจริงโหลดไม่ได้ → ซ่อนปุ่มดูตัวจริง */
+  Array.prototype.forEach.call(el.querySelectorAll('.pkreal img'), function (im) { im.onerror = function () { var b = el.querySelector('.pkreal'); if (b) b.remove(); var q = el.querySelector('.pkphoto'); if (q) q.remove(); }; });
+  el.onclick = function (e) {
+    var t = e.target.closest ? e.target.closest('.pkgo,[data-pkreal]') : null;
+    if (!t) return;
+    buzz(10);
+    if (t.hasAttribute('data-pkreal')) { el.querySelector('.pkpic').classList.toggle('showphoto'); return; }
+    pcClose();
+  };
+  document.addEventListener('keydown', pcKey);
+  try { say('การ์ดความรู้ ' + d.n); } catch (er) {}
+  setTimeout(function () { try { el.querySelector('.pkgo').focus(); } catch (er) {} }, 300);
+}
+function pcKey(e) { if (e.key === 'Escape') pcClose(); }
+function pcClose(silent) {
+  document.removeEventListener('keydown', pcKey);
+  var el = $('pkcard');
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+  if (!$('trip') && !$('tv-pop') && !$('tw-pop') && !$('howto')) document.body.classList.remove('tropen');
+  var f = PCX.done; PCX.done = null;
+  if (!silent && f) f();
+}
+/* หลังฟักไข่: ฉลองก่อน แล้วขึ้นการ์ดความรู้ ปุ่มบนการ์ดพาไปทำต่อ (ตั้งชื่อ / เล่นกับน้อง) */
+(function () {
+  var _hs = hatchShow;
+  hatchShow = function (p, done) {
+    _hs(p, function () { pcShow(p.sp, done, p.named ? 'ไปเล่นกับน้อง 🐾' : 'ไปตั้งชื่อน้อง ✏️', p.tier); });
+  };
+  window.hatchShow = hatchShow;
+  var _hr = hatchReveal;
+  hatchReveal = function () {
+    _hr.apply(this, arguments);
+    var go = document.querySelector('#hatch .hgo');
+    if (go) go.textContent = 'เย้! ดูการ์ดความรู้ 📖';
+  };
+})();
+/* หน้าน้องคู่หู: ปุ่มเปิดการ์ดความรู้ดูซ้ำ */
+(function () {
+  var _ph = petHtml;
+  petHtml = function (p) {
+    var h = _ph.apply(this, arguments), d = p && PCARD.D[p.sp];
+    if (!d) return h;
+    var btn = '<button type="button" class="ghost pkbtn" data-pcard="' + esc(p.sp) + '" data-pctier="' + (p.tier || '') + '">📖 การ์ดความรู้: ' + d.e + ' ' + esc(d.n) + (d.legend ? ' (ในตำนาน)' : 'ตัวจริง') + '</button>';
+    var at = h.indexOf('<div class="card pcoach">');
+    return at >= 0 ? h.slice(0, at) + btn + h.slice(at) : h + btn;
+  };
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-pcard]') : null;
+    if (!b) return;
+    buzz(8);
+    pcShow(b.getAttribute('data-pcard'), null, 'ปิด', +b.getAttribute('data-pctier') || 0);
+  });
 })();
 
 /* ---------- เริ่มต้น ---------- */

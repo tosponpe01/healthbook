@@ -2277,16 +2277,42 @@ var FQ = (function () {
     ],
     tiers: { 1: { label: 'ธรรมดา', total: 65 }, 2: { label: 'หายาก', total: 24 }, 3: { label: 'หายากมาก', total: 8 }, 4: { label: 'สัตว์ในตำนาน', total: 3 } },
     rerollCost: 100, rerollPerDay: 3, snackCost: 5, snacksPerDay: 3, nameMax: 12,
+    /* อาหาร 5 หมู่ (g = หมู่ที่ 1–5, 0 = น้ำเปล่า) · tip = เกร็ดความรู้สั้น ๆ ขึ้นหลังป้อน */
     snacks: [
-      { id: 'apple', icon: '🍎', label: 'แอปเปิล' }, { id: 'banana', icon: '🍌', label: 'กล้วย' }, { id: 'carrot', icon: '🥕', label: 'แครอท' },
-      { id: 'broccoli', icon: '🥦', label: 'บรอกโคลี' }, { id: 'watermelon', icon: '🍉', label: 'แตงโม' }, { id: 'milk', icon: '🥛', label: 'นมจืด' }
+      { id: 'milk', icon: '🥛', label: 'นมจืด', g: 1, tip: 'มีแคลเซียม ช่วยให้กระดูกและฟันแข็งแรง' },
+      { id: 'egg', icon: '🥚', label: 'ไข่ต้ม', g: 1, tip: 'มีโปรตีน ช่วยให้ร่างกายเติบโตแข็งแรง' },
+      { id: 'fish', icon: '🐟', label: 'ปลา', g: 1, tip: 'มีโปรตีน ย่อยง่าย ช่วยซ่อมแซมส่วนที่สึกหรอ' },
+      { id: 'rice', icon: '🍚', label: 'ข้าวสวย', g: 2, tip: 'ให้พลังงาน มีแรงวิ่งเล่นได้ทั้งวัน' },
+      { id: 'corn', icon: '🌽', label: 'ข้าวโพด', g: 2, tip: 'ให้พลังงาน และมีใยอาหารช่วยขับถ่าย' },
+      { id: 'sweetpotato', icon: '🍠', label: 'มันเทศ', g: 2, tip: 'ให้พลังงาน หวานแบบธรรมชาติ กินแทนขนมหวานได้' },
+      { id: 'carrot', icon: '🥕', label: 'แครอท', g: 3, tip: 'มีวิตามินเอ ช่วยบำรุงสายตา' },
+      { id: 'broccoli', icon: '🥦', label: 'บรอกโคลี', g: 3, tip: 'มีใยอาหาร ช่วยให้ขับถ่ายดี' },
+      { id: 'cucumber', icon: '🥒', label: 'แตงกวา', g: 3, tip: 'มีน้ำเยอะ กรอบอร่อย กินแล้วสดชื่น' },
+      { id: 'apple', icon: '🍎', label: 'แอปเปิล', g: 4, tip: 'มีวิตามินและใยอาหาร ช่วยให้ร่างกายแข็งแรง' },
+      { id: 'banana', icon: '🍌', label: 'กล้วย', g: 4, tip: 'ให้พลังงานเร็ว เหมาะกินก่อนออกกำลังกาย' },
+      { id: 'watermelon', icon: '🍉', label: 'แตงโม', g: 4, tip: 'มีน้ำมาก กินแล้วสดชื่น คลายร้อน' },
+      { id: 'orange', icon: '🍊', label: 'ส้ม', g: 4, tip: 'มีวิตามินซี ช่วยให้แผลหายไวและเหงือกแข็งแรง' },
+      { id: 'mango', icon: '🥭', label: 'มะม่วง', g: 4, tip: 'มะม่วงสุกมีวิตามินเอ ช่วยบำรุงสายตาและผิว' },
+      { id: 'avocado', icon: '🥑', label: 'อะโวคาโด', g: 5, tip: 'มีไขมันดี ให้พลังงาน กินแต่พอดี' },
+      { id: 'coconut', icon: '🥥', label: 'มะพร้าว', g: 5, tip: 'เนื้อมะพร้าวและกะทิเป็นไขมัน ให้พลังงานและความอบอุ่น กินแต่พอดี' },
+      { id: 'water', icon: '💧', label: 'น้ำเปล่า', g: 0, tip: 'ดื่มบ่อย ๆ โดยเฉพาะตอนออกกำลังกาย ร่างกายจะสดชื่น' }
     ],
     wear: [
       { id: 'cap', slot: 'hat', label: 'หมวกแก๊ป', cost: 40 }, { id: 'beanie', slot: 'hat', label: 'หมวกไหมพรม', cost: 40 },
       { id: 'party', slot: 'hat', label: 'หมวกปาร์ตี้', cost: 30 }, { id: 'flower', slot: 'hat', label: 'มงกุฎดอกไม้', cost: 60 },
       { id: 'sun', slot: 'face', label: 'แว่นกันแดด', cost: 50 }, { id: 'round', slot: 'face', label: 'แว่นกลม', cost: 40 }, { id: 'star', slot: 'face', label: 'แว่นดาว', cost: 60 },
-      { id: 'scarf', slot: 'neck', label: 'ผ้าพันคอ', cost: 40 }, { id: 'bow', slot: 'neck', label: 'หูกระต่าย', cost: 30 }, { id: 'whistle', slot: 'neck', label: 'นกหวีดครูพละ', cost: 50 }
+      { id: 'scarf', slot: 'neck', label: 'ผ้าพันคอ', cost: 40 }, { id: 'bow', slot: 'neck', label: 'หูกระต่าย', cost: 30 }, { id: 'whistle', slot: 'neck', label: 'นกหวีดครูพละ', cost: 50 },
+      /* 6B-36 ธีมกีฬา · ธีมไทย · ช่องใหม่ "หลัง" (th = ธีม: sport / thai) */
+      { id: 'headband', slot: 'hat', label: 'ผ้าคาดหัว', cost: 40, th: 'sport' }, { id: 'helmet', slot: 'hat', label: 'หมวกกันน็อก', cost: 60, th: 'sport' },
+      { id: 'ngob', slot: 'hat', label: 'งอบ', cost: 50, th: 'thai' }, { id: 'chada', slot: 'hat', label: 'ชฎา', cost: 70, th: 'thai' },
+      { id: 'goggles', slot: 'face', label: 'แว่นว่ายน้ำ', cost: 50, th: 'sport' },
+      { id: 'medal', slot: 'neck', label: 'เหรียญทอง', cost: 60, th: 'sport' }, { id: 'towel', slot: 'neck', label: 'ผ้าขนหนู', cost: 40, th: 'sport' },
+      { id: 'pakama', slot: 'neck', label: 'ผ้าขาวม้า', cost: 50, th: 'thai' }, { id: 'malai', slot: 'neck', label: 'พวงมาลัย', cost: 60, th: 'thai' },
+      { id: 'cape', slot: 'back', label: 'ผ้าคลุมฮีโร่', cost: 100 }, { id: 'angel', slot: 'back', label: 'ปีกนางฟ้า', cost: 120 },
+      { id: 'butterfly', slot: 'back', label: 'ปีกผีเสื้อ', cost: 120 }, { id: 'bag', slot: 'back', label: 'กระเป๋าเป้', cost: 80 },
+      { id: 'umbrella', slot: 'back', label: 'ร่มบ่อสร้าง', cost: 100, th: 'thai' }
     ],
+    slots: ['hat', 'face', 'neck', 'back'],
     names: ['โทโต้', 'ปุยฝ้าย', 'ข้าวปั้น', 'มะลิ', 'ส้มโอ', 'บัวลอย', 'โมจิ', 'ถั่วแดง', 'ขนมปัง', 'น้ำตาล', 'ทองคำ', 'ฟ้าใส', 'ลูกชิ้น', 'เต้าหู้', 'มะปราง',
       'ชมพู่', 'ลำไย', 'สายไหม', 'คุกกี้', 'บิสกิต', 'เจ้าจุก', 'ป๊อปคอร์น', 'มะม่วง', 'ฟักทอง', 'ก้อนเมฆ', 'ดาวเหนือ', 'สายฟ้า', 'จัมโบ้', 'พุดดิ้ง', 'วุ้นเส้น']
   };
@@ -2305,7 +2331,7 @@ var FQ = (function () {
     if (raw && typeof raw === 'object') x = raw;
     else { try { x = JSON.parse(raw || '{}') || {}; } catch (e) { x = {}; } }
     var own = (Array.isArray(x.own) ? x.own : []).filter(function (id, i, a) { return petWear(id) && a.indexOf(id) === i; }), wear = {};
-    ['hat', 'face', 'neck'].forEach(function (slot) { var w = x.wear && petWear(x.wear[slot]); if (w && w.slot === slot && own.indexOf(w.id) >= 0) wear[slot] = w.id; });
+    PETS.slots.forEach(function (slot) { var w = x.wear && petWear(x.wear[slot]); if (w && w.slot === slot && own.indexOf(w.id) >= 0) wear[slot] = w.id; });
     return {
       sp: s.id, name: String(name || '').trim().slice(0, 30), own: own, wear: wear,
       fed: x.fed && x.fed.d ? { d: String(x.fed.d), n: Math.max(0, Math.round(Number(x.fed.n) || 0)), last: petSnack(x.fed.last) ? x.fed.last : '' } : { d: '', n: 0, last: '' },
@@ -2401,7 +2427,7 @@ var FQ = (function () {
         paid = w.cost; res.item = w.id;
       } else if (op === 'wear') {
         var slot = String(o.slot || ''), id = String(o.item || '');
-        if (['hat', 'face', 'neck'].indexOf(slot) < 0) return fail('ไม่พบช่องนี้', 'BAD');
+        if (PETS.slots.indexOf(slot) < 0) return fail('ไม่พบช่องนี้', 'BAD');
         if (!id) { delete p.wear[slot]; res.slot = slot; }
         else {
           var x = petWear(id);
