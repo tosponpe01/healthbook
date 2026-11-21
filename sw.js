@@ -44,6 +44,7 @@ self.addEventListener('fetch', function (e) {
   var req = e.request, url = new URL(req.url);
   if (req.method !== 'GET') return;
   if (/script\.google(usercontent)?\.com$/.test(url.hostname)) return;
+  if (/\.(mp4|webm|m4v)$/i.test(url.pathname)) return; /* คลิป: ให้เบราว์เซอร์โหลดเอง (เล่นแบบทีละช่วง) ไม่เก็บไว้ในเครื่อง */
   if (url.origin === location.origin) {
     if (req.mode === 'navigate' || /\/(index\.html)?$/.test(url.pathname)) { e.respondWith(networkFirst(req)); return; }
     e.respondWith(staleWhileRevalidate(req));

@@ -939,7 +939,7 @@ body.light .okb { color:#3A8C00; }
 #hatch .hgo { width:auto; padding:0 28px; }
 #hatch .hban .hic { display:inline-block; }
 /* ===== 6B-18 ห้องทดลองน้องของครู ===== */
-#tnav { grid-template-columns:repeat(5,1fr); }
+#tnav { grid-template-columns:repeat(6,1fr); padding-left:6px; padding-right:6px; }
 .tlnote { display:flex; gap:10px; align-items:flex-start; } .tlnote > span { font-size:1.6em; line-height:1; } .tlnote small { display:block; color:var(--ink-2); margin-top:2px; }
 .tlrow { padding:2px 0; }
 .tlslot { margin-top:10px; } .tlslot > small { display:block; font-weight:800; color:var(--ink-2); margin-bottom:4px; }
@@ -1376,6 +1376,52 @@ body.tropen { overflow:hidden; }
   .tbv.hastrip .tbtpic { width:13em; }
 }
 
+/* ===== 6B-27: เยี่ยมห้อง (โหมดครู ดูอย่างเดียว) ===== */
+#tnav button { min-width:0; white-space:nowrap; letter-spacing:-.2px; }
+.tvhint { text-align:center; color:var(--ink-2); font-size:.86em; }
+.tvhint small { font-size:.88em; }
+.tvrooms { overflow-x:auto; flex-wrap:nowrap; scrollbar-width:none; }
+.tvrooms::-webkit-scrollbar { display:none; }
+.tvrooms button { flex:none; white-space:nowrap; }
+.tvrooms small { opacity:.7; font-size:.8em; }
+.tvsum { text-align:center; font-size:.9em; color:var(--ink-2); }
+.tvgrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.tvk { display:flex; flex-direction:column; align-items:center; gap:3px; padding:10px 8px 12px; text-align:center; border:2px solid var(--line); background:var(--card); color:var(--ink); font:inherit; cursor:pointer; min-width:0; }
+.tvk b { font-family:var(--display); font-size:.98em; }
+.tvk .tvnm { color:var(--ink-2); font-size:.74em; line-height:1.3; max-width:100%; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.tvpic { position:relative; width:88px; height:88px; display:grid; place-items:center; border-radius:50%; background:var(--card-2); }
+.tvpic svg { width:84px; height:84px; }
+.tvegg { font-size:2.4em; filter:grayscale(.3); }
+.tvst { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; font-size:.76em; font-weight:700; }
+.tvpop .trtop { justify-content:space-between; }
+.tvttl { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.tvnav { display:flex; align-items:center; gap:6px; }
+.tvnav small { color:var(--ink-2); font-weight:700; min-width:3em; text-align:center; }
+.tvnav .trx:disabled { opacity:.35; }
+.tvhead { display:flex; flex-direction:column; gap:2px; }
+.tvhead b { font-family:var(--display); font-size:1.15em; }
+.tvhead small, .tvpet small { color:var(--ink-2); font-size:.82em; }
+.tvpet { display:flex; align-items:center; gap:12px; }
+.tvpet .tvpic { width:76px; height:76px; flex:none; }
+.tvpet .tvpic svg { width:72px; height:72px; }
+.tvpet div { display:flex; flex-direction:column; }
+/* จังหวะเต้นของปุ่มเล่นคลิป (6B-28) */
+@keyframes hrbeat { 0%,100% { transform:scale(1); } 15% { transform:scale(1.18); } 30% { transform:scale(.96); } 45% { transform:scale(1.1); } }
+
+/* ===== 6B-28: คลิปวิธีเล่น ===== */
+.howto { position:fixed; inset:0; z-index:80; background:rgba(10,8,28,.94); display:flex; align-items:center; justify-content:center; padding:14px 14px calc(14px + env(safe-area-inset-bottom)); overflow:auto; }
+.howin { width:min(420px,100%); display:flex; flex-direction:column; gap:10px; align-items:stretch; text-align:center; }
+.howtop { color:#fff; display:flex; flex-direction:column; gap:2px; }
+.howtop b { font:800 1.3em var(--display); }
+.howtop small { color:#ABA4D6; }
+.howvid { position:relative; height:min(66vh, calc((100vw - 28px) * 16 / 9)); max-height:66vh; aspect-ratio:9/16; margin:0 auto; border-radius:20px; overflow:hidden; background:#000; border:3px solid rgba(255,255,255,.15); }
+.howvid video { width:100%; height:100%; display:block; object-fit:contain; background:#000; }
+.howplay { position:absolute; left:50%; top:50%; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%; border:0; background:var(--lime); color:var(--lime-ink); font-size:2.1em; padding-left:6px; box-shadow:0 8px 24px rgba(0,0,0,.45); animation:hrbeat 1.8s ease-in-out infinite; cursor:pointer; }
+.howto.playing .howplay { display:none; }
+.howmsg { color:#FFB3B3; min-height:1.2em; font-size:.9em; }
+.howto .linkbtn { color:#ABA4D6; }
+@media (prefers-reduced-motion: reduce) { .howplay { animation:none; } }
+
 </style>
 </head>
 <body>
@@ -1602,6 +1648,7 @@ body.tropen { overflow:hidden; }
     <div class="setrow setvol"><label class="lbl" for="vol-sfx">ความดังเอฟเฟกต์</label><input type="range" id="vol-sfx" min="0" max="100" step="5"><b id="vol-sfx-v" class="volv">80%</b></div>
     <div class="setrow"><span class="lbl">🔊 อ่านออกเสียง<small>ช่วยน้อง ป.1–3 อ่านภารกิจ</small></span><button class="switch" type="button" role="switch" id="sw-say" aria-label="อ่านออกเสียง"></button></div>
     <div class="setrow"><span class="lbl">📲 เพิ่มไปหน้าจอโฮม</span><button class="tag" type="button" id="go-install" style="border:0">วิธีทำ ›</button></div>
+    <div class="setrow"><span class="lbl">🎬 ดูคลิปวิธีเล่น<small>1 นาที มีเสียงพากย์</small></span><button class="tag" type="button" id="go-howto" style="border:0">ดู ›</button></div>
     <div class="setrow"><span class="lbl">👋 ดูหน้าแนะนำอีกครั้ง</span><button class="tag" type="button" id="go-onboard" style="border:0">ดู ›</button></div>
   </div>
   <button class="ghost" type="button" id="btn-logout">ออกจากระบบ</button>
@@ -1662,6 +1709,12 @@ body.tropen { overflow:hidden; }
 <section class="screen nonav tscreen" id="s-tfit" aria-labelledby="tf-title">
   <div class="top"><span class="tbadge">โหมดครู</span><h1 id="tf-title" style="font-size:1.3em;flex:1">💪 กรอกผลสมรรถภาพ</h1></div>
   <div id="tf-body" class="stack"></div>
+</section>
+
+<!-- โหมดครู: เยี่ยมห้อง ดูศูนย์ฝึก + น้องคู่หูของนักเรียน (ดูอย่างเดียว) -->
+<section class="screen nonav tscreen" id="s-tvisit" aria-labelledby="tv-title">
+  <div class="top"><span class="tbadge">โหมดครู</span><h1 id="tv-title" style="font-size:1.3em;flex:1">🏟️ เยี่ยมห้อง</h1></div>
+  <div id="tv-body" class="stack"></div>
 </section>
 
 <section class="screen nonav tscreen" id="s-tpet" aria-labelledby="tp-title">
@@ -1749,6 +1802,7 @@ body.tropen { overflow:hidden; }
   <button type="button" data-go="s-tmiss"><span class="ic" aria-hidden="true">🔔</span>ตามเด็ก</button>
   <button type="button" data-go="s-tcheck"><span class="ic" aria-hidden="true">🪪</span>ตรวจ</button>
   <button type="button" data-go="s-tfit"><span class="ic" aria-hidden="true">💪</span>สมรรถภาพ</button>
+  <button type="button" data-go="s-tvisit"><span class="ic" aria-hidden="true">🏟️</span>เยี่ยมห้อง</button>
   <button type="button" data-go="s-tpet"><span class="ic" aria-hidden="true">🧪</span>ทดลอง</button>
 </nav>
 
@@ -1765,7 +1819,7 @@ body.tropen { overflow:hidden; }
  * วางลิงก์เว็บแอป Apps Script (ลงท้ายด้วย /exec) ใน API_URL แล้วอัปโหลดไฟล์นี้ขึ้น GitHub Pages
  * ว่างไว้ = โหมดตัวอย่าง (ยังไม่เชื่อมระบบ) */
 var API_URL = 'https://script.google.com/macros/s/AKfycbzhykUt8ertRZqZT_gnBIvvjRWw6ygOSZsZm8aBZhm73RfhkVIDY16BuO3LZJM7wckV/exec';
-var APP_VER = '1.2';
+var APP_VER = '1.3';
 /* โหมดตัวอย่าง: ยังไม่ใส่ลิงก์ หรือเปิดด้วย ?demo=1 → ใช้ระบบจำลองในเครื่อง (ไฟล์ demo.js) ข้อมูลแยกจากของจริง */
 var API_OK = /^https:\/\/\S+\/exec$/.test(API_URL);
 var DEMO = !API_OK || /[?&]demo=1(&|#|$)/.test(location.search);
@@ -9190,7 +9244,7 @@ function syAuto(wk) {
   if (!a || a.storyWk === wk || SY.auto === wk + a.sid || syDemo()) return;
   SY.auto = wk + a.sid;
   setTimeout(function () {
-    if (current !== 's-home' || $('story') || $('hatch') || document.querySelector('#s-cele.on, .sheet.on')) { SY.auto = ''; return; }
+    if (current !== 's-home' || $('story') || $('hatch') || $('howto') || document.querySelector('#s-cele.on, .sheet.on')) { SY.auto = ''; return; }
     syLoad().then(function (S) {
       if (!S || current !== 's-home' || $('story')) return;
       a.storyWk = S.from; save();
@@ -9804,7 +9858,7 @@ function tpCele() {
   if (!w || !a || w.start) return;
   var k = TRIP.key(w);
   if (a.tripSeen === k) return;
-  if (current !== 's-home' || $('story') || $('trip') || $('hatch') || document.querySelector('#s-cele.on, .sheet-wrap.on')) return;
+  if (current !== 's-home' || $('story') || $('trip') || $('hatch') || $('howto') || document.querySelector('#s-cele.on, .sheet-wrap.on')) return;
   a.tripSeen = k; save();
   CELE = { list: [{ sound: 'level', confetti: true, say: 'ทั้งโรงเรียนเดินทางถึง ' + w.cur.name + ' แล้ว',
     html: '<div class="trcele" aria-hidden="true">' + TRIP.art(w.cur.id) + '</div><h1>' + w.cur.e + ' ถึง' + esc(w.cur.name) + 'แล้ว!</h1>' +
@@ -9903,6 +9957,210 @@ tbRender = function () {
   if (TB.tripK && TB.tripK !== k && !w.start) tbArrive(w);
   TB.tripK = k;
 };
+
+/* ===== 6B-27: เยี่ยมห้อง (ดูอย่างเดียว) =====
+ * โหมดครู → เยี่ยมห้อง: เลือกห้อง ดูศูนย์ฝึก + น้องคู่หูของนักเรียนทุกคน แตะการ์ดดูเต็ม ๆ
+ * ชื่อจริงอยู่ในหน่วยความจำของโหมดครูเท่านั้น ไม่เก็บลงเครื่อง */
+TEACHER_SCREENS['s-tvisit'] = 1;
+var TV = { room: '', d: null, loading: false, err: '', i: -1, seq: 0 };
+var _tng_tv = tnavGo;
+tnavGo = function (id) { if (id === 's-tvisit') openTVisit(); else _tng_tv(id); };
+
+function openTVisit(room) {
+  if (current !== 's-tvisit') show('s-tvisit');
+  if (room !== undefined) TV.room = room;
+  tvLoad();
+}
+function tvLoad() {
+  var seq = ++TV.seq;
+  TV.loading = true; TV.err = '';
+  renderTVisit();
+  tcall('troom', { room: TV.room }).then(function (res) {
+    if (seq !== TV.seq) return;
+    TV.loading = false;
+    if (!res.ok) {
+      if (res.code === 'AUTH_T') { toast('กรุณาเข้าโหมดครูใหม่', true); return; }
+      TV.err = res.error || 'โหลดไม่สำเร็จ ลองใหม่อีกครั้ง';
+      renderTVisit(); return;
+    }
+    TV.d = res; TV.room = res.room;
+    renderTVisit();
+  });
+}
+function tvPet(k, size) {
+  if (!k.pet) return '<span class="tvegg" aria-hidden="true">🥚</span>';
+  return window.PETART ? PETART.svg(k.pet.sp, k.pet.stage || 1, size, { fit: true, wear: k.pet.wear }) : '🐾';
+}
+function tvWho(k) { return 'เลขที่ ' + (k.no || '?'); }
+function renderTVisit() {
+  var box = $('tv-body'), d = TV.d, h = [];
+  if (!box) return;
+  h.push('<p class="tvhint">แตะการ์ดเพื่อดูศูนย์ฝึกกับน้องคู่หูของนักเรียน</p>');
+  if (d && d.rooms && d.rooms.length) {
+    h.push('<div class="league tvrooms" role="tablist" aria-label="เลือกห้อง">' + d.rooms.map(function (r) {
+      var on = r.id === TV.room;
+      return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tvroom="' + esc(r.id) + '">' + esc(r.id) + ' <small>' + r.n + '</small></button>';
+    }).join('') + '</div>');
+  }
+  if (TV.loading && !d) {
+    h.push('<div class="tvgrid">' + [1, 2, 3, 4].map(function () { return '<div class="card tvk"><div class="sk" style="height:96px"></div><div class="sk" style="height:14px;width:70%"></div></div>'; }).join('') + '</div>');
+  } else if (TV.err) {
+    h.push('<p class="err">' + esc(TV.err) + '</p><button type="button" class="ghost" data-tva="reload">ลองใหม่</button>');
+  } else if (d) {
+    if (!d.kids.length) h.push('<p class="muted" style="text-align:center">ยังไม่มีนักเรียนในห้องนี้</p>');
+    else {
+      var go = d.kids.filter(function (k) { return k.level > 0 || k.pet; }).length;
+      h.push('<p class="tvsum"><b>' + esc(d.room) + '</b> · ' + d.kids.length + ' คน · เริ่มสร้างศูนย์ฝึกแล้ว <b>' + go + '</b> คน' + (TV.loading ? ' · กำลังโหลด…' : '') + '</p>');
+      h.push('<div class="tvgrid">' + d.kids.map(function (k, i) {
+        return '<button type="button" class="card tvk" data-tvk="' + i + '" aria-label="ดูศูนย์ฝึกของ ' + esc(tvWho(k) + ' ' + k.name) + '">' +
+          '<span class="tvpic">' + tvPet(k, 84) + '</span>' +
+          '<b>' + esc(tvWho(k)) + '</b><small class="tvnm">' + esc(k.name) + (k.nick ? ' · “' + esc(k.nick) + '”' : '') + '</small>' +
+          '<span class="tvst"><span>🏟️ ' + fmt(k.level) + '</span>' + (k.trophies ? '<span>🏆 ' + fmt(k.trophies) + '</span>' : '') + '<span>❤️ ' + fmt(k.likes || 0) + '</span></span></button>';
+      }).join('') + '</div>');
+    }
+  }
+  box.innerHTML = h.join('');
+}
+$('tv-body').addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('[data-tvroom],[data-tvk],[data-tva]') : null;
+  if (!b) return;
+  buzz(8);
+  if (b.hasAttribute('data-tvroom')) { var r = b.getAttribute('data-tvroom'); if (r !== TV.room) { TV.room = r; tvLoad(); } return; }
+  if (b.hasAttribute('data-tvk')) { tvOpen(+b.getAttribute('data-tvk')); return; }
+  if (b.getAttribute('data-tva') === 'reload') tvLoad();
+});
+
+/* ---------- ดูเต็ม ๆ ---------- */
+function tvOpen(i) {
+  var d = TV.d;
+  if (!d || !d.kids[i]) return;
+  TV.i = i;
+  var el = $('tv-pop');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'tv-pop'; el.className = 'trip tvpop';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+    el.onclick = tvPopClick;
+    document.body.appendChild(el);
+    document.body.classList.add('tropen');
+    document.addEventListener('keydown', tvKey);
+  }
+  tvRender();
+  el.scrollTop = 0;
+  setTimeout(function () { try { el.querySelector('.trx').focus(); } catch (er) {} }, 60);
+}
+function tvRender() {
+  var el = $('tv-pop'), d = TV.d, k = d && d.kids[TV.i];
+  if (!el || !k) return;
+  var n = d.kids.length, h = [];
+  el.setAttribute('aria-label', 'ศูนย์ฝึกของ ' + tvWho(k));
+  h.push('<div class="trin">');
+  h.push('<div class="trtop"><button type="button" class="trx" data-tvx="1" aria-label="ปิด">✕</button><b class="tvttl">' + esc(tvWho(k)) + ' · ' + esc(d.room) + '</b>' +
+    '<span class="tvnav"><button type="button" class="trx" data-tvgo="-1" aria-label="คนก่อนหน้า"' + (TV.i <= 0 ? ' disabled' : '') + '>‹</button><small>' + (TV.i + 1) + '/' + n + '</small><button type="button" class="trx" data-tvgo="1" aria-label="คนถัดไป"' + (TV.i >= n - 1 ? ' disabled' : '') + '>›</button></span></div>');
+  h.push('<section class="card tvhead"><b>' + esc(k.name) + '</b><small>' + (k.nick ? 'ชื่อเล่นในแอป “' + esc(k.nick) + '”' : 'ยังไม่ได้ตั้งชื่อเล่นในแอป') + '</small></section>');
+  h.push('<div class="gstage cstage">' + centerSvg(k.c, { pet: k.pet }) + '</div>');
+  h.push('<section class="card gsum"><div><b>🏟️ ' + fmt(k.level) + '</b><small>ระดับศูนย์ฝึก</small></div><div><b>🏆 ' + fmt(k.trophies) + '</b><small>ถ้วยรางวัล</small></div><div><b>❤️ ' + fmt(k.likes || 0) + '</b><small>ถูกใจจากเพื่อน</small></div></section>');
+  h.push('<section class="card tvpet"><span class="tvpic">' + tvPet(k, 72) + '</span><div>' + (k.pet ? '<b>🐾 ' + esc(k.pet.name) + '</b><small>' + esc(k.pet.label) + (k.pet.tier >= 2 ? ' ' + ['', '', '✨', '🌈', '👑'][k.pet.tier] : '') + '</small>' : '<b>ยังไม่ได้ฟักไข่น้อง</b><small>ฟักไข่ได้ที่หน้าศูนย์ฝึกของนักเรียน</small>') + '</div></section>');
+  if (k.level === 0 && !k.pet) h.push('<p class="muted" style="text-align:center">ยังไม่ได้เริ่มสร้างศูนย์ฝึก</p>');
+  if (TV.i < n - 1) h.push('<button type="button" class="ghost" data-tvgo="1">คนถัดไป ›</button>');
+  h.push('</div>');
+  el.innerHTML = h.join('');
+}
+function tvPopClick(e) {
+  var b = e.target.closest ? e.target.closest('[data-tvx],[data-tvgo]') : null;
+  if (!b || b.disabled) return;
+  buzz(8);
+  if (b.hasAttribute('data-tvx')) { tvClose(); return; }
+  if (b.hasAttribute('data-tvgo')) { var j = TV.i + (+b.getAttribute('data-tvgo')); if (TV.d && TV.d.kids[j]) { TV.i = j; tvRender(); $('tv-pop').scrollTop = 0; } }
+}
+function tvKey(e) {
+  if (e.key === 'Escape') tvClose();
+  else if (e.key === 'ArrowRight' && TV.d && TV.d.kids[TV.i + 1]) { TV.i++; tvRender(); }
+  else if (e.key === 'ArrowLeft' && TV.i > 0) { TV.i--; tvRender(); }
+}
+function tvClose() {
+  document.removeEventListener('keydown', tvKey);
+  document.body.classList.remove('tropen');
+  var el = $('tv-pop');
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+  TV.i = -1;
+}
+/* ออกจากหน้าเยี่ยมห้อง (เปลี่ยนหน้า / ออกจากโหมดครู) ปิดหน้าต่างค้างไว้ด้วย */
+var _show_tv = show;
+show = function (id) { if (id !== 's-tvisit' && $('tv-pop')) tvClose(); _show_tv(id); };
+
+/* ===== 6B-28: คลิปวิธีเล่น =====
+ * เปิดแอปครั้งแรก ทุกบัญชีที่ยังไม่เคยเห็น (ทั้งเด็กใหม่และเด็กที่สมัครแล้ว) ขึ้นคลิปวิธีเล่น 1 นาที กดดูหรือข้ามได้
+ * ดูซ้ำได้ที่ ⚙️ ตั้งค่า · ไฟล์ howto.mp4 / howto.jpg อยู่คู่กับ index.html · โหลดคลิปตอนกดเล่นเท่านั้น (ประหยัดเน็ต) */
+var HOWTO = { src: 'howto.mp4?v=1', poster: 'howto.jpg?v=1', t: 0 };
+function howOpen(auto) {
+  howClose();
+  var el = document.createElement('div');
+  el.id = 'howto'; el.className = 'howto';
+  el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'คลิปวิธีเล่น');
+  el.innerHTML = '<div class="howin">' +
+    '<div class="howtop"><b>🎬 วิธีเล่นสมุดสุขภาพ</b><small>1 นาที · เปิดเสียงด้วยนะ 🔊</small></div>' +
+    '<div class="howvid"><video id="how-v" playsinline controls preload="none" poster="' + HOWTO.poster + '" src="' + HOWTO.src + '"></video>' +
+      '<button type="button" class="howplay" data-howplay="1" aria-label="เล่นคลิปวิธีเล่น">▶</button></div>' +
+    '<p class="howmsg" id="how-msg" aria-live="polite"></p>' +
+    '<button type="button" class="cta" data-howgo="1">' + (auto ? 'ดูแล้ว เริ่มเล่นเลย! 💪' : 'ปิด') + '</button>' +
+    (auto ? '<button type="button" class="linkbtn" data-howgo="1">ข้ามไปก่อน (ดูทีหลังได้ที่ ⚙️ ตั้งค่า)</button>' : '') +
+    '</div>';
+  document.body.appendChild(el);
+  document.body.classList.add('tropen');
+  var v = $('how-v');
+  v.addEventListener('play', function () { el.classList.add('playing'); $('how-msg').textContent = ''; if (window.SND) SND.hold(true); });
+  v.addEventListener('pause', function () { if (window.SND) SND.hold(false); });
+  v.addEventListener('ended', function () {
+    el.classList.remove('playing');
+    if (window.SND) SND.hold(false);
+    var b = el.querySelector('.cta');
+    if (b) { b.textContent = 'เริ่มเล่นเลย! 💪'; try { b.focus(); } catch (er) {} }
+  });
+  v.addEventListener('error', function () {
+    el.classList.remove('playing');
+    $('how-msg').textContent = navigator.onLine ? 'เปิดคลิปไม่ได้ ลองใหม่ภายหลังนะ' : 'ต่อเน็ตก่อนแล้วค่อยดูคลิปนะ';
+  });
+  el.onclick = function (e) {
+    var b = e.target.closest ? e.target.closest('[data-howplay],[data-howgo]') : null;
+    if (!b) return;
+    buzz(8);
+    if (b.hasAttribute('data-howplay')) {
+      if (!navigator.onLine) { $('how-msg').textContent = 'ต่อเน็ตก่อนแล้วค่อยดูคลิปนะ'; return; }
+      try { var p = v.play(); if (p && p.catch) p.catch(function () {}); } catch (er) {}
+      return;
+    }
+    howClose();
+  };
+  document.addEventListener('keydown', howKey);
+  if (auto) { var a = active(); if (a) { a.howtoSeen = 1; save(); } }
+  setTimeout(function () { try { el.querySelector('.howplay').focus(); } catch (er) {} }, 60);
+}
+function howKey(e) { if (e.key === 'Escape') howClose(); }
+function howClose() {
+  document.removeEventListener('keydown', howKey);
+  var el = $('howto');
+  if (!el) return;
+  try { $('how-v').pause(); } catch (er) {}
+  if (window.SND) SND.hold(false);
+  if (el.parentNode) el.parentNode.removeChild(el);
+  if (!$('trip') && !$('tv-pop')) document.body.classList.remove('tropen');
+}
+/* ขึ้นเองครั้งแรก: หลังหน้าแนะนำ เมื่ออยู่หน้าแรกและไม่มีป๊อปอัปอื่น (ก่อนสรุปสัปดาห์ / การเดินทาง) */
+var _rh_how = renderHome;
+renderHome = function () {
+  _rh_how.apply(this, arguments);
+  var a = active();
+  clearTimeout(HOWTO.t);
+  if (!a || a.howtoSeen) return;
+  if (navigator.webdriver && !window.HB_FORCE_HOWTO) return;
+  HOWTO.t = setTimeout(function () {
+    var b = active();
+    if (!b || b.howtoSeen || current !== 's-home' || $('howto') || $('story') || $('trip') || $('hatch') || document.querySelector('#s-cele.on, .sheet-wrap.on')) return;
+    howOpen(true);
+  }, 700);
+};
+$('go-howto').onclick = function () { buzz(8); howOpen(false); };
 
 /* ---------- เริ่มต้น ---------- */
 function boot() {

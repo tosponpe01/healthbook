@@ -2772,6 +2772,7 @@ function route_(req) {
     case 'tcenter': return teacherApi_(req, teacherCenter_);
     case 'tcentersave': return teacherApi_(req, teacherCenterSave_);
     case 'tboard': return teacherApi_(req, teacherBoard_);
+    case 'troom': return teacherApi_(req, teacherRoom_);
     default: return FQ.fail('ไม่รู้จักคำสั่งนี้', 'BAD');
   }
 }
@@ -3508,6 +3509,29 @@ function teacherApi_(req, fn) {
     if (res && res.ok !== false) res.ok = true;
     return res;
   });
+}
+
+/* 6B-27 เยี่ยมห้อง: ครูดูศูนย์ฝึก + น้องคู่หูของนักเรียนทั้งห้อง ดูอย่างเดียว (ชื่อจริงส่งเฉพาะคำขอที่มีตั๋วครู) */
+function roomKey_(id) { var m = /(\d+)\D+(\d+)/.exec(String(id || '')); return m ? Number(m[1]) * 1000 + Number(m[2]) : 999999; }
+function teacherRoom_(req) {
+  var today = todayKey_(), roster = readRoster_().filter(function (x) { return x.active && x.classId; }), count = {};
+  roster.forEach(function (x) { count[x.classId] = (count[x.classId] || 0) + 1; });
+  var ids = Object.keys(count).sort(function (a, b) { return roomKey_(a) - roomKey_(b) || (a < b ? -1 : a > b ? 1 : 0); });
+  var room = String(req.room || '');
+  if (!count[room]) room = ids[0] || '';
+  var sh = gameSheet_(false), rows = {};
+  if (sh && sh.getLastRow() >= 2) {
+    sh.getRange(2, 1, sh.getLastRow() - 1, H.game.length).getValues().forEach(function (v) { var k = normSid_(v[GC.sid - 1]); if (k) rows[k] = v; });
+  }
+  var kids = roster.filter(function (x) { return x.classId === room; }).sort(function (a, b) { return (a.no || 999) - (b.no || 999) || (a.sid < b.sid ? -1 : 1); }).map(function (x) {
+    var v = rows[x.sid], C = FQ.centerParse(v ? String(v[GC.layout - 1] || '') : ''), B = FQ.centerBrief(C), lv = v ? Number(v[GC.lv - 1]) || 1 : 1;
+    var pet = v ? FQ.petParse(v[GC.pet - 1], v[GC.pname - 1], String(v[GC.pdata - 1] || '')) : null;
+    return {
+      sid: x.sid, no: x.no || 0, name: x.name, nick: x.nick || '', c: { r: B.r, s: B.s }, level: B.level, trophies: B.r,
+      likes: v ? Number(v[GC.likes - 1]) || 0 : 0, pet: FQ.petView(pet, lv, today, false)
+    };
+  });
+  return { today: today, room: room, rooms: ids.map(function (k) { return { id: k, n: count[k] }; }), kids: kids };
 }
 
 /* 6B-25 จอใหญ่หน้าเสาธง: ยอดรวมวันนี้ + อันดับห้องสัปดาห์นี้ (แคช 1 นาที) ไม่มีชื่อเด็ก */
