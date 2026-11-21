@@ -2773,6 +2773,7 @@ function route_(req) {
     case 'tcentersave': return teacherApi_(req, teacherCenterSave_);
     case 'tboard': return teacherApi_(req, teacherBoard_);
     case 'troom': return teacherApi_(req, teacherRoom_);
+    case 'trank': return teacherApi_(req, teacherRank_);
     default: return FQ.fail('ไม่รู้จักคำสั่งนี้', 'BAD');
   }
 }
@@ -3532,6 +3533,42 @@ function teacherRoom_(req) {
     };
   });
   return { today: today, room: room, rooms: ids.map(function (k) { return { id: k, n: count[k] }; }), kids: kids };
+}
+
+/* 6B-29 ลำดับนักเรียนสำหรับครู: แต้มสัปดาห์นี้ แต้มสะสม นาทีสัปดาห์นี้ (จากแท็บสรุปดาว ที่สร้างทุกชั่วโมง) + ถ้วยศูนย์ฝึก (อ่านสด)
+ * ส่งทุกคนในโรงเรียนครั้งเดียว หน้าเว็บกรองห้อง/ชั้น/ทั้งโรงเรียนและเรียงเอง · ชื่อจริงส่งเฉพาะคำขอที่มีตั๋วครู */
+function rankSummary_() {
+  var sh = SpreadsheetApp.getActive().getSheetByName(TAB.summary);
+  if (!sh || sh.getLastRow() < 3) return null;
+  var all = sh.getRange(1, 1, sh.getLastRow(), sh.getLastColumn()).getValues(), hd = all[1].map(function (x) { return String(x); });
+  var c = { s: hd.indexOf(SC.sid), t: hd.indexOf('แต้มรวม'), l: hd.indexOf('ระดับ'), w: hd.indexOf('แต้มสัปดาห์นี้'), m: hd.indexOf('นาทีสัปดาห์นี้') };
+  if (c.s < 0 || c.t < 0 || c.w < 0 || c.m < 0) return null;
+  var at = /อัปเดตล่าสุด (\d{4}-\d\d-\d\d) (\d\d:\d\d)/.exec(String(all[0][0] || ''));
+  var by = {}, n = function (v) { return Math.max(0, Math.round(Number(v) || 0)); };
+  for (var i = 2; i < all.length; i++) {
+    var sid = normSid_(String(all[i][c.s]).replace(/^'/, ''));
+    if (sid) by[sid] = { t: n(all[i][c.t]), w: n(all[i][c.w]), m: n(all[i][c.m]), lv: parseInt(all[i][c.l], 10) || 0 };
+  }
+  return { by: by, date: at ? at[1] : '', time: at ? at[2] : '' };
+}
+function teacherRank_(req) {
+  var today = todayKey_(), ws = FQ.addDays(today, -FQ.weekdayIdx(today));
+  var S = rankSummary_();
+  /* ยังไม่เคยสร้าง / สร้างด้วยโค้ดเก่า (ไม่มีคอลัมน์นาทีสัปดาห์นี้) / ข้ามสัปดาห์แล้ว / ครูกดอัปเดตตอนนี้ (เก่ากว่า 5 นาที) → สร้างใหม่ */
+  var old5 = Utilities.formatDate(new Date(Date.now() - 5 * 60e3), TZ, 'yyyy-MM-dd HH:mm');
+  if (!S || !S.date || S.date < ws || (req.fresh && S.date + ' ' + S.time < old5)) { rebuildSummary_(); S = rankSummary_() || { by: {}, date: '', time: '' }; }
+  var sh = gameSheet_(false), tro = {};
+  if (sh && sh.getLastRow() >= 2) {
+    sh.getRange(2, 1, sh.getLastRow() - 1, H.game.length).getValues().forEach(function (v) {
+      var k = normSid_(v[GC.sid - 1]);
+      if (k) tro[k] = FQ.centerBrief(FQ.centerParse(String(v[GC.layout - 1] || ''))).r;
+    });
+  }
+  var kids = readRoster_().filter(function (x) { return x.active && x.classId; }).map(function (x) {
+    var v = S.by[x.sid] || { t: 0, w: 0, m: 0, lv: 0 };
+    return { sid: x.sid, no: x.no || 0, name: x.name, nick: x.nick || '', c: x.classId, g: x.grade, rm: x.room, reg: !!x.pinHash, w: v.w, t: v.t, m: v.m, lv: v.lv, tr: tro[x.sid] || 0 };
+  });
+  return { today: today, week: ws, updated: S.time ? S.date + ' ' + S.time : '', who: 420, kids: kids };
 }
 
 /* 6B-25 จอใหญ่หน้าเสาธง: ยอดรวมวันนี้ + อันดับห้องสัปดาห์นี้ (แคช 1 นาที) ไม่มีชื่อเด็ก */
@@ -5105,7 +5142,7 @@ function rebuildSummary_() {
   head.push('ดาวรวม');
   for (w = 1; w <= weeks; w++) head.push('นาที ส.' + w);
   head.push('นาทีรวม', 'บันทึกล่าสุด');
-  head.push('แต้มรวม', 'ระดับ', 'ฉายา', 'ภารกิจ (ครั้ง)', 'วันที่บันทึกสะสม', 'แต้มสัปดาห์นี้', 'เป้าสัปดาห์ (นาที)', 'สติกเกอร์', 'คำถาม (ถูก/ตอบ)', 'ดูคลิปครบ (ครั้ง)');
+  head.push('แต้มรวม', 'ระดับ', 'ฉายา', 'ภารกิจ (ครั้ง)', 'วันที่บันทึกสะสม', 'แต้มสัปดาห์นี้', 'เป้าสัปดาห์ (นาที)', 'สติกเกอร์', 'คำถาม (ถูก/ตอบ)', 'ดูคลิปครบ (ครั้ง)', 'นาทีสัปดาห์นี้');
   var bySid = {}, doneBy = {}, extraBy = {}, people = [], snaps = [];
   var cheerTo = {}, ws0 = FQ.addDays(today, -FQ.weekdayIdx(today)), cut0 = FQ.addDays(today, -c.settings.backfillDays);
   readExtra_().forEach(function (x) {
@@ -5145,6 +5182,7 @@ function rebuildSummary_() {
     mine.forEach(function (l) {
       if (!l.excluded && l.date >= ws && l.date <= today) { wk.moved = true; wk.minutes += Number(l.minutes) || 0; }
     });
+    r.push(wk.minutes);
     var of = FQ.PROFILE.outfits.filter(function (o) { return o.id === s.outfit || o.label === s.outfit; })[0];
     var cf = FQ.PROFILE.colors.filter(function (o) { return o.id === s.color || o.label === s.color; })[0];
     people.push({

@@ -1422,6 +1422,50 @@ body.tropen { overflow:hidden; }
 .howto .linkbtn { color:#ABA4D6; }
 @media (prefers-reduced-motion: reduce) { .howplay { animation:none; } }
 
+/* ===== 6B-29: ลำดับนักเรียนสำหรับครู (เยี่ยมห้อง → อันดับ) ===== */
+.tvmode { justify-content:center; }
+.tvmode button { font-size:.95em; padding:8px 18px; }
+.trscope { overflow-x:auto; flex-wrap:nowrap; scrollbar-width:none; }
+.trscope::-webkit-scrollbar { display:none; }
+.trscope button { flex:none; white-space:nowrap; }
+.trmet { display:grid; grid-template-columns:1fr 1fr; gap:6px; overflow:visible; }
+.trmet button { white-space:nowrap; text-align:center; }
+.trlist { padding:4px 10px; }
+.trrow { padding:8px 4px; }
+.trrow .no { flex:none; }
+.trrow .nm { min-width:0; display:flex; flex-direction:column; }
+.trrow .nm b { font-size:.9em; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.trrow .nm small { color:var(--ink-2); font-size:.76em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.trrow .pt { flex:none; white-space:nowrap; text-align:right; font-family:var(--display); }
+.trrow .pt small { font:600 .72em var(--body, inherit); color:var(--ink-2); }
+.trrow.top .no { font-size:1.35em; }
+.trrow.zero { opacity:.55; }
+.trrow.zero .no { color:var(--ink-2); }
+.trnote { text-align:center; color:var(--ink-2); font-size:.8em; line-height:1.7; }
+.trnote .linkbtn { font-size:1.05em; }
+
+/* ===== 6B-30: ห้องทดลอง → 🌏 รอบโลก ===== */
+.twintro { display:flex; flex-direction:column; gap:4px; }
+.twintro small { color:var(--ink-2); font-size:.82em; line-height:1.5; }
+.twnow { margin:4px 0 0; font-size:.9em; color:var(--lime); }
+.twnow b { color:var(--ink); }
+.twreg { font-size:1.05em; margin:6px 2px 0; }
+.twreg small { color:var(--ink-2); font-size:.75em; font-weight:600; }
+.twgrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+.twk { display:flex; flex-direction:column; gap:3px; padding:0 0 10px; overflow:hidden; text-align:left; border:2px solid var(--line); background:var(--card); color:var(--ink); font:inherit; cursor:pointer; min-width:0; content-visibility:auto; contain-intrinsic-size:auto 170px; }
+.twk.now { border-color:var(--lime); }
+.twpic { position:relative; display:block; aspect-ratio:16/10; overflow:hidden; background:var(--card-2); }
+.twpic svg { display:block; width:100%; height:100%; }
+.twk b { padding:0 10px; font-size:.9em; line-height:1.3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.twk small { padding:0 10px; color:var(--ink-2); font-size:.74em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.twok, .twme { position:absolute; right:6px; top:6px; font-style:normal; font-size:.85em; font-weight:800; width:24px; height:24px; display:grid; place-items:center; border-radius:50%; background:var(--lime); color:var(--lime-ink); }
+.twme { background:#fff; font-size:1em; }
+.twfact { display:flex; flex-direction:column; gap:4px; }
+.twfact p { margin:0; line-height:1.6; }
+.twleft { text-align:center; color:var(--ink-2); font-size:.9em; }
+.twleft b { color:var(--ink); }
+@media (min-width:600px) { .twgrid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+
 </style>
 </head>
 <body>
@@ -1719,9 +1763,10 @@ body.tropen { overflow:hidden; }
 
 <section class="screen nonav tscreen" id="s-tpet" aria-labelledby="tp-title">
   <div class="top"><span class="tbadge">โหมดครู</span><h1 id="tp-title" style="font-size:1.3em;flex:1">🧪 ห้องทดลอง</h1></div>
-  <div class="league tptabs" role="tablist" id="tp-tabs" aria-label="เลือกห้องทดลอง"><button type="button" role="tab" class="on" aria-selected="true" data-tpt="pet">🐾 น้องคู่หู</button><button type="button" role="tab" aria-selected="false" data-tpt="field">🏟️ สนาม (ศูนย์ฝึกต้นแบบ)</button></div>
+  <div class="league tptabs" role="tablist" id="tp-tabs" aria-label="เลือกห้องทดลอง"><button type="button" role="tab" class="on" aria-selected="true" data-tpt="pet">🐾 น้องคู่หู</button><button type="button" role="tab" aria-selected="false" data-tpt="field">🏟️ สนามต้นแบบ</button><button type="button" role="tab" aria-selected="false" data-tpt="world">🌏 รอบโลก</button></div>
   <div id="tp-body" class="stack"></div>
   <div id="tfd-body" class="stack" hidden></div>
+  <div id="tw-body" class="stack" hidden></div>
 </section>
 
 <!-- โหมดครู: ค้นหานักเรียน + แก้เลขประจำตัว -->
@@ -1819,7 +1864,7 @@ body.tropen { overflow:hidden; }
  * วางลิงก์เว็บแอป Apps Script (ลงท้ายด้วย /exec) ใน API_URL แล้วอัปโหลดไฟล์นี้ขึ้น GitHub Pages
  * ว่างไว้ = โหมดตัวอย่าง (ยังไม่เชื่อมระบบ) */
 var API_URL = 'https://script.google.com/macros/s/AKfycbzhykUt8ertRZqZT_gnBIvvjRWw6ygOSZsZm8aBZhm73RfhkVIDY16BuO3LZJM7wckV/exec';
-var APP_VER = '1.3';
+var APP_VER = '1.4';
 /* โหมดตัวอย่าง: ยังไม่ใส่ลิงก์ หรือเปิดด้วย ?demo=1 → ใช้ระบบจำลองในเครื่อง (ไฟล์ demo.js) ข้อมูลแยกจากของจริง */
 var API_OK = /^https:\/\/\S+\/exec$/.test(API_URL);
 var DEMO = !API_OK || /[?&]demo=1(&|#|$)/.test(location.search);
@@ -8977,9 +9022,11 @@ function tpTab(t) {
   for (var i = 0; i < bs.length; i++) { var on = bs[i].getAttribute('data-tpt') === t; bs[i].classList.toggle('on', on); bs[i].setAttribute('aria-selected', on ? 'true' : 'false'); }
   $('tp-body').hidden = t !== 'pet';
   $('tfd-body').hidden = t !== 'field';
+  if ($('tw-body')) $('tw-body').hidden = t !== 'world';
 }
 openTPet = function () {
   if (TPT === 'field') { show('s-tpet'); tpTab('field'); openTField(); }
+  else if (TPT === 'world') { show('s-tpet'); tpTab('world'); openTWorld(); }
   else { tpTab('pet'); _openTPet14(); }
 };
 $('tp-tabs').onclick = function (e) {
@@ -8989,6 +9036,7 @@ $('tp-tabs').onclick = function (e) {
   if (t === TPT) return;
   tpTab(t);
   if (t === 'field') openTField();
+  else if (t === 'world') openTWorld();
   else if (!$('tp-body').innerHTML.trim()) _openTPet14();
   try { window.scrollTo(0, 0); } catch (er) {}
 };
@@ -9962,7 +10010,7 @@ tbRender = function () {
  * โหมดครู → เยี่ยมห้อง: เลือกห้อง ดูศูนย์ฝึก + น้องคู่หูของนักเรียนทุกคน แตะการ์ดดูเต็ม ๆ
  * ชื่อจริงอยู่ในหน่วยความจำของโหมดครูเท่านั้น ไม่เก็บลงเครื่อง */
 TEACHER_SCREENS['s-tvisit'] = 1;
-var TV = { room: '', d: null, loading: false, err: '', i: -1, seq: 0 };
+var TV = { room: '', d: null, loading: false, err: '', i: -1, seq: 0, mode: 'center', want: '' };
 var _tng_tv = tnavGo;
 tnavGo = function (id) { if (id === 's-tvisit') openTVisit(); else _tng_tv(id); };
 
@@ -9979,12 +10027,15 @@ function tvLoad() {
     if (seq !== TV.seq) return;
     TV.loading = false;
     if (!res.ok) {
+      TV.want = '';
       if (res.code === 'AUTH_T') { toast('กรุณาเข้าโหมดครูใหม่', true); return; }
       TV.err = res.error || 'โหลดไม่สำเร็จ ลองใหม่อีกครั้ง';
       renderTVisit(); return;
     }
     TV.d = res; TV.room = res.room;
     renderTVisit();
+    /* มาจากแตะชื่อในหน้าอันดับ: เปิดศูนย์ฝึกของเด็กคนนั้นต่อเลย */
+    if (TV.want) { var w = TV.want, j = -1; TV.want = ''; res.kids.forEach(function (k, i) { if (k.sid === w) j = i; }); if (j >= 0) tvOpen(j); }
   });
 }
 function tvPet(k, size) {
@@ -9995,6 +10046,12 @@ function tvWho(k) { return 'เลขที่ ' + (k.no || '?'); }
 function renderTVisit() {
   var box = $('tv-body'), d = TV.d, h = [];
   if (!box) return;
+  /* 6B-29: สลับ ศูนย์ฝึก / อันดับ */
+  h.push('<div class="league tvmode" role="tablist" aria-label="เลือกมุมมอง">' + [['center', '🏟️ ศูนย์ฝึก'], ['rank', '🏆 อันดับ']].map(function (m) {
+    var on = TV.mode === m[0];
+    return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tvmode="' + m[0] + '">' + m[1] + '</button>';
+  }).join('') + '</div>');
+  if (TV.mode === 'rank') { box.innerHTML = h.join('') + trHtml(); return; }
   h.push('<p class="tvhint">แตะการ์ดเพื่อดูศูนย์ฝึกกับน้องคู่หูของนักเรียน</p>');
   if (d && d.rooms && d.rooms.length) {
     h.push('<div class="league tvrooms" role="tablist" aria-label="เลือกห้อง">' + d.rooms.map(function (r) {
@@ -10022,9 +10079,11 @@ function renderTVisit() {
   box.innerHTML = h.join('');
 }
 $('tv-body').addEventListener('click', function (e) {
-  var b = e.target.closest ? e.target.closest('[data-tvroom],[data-tvk],[data-tva]') : null;
+  var b = e.target.closest ? e.target.closest('[data-tvroom],[data-tvk],[data-tva],[data-tvmode],[data-trs],[data-trg],[data-trm],[data-trk],[data-tra]') : null;
   if (!b) return;
   buzz(8);
+  if (b.hasAttribute('data-tvmode')) { tvMode(b.getAttribute('data-tvmode')); return; }
+  if (TV.mode === 'rank' && trClick(b)) return;
   if (b.hasAttribute('data-tvroom')) { var r = b.getAttribute('data-tvroom'); if (r !== TV.room) { TV.room = r; tvLoad(); } return; }
   if (b.hasAttribute('data-tvk')) { tvOpen(+b.getAttribute('data-tvk')); return; }
   if (b.getAttribute('data-tva') === 'reload') tvLoad();
@@ -10161,6 +10220,250 @@ renderHome = function () {
   }, 700);
 };
 $('go-howto').onclick = function () { buzz(8); howOpen(false); };
+
+/* ===== 6B-29: ลำดับนักเรียนสำหรับครู (แท็บเยี่ยมห้อง → 🏆 อันดับ) =====
+ * เรียงได้ 4 แบบ: แต้มสัปดาห์นี้ / แต้มสะสม / นาทีสัปดาห์นี้ / ถ้วยศูนย์ฝึก · ดูได้ทั้งในห้อง ทั้งชั้น ทั้งโรงเรียน · แสดงทุกคน
+ * โหลดทั้งโรงเรียนครั้งเดียว (trank) แล้วกรอง/เรียงในเครื่อง · ชื่อจริงอยู่ในหน่วยความจำของโหมดครูเท่านั้น ไม่เก็บลงเครื่อง */
+var TR = { d: null, loading: false, err: '', at: 0, seq: 0, scope: 'room', grade: 0, metric: 'w', busy: false };
+var TR_M = {
+  w: { tab: '⭐ แต้มสัปดาห์นี้', unit: 'แต้ม', has: 'มีแต้มสัปดาห์นี้แล้ว' },
+  t: { tab: '🏅 แต้มสะสม', unit: 'แต้ม', has: 'มีแต้มสะสมแล้ว' },
+  m: { tab: '⏱️ นาทีสัปดาห์นี้', unit: 'นาที', has: 'ขยับสัปดาห์นี้แล้ว' },
+  tr: { tab: '🏆 ถ้วยศูนย์ฝึก', unit: 'ถ้วย', has: 'ได้ถ้วยแล้ว' }
+};
+function tvMode(m) {
+  if (m !== 'center' && m !== 'rank') return;
+  TV.mode = m;
+  if (m === 'center') {
+    if (!TV.d || TV.d.room !== TV.room) { tvLoad(); return; }
+  } else if (!TR.d || Date.now() - TR.at > 5 * 60e3) { trLoad(false); return; }
+  renderTVisit();
+}
+function trLoad(fresh) {
+  var seq = ++TR.seq;
+  TR.loading = true; TR.err = '';
+  renderTVisit();
+  tcall('trank', { fresh: !!fresh }).then(function (res) {
+    if (seq !== TR.seq) return;
+    TR.loading = false; TR.busy = false;
+    if (!res.ok) {
+      if (res.code === 'AUTH_T') { toast('กรุณาเข้าโหมดครูใหม่', true); return; }
+      TR.err = res.error || 'โหลดไม่สำเร็จ ลองใหม่อีกครั้ง';
+      renderTVisit(); return;
+    }
+    TR.d = res; TR.at = Date.now();
+    if (fresh) toast('อัปเดตอันดับแล้ว');
+    renderTVisit();
+  });
+}
+function trKey(c) { var m = /(\d+)\D+(\d+)/.exec(String(c || '')); return m ? +m[1] * 1000 + +m[2] : 999999; }
+function trVal(k) { return Number(k[TR.metric]) || 0; }
+function trList() {
+  var d = TR.d, kids = d.kids.filter(function (k) {
+    return TR.scope === 'school' || (TR.scope === 'grade' ? k.g === TR.grade : k.c === TV.room);
+  });
+  kids.sort(function (a, b) { return trVal(b) - trVal(a) || trKey(a.c) - trKey(b.c) || (a.no || 999) - (b.no || 999) || (a.sid < b.sid ? -1 : 1); });
+  var prev = null, r = 0;
+  kids.forEach(function (k, i) { var v = trVal(k); if (v !== prev) { r = i + 1; prev = v; } k._r = v > 0 ? r : 0; });
+  return kids;
+}
+function trHtml() {
+  var d = TR.d, h = [];
+  h.push('<div class="league trscope" role="tablist" aria-label="ดูลำดับในกลุ่ม">' + [['room', 'ในห้อง'], ['grade', 'ทั้งชั้น'], ['school', 'ทั้งโรงเรียน']].map(function (s) {
+    var on = TR.scope === s[0];
+    return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-trs="' + s[0] + '">' + s[1] + '</button>';
+  }).join('') + '</div>');
+  if (!d) {
+    if (TR.err) h.push('<p class="err">' + esc(TR.err) + '</p><button type="button" class="ghost" data-tra="reload">ลองใหม่</button>');
+    else h.push('<div class="card" style="padding:8px 12px">' + [1, 2, 3, 4, 5].map(function () { return '<div class="sk" style="height:40px;margin:6px 0"></div>'; }).join('') + '</div>');
+    return h.join('');
+  }
+  var rooms = {}, grades = {};
+  d.kids.forEach(function (k) { rooms[k.c] = (rooms[k.c] || 0) + 1; grades[k.g] = (grades[k.g] || 0) + 1; });
+  var rl = Object.keys(rooms).sort(function (a, b) { return trKey(a) - trKey(b); }), gl = Object.keys(grades).map(Number).sort(function (a, b) { return a - b; });
+  if (!rooms[TV.room]) TV.room = rl[0] || '';
+  if (!grades[TR.grade]) TR.grade = (TV.room && +(/\d+/.exec(TV.room) || [0])[0]) || gl[0] || 0;
+  if (TR.scope === 'room' && rl.length) {
+    h.push('<div class="league tvrooms" role="tablist" aria-label="เลือกห้อง">' + rl.map(function (r) {
+      var on = r === TV.room;
+      return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-tvroom="' + esc(r) + '">' + esc(r) + ' <small>' + rooms[r] + '</small></button>';
+    }).join('') + '</div>');
+  } else if (TR.scope === 'grade' && gl.length) {
+    h.push('<div class="league tvrooms" role="tablist" aria-label="เลือกชั้น">' + gl.map(function (g) {
+      var on = g === TR.grade;
+      return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-trg="' + g + '">ป.' + g + ' <small>' + grades[g] + '</small></button>';
+    }).join('') + '</div>');
+  }
+  h.push('<div class="league trmet" role="tablist" aria-label="เรียงตาม">' + ['w', 't', 'm', 'tr'].map(function (m) {
+    var on = TR.metric === m;
+    return '<button type="button" role="tab" aria-selected="' + on + '" class="' + (on ? 'on' : '') + '" data-trm="' + m + '">' + TR_M[m].tab + '</button>';
+  }).join('') + '</div>');
+  var list = trList(), M = TR_M[TR.metric], has = list.filter(function (k) { return trVal(k) > 0; }).length, who = d.who || 420;
+  var label = TR.scope === 'room' ? TV.room : TR.scope === 'grade' ? 'ป.' + TR.grade + ' ทุกห้อง' : 'ทั้งโรงเรียน';
+  h.push('<p class="tvsum"><b>' + esc(label) + '</b> · ' + fmt(list.length) + ' คน · ' + M.has + ' <b>' + fmt(has) + '</b> คน' +
+    (TR.metric === 'm' ? ' · ถึงเกณฑ์ WHO ' + who + ' นาที <b>' + fmt(list.filter(function (k) { return k.m >= who; }).length) + '</b> คน' : '') +
+    (TR.loading ? ' · กำลังโหลด…' : '') + '</p>');
+  if (!list.length) h.push('<p class="muted" style="text-align:center">ยังไม่มีนักเรียนในกลุ่มนี้</p>');
+  else {
+    var medal = ['', '🥇', '🥈', '🥉'], showRoom = TR.scope !== 'room';
+    h.push('<div class="card trlist">' + list.map(function (k) {
+      var v = trVal(k), sub = [];
+      if (k.nick) sub.push('“' + esc(k.nick) + '”');
+      if (showRoom) sub.push(esc(k.c));
+      if (!k.reg) sub.push('ยังไม่สมัคร');
+      var val = TR.metric === 'tr' ? '🏆 ' + fmt(v) : fmt(v) + ' <small>' + M.unit + '</small>' + (TR.metric === 'm' && v >= who ? ' ✅' : '');
+      return '<button type="button" class="rank trrow' + (v > 0 ? '' : ' zero') + (k._r && k._r <= 3 ? ' top' : '') + '" data-trk="' + esc(k.sid) + '" data-trc="' + esc(k.c) + '" aria-label="' +
+        esc((k._r ? 'อันดับ ' + k._r + ' ' : '') + 'เลขที่ ' + (k.no || '?') + ' ' + k.name + ' ' + v + ' ' + M.unit) + '">' +
+        '<span class="no">' + (k._r ? medal[k._r] || k._r : '–') + '</span>' +
+        '<span class="nm"><b>เลขที่ ' + (k.no || '?') + ' · ' + esc(k.name) + '</b>' + (sub.length ? '<small>' + sub.join(' · ') + '</small>' : '') + '</span>' +
+        '<span class="pt">' + val + '</span></button>';
+    }).join('') + '</div>');
+  }
+  var at = d.updated ? d.updated.slice(11, 16) : '';
+  h.push('<p class="trnote">' + (TR.metric === 'tr' ? 'ถ้วยศูนย์ฝึกเป็นตัวเลขล่าสุด' : 'แต้มและนาทีอัปเดตทุกชั่วโมง' + (at ? ' (ล่าสุด ' + at + ' น.)' : '')) +
+    ' · แตะชื่อเพื่อดูศูนย์ฝึก<br><button type="button" class="linkbtn" data-tra="fresh"' + (TR.busy ? ' disabled' : '') + '>' + (TR.busy ? 'กำลังอัปเดต…' : '🔄 อัปเดตตอนนี้') + '</button></p>');
+  return h.join('');
+}
+/* คืน true เมื่อจัดการปุ่มนี้แล้ว */
+function trClick(b) {
+  if (b.hasAttribute('data-trs')) { TR.scope = b.getAttribute('data-trs'); renderTVisit(); return true; }
+  if (b.hasAttribute('data-trg')) { TR.grade = +b.getAttribute('data-trg'); renderTVisit(); return true; }
+  if (b.hasAttribute('data-trm')) { TR.metric = b.getAttribute('data-trm'); renderTVisit(); return true; }
+  if (b.hasAttribute('data-tvroom')) { TV.room = b.getAttribute('data-tvroom'); renderTVisit(); return true; }
+  if (b.hasAttribute('data-tra')) {
+    var a = b.getAttribute('data-tra');
+    if (a === 'fresh') { if (TR.busy) return true; if (!navigator.onLine) { toast('ต้องมีเน็ตตอนอัปเดต', true); return true; } TR.busy = true; trLoad(true); }
+    else trLoad(false);
+    return true;
+  }
+  if (b.hasAttribute('data-trk')) {
+    var sid = b.getAttribute('data-trk'), c = b.getAttribute('data-trc'), j = -1;
+    if (TV.d && TV.d.room === c) TV.d.kids.forEach(function (k, i) { if (k.sid === sid) j = i; });
+    if (j >= 0) { tvOpen(j); return true; }
+    TV.room = c; TV.want = sid; tvLoad();
+    return true;
+  }
+  return false;
+}
+/* ออกจากโหมดครู: ล้างรายชื่อที่โหลดไว้ */
+(function () {
+  var b = $('btn-tlogout'), _lo = b && b.onclick;
+  if (!b || !_lo) return;
+  b.onclick = function () { TR.d = null; TR.at = 0; TV.d = null; TV.mode = 'center'; return _lo.apply(this, arguments); };
+})();
+
+/* ===== 6B-30: ห้องทดลอง → 🌏 รอบโลก =====
+ * ครูดูภาพสถานที่ครบ 39 ที่ของการเดินทางของโรงเรียน แตะดูภาพใหญ่ + เกร็ดความรู้ + ต้องขยับรวมกี่นาทีจึงจะถึง
+ * ถ้าโหลดข้อมูลจอใหญ่ได้ (tboard) จะบอกด้วยว่าตอนนี้ทั้งโรงเรียนอยู่ที่ไหน ถึงที่ไหนมาแล้ว · ไม่มีชื่อเด็ก */
+var TW = { trip: null, tried: false, i: -1 };
+function twSpm() { return (TW.trip && TW.trip.spm) || 100; }
+/* ต้องขยับรวมกี่นาทีจึงถึงระยะ km (1 นาที = spm ก้าว ก้าวละครึ่งเมตร) */
+function twMin(km) { return Math.ceil(km * 2000 / twSpm()); }
+function twW() { return TW.trip && typeof TW.trip.min === 'number' ? TRIP.where(TRIP.km(TW.trip.min, TW.trip.spm)) : null; }
+function twState(s, w) { if (!w) return ''; if (s.i === w.i) return 'now'; return s.i < w.i || w.round > 1 ? 'done' : ''; }
+function openTWorld() {
+  renderTWorld();
+  if (TW.tried) return;
+  TW.tried = true;
+  tcall('tboard', {}).then(function (res) {
+    if (res && res.ok && res.trip) { TW.trip = res.trip; renderTWorld(); if ($('tw-pop')) twRender(); }
+  });
+}
+function renderTWorld() {
+  var box = $('tw-body');
+  if (!box || !window.TRIP) return;
+  var w = twW(), h = [], reg = '', icon = { th: '🛺', asean: '🤝', world: '🌏' };
+  h.push('<div class="card twintro"><b>🌏 สถานที่ที่ทั้งโรงเรียนเดินทางไปด้วยก้าว</b><small>' + TRIP.STOPS.length + ' ที่ จากโรงเรียน → ทั่วไทย → อาเซียน → รอบโลก แล้ววนกลับโรงเรียน = ครบรอบโลก (' + fmt(TRIP.LOOP) + ' กม.) · แตะภาพเพื่อดูใหญ่</small>' +
+    (w ? '<p class="twnow">📍 ตอนนี้ทั้งโรงเรียนอยู่ที่ <b>' + w.cur.e + ' ' + esc(w.cur.name) + '</b> · ขยับรวม ' + fmt(TW.trip.min) + ' นาที' + (w.round > 1 ? ' · รอบโลกที่ ' + w.round : '') + '</p>' : '') + '</div>');
+  TRIP.STOPS.forEach(function (s) {
+    if (s.reg !== reg) {
+      if (reg) h.push('</div>');
+      reg = s.reg;
+      var n = TRIP.STOPS.filter(function (x) { return x.reg === reg; }).length;
+      h.push('<h2 class="twreg">' + icon[reg] + ' ' + TRIP.REG[reg] + ' <small>' + n + ' ที่</small></h2><div class="twgrid">');
+    }
+    var st = twState(s, w);
+    h.push('<button type="button" class="card twk' + (st ? ' ' + st : '') + '" data-twk="' + s.i + '" aria-label="ดูภาพ ' + esc(s.name) + '">' +
+      '<span class="twpic">' + TRIP.art(s.id, { slice: true }) + (st === 'now' ? '<i class="twme">📍</i>' : st === 'done' ? '<i class="twok" aria-label="ถึงแล้ว">✓</i>' : '') + '</span>' +
+      '<b>' + s.e + ' ' + esc(s.name) + '</b><small>' + esc(s.at) + ' · ' + (s.km ? tpKm(s.km) + ' กม.' : 'จุดเริ่มต้น') + '</small></button>');
+  });
+  h.push('</div><p class="trnote">ระยะทางโดยประมาณ วัดเป็นเส้นตรงระหว่างสถานที่ · 1 นาที ≈ ' + fmt(twSpm()) + ' ก้าว (ก้าวละครึ่งเมตร)</p>');
+  box.innerHTML = h.join('');
+}
+$('tw-body').addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('[data-twk]') : null;
+  if (!b) return;
+  buzz(8);
+  twOpen(+b.getAttribute('data-twk'));
+});
+
+/* ---------- ดูภาพใหญ่ ---------- */
+function twOpen(i) {
+  if (!TRIP.STOPS[i]) return;
+  TW.i = i;
+  var el = $('tw-pop');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'tw-pop'; el.className = 'trip twpop';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+    el.onclick = twPopClick;
+    document.body.appendChild(el);
+    document.body.classList.add('tropen');
+    document.addEventListener('keydown', twKey);
+  }
+  twRender();
+  el.scrollTop = 0;
+  setTimeout(function () { try { el.querySelector('.trx').focus(); } catch (er) {} }, 60);
+}
+function twRender() {
+  var el = $('tw-pop'), s = TRIP.STOPS[TW.i];
+  if (!el || !s) return;
+  var n = TRIP.STOPS.length, w = twW(), st = twState(s, w), min = twMin(s.km), h = [];
+  el.setAttribute('aria-label', 'ภาพ ' + s.name);
+  h.push('<div class="trin">');
+  h.push('<div class="trtop"><button type="button" class="trx" data-twx="1" aria-label="ปิด">✕</button><b class="tvttl">' + TRIP.REG[s.reg] + '</b>' +
+    '<span class="tvnav"><button type="button" class="trx" data-twgo="-1" aria-label="ที่ก่อนหน้า"' + (TW.i <= 0 ? ' disabled' : '') + '>‹</button><small>' + (TW.i + 1) + '/' + n + '</small><button type="button" class="trx" data-twgo="1" aria-label="ที่ถัดไป"' + (TW.i >= n - 1 ? ' disabled' : '') + '>›</button></span></div>');
+  h.push('<div class="trhero">' + TRIP.art(s.id) + '<div class="trcap"><small>' + (st === 'now' ? '📍 ตอนนี้ทั้งโรงเรียนอยู่ที่นี่' : st === 'done' ? '✓ ทั้งโรงเรียนมาถึงแล้ว' : 'ที่ ' + (TW.i + 1) + ' จาก ' + n) + '</small><h2>' + s.e + ' ' + esc(s.name) + '</h2><small>' + esc(s.at) + '</small></div></div>');
+  h.push('<section class="card twfact"><b>💡 รู้ไหม</b><p>' + esc(s.fact) + '</p></section>');
+  if (s.km) {
+    h.push('<div class="trstats"><div><b>' + tpKm(s.km) + '</b><small>กม. จากโรงเรียน</small></div><div><b>' + tpBig(min) + '</b><small>นาทีที่ต้องขยับรวม</small></div><div><b>' + tpBig(TRIP.steps(min, twSpm())) + '</b><small>ก้าว</small></div></div>');
+    if (w && !st) {
+      var left = Math.max(0, min - TW.trip.min);
+      h.push('<p class="twleft">ทั้งโรงเรียนต้องขยับรวมอีก <b>' + tpBig(left) + '</b> นาที จึงจะถึง</p>');
+    }
+  } else h.push('<p class="twleft">🏁 จุดเริ่มต้นการเดินทาง · ครบรอบโลกเมื่อวนกลับมาที่ ' + fmt(TRIP.LOOP) + ' กม.</p>');
+  h.push('<button type="button" class="ghost" data-twgo="1"' + (TW.i >= n - 1 ? ' hidden' : '') + '>ที่ถัดไป ›</button>');
+  h.push('</div>');
+  el.innerHTML = h.join('');
+}
+function twPopClick(e) {
+  var b = e.target.closest ? e.target.closest('[data-twx],[data-twgo]') : null;
+  if (!b || b.disabled) return;
+  buzz(8);
+  if (b.hasAttribute('data-twx')) { twClose(); return; }
+  var j = TW.i + (+b.getAttribute('data-twgo'));
+  if (TRIP.STOPS[j]) { TW.i = j; twRender(); $('tw-pop').scrollTop = 0; }
+}
+function twKey(e) {
+  if (e.key === 'Escape') twClose();
+  else if (e.key === 'ArrowRight' && TRIP.STOPS[TW.i + 1]) { TW.i++; twRender(); }
+  else if (e.key === 'ArrowLeft' && TW.i > 0) { TW.i--; twRender(); }
+}
+function twClose() {
+  document.removeEventListener('keydown', twKey);
+  document.body.classList.remove('tropen');
+  var el = $('tw-pop');
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+  TW.i = -1;
+}
+var _show_tw = show;
+show = function (id) { if (id !== 's-tpet' && $('tw-pop')) twClose(); _show_tw(id); };
+/* ออกจากโหมดครู: ลืมตำแหน่งการเดินทางที่โหลดไว้ (โหลดใหม่ครั้งหน้า) */
+(function () {
+  var b = $('btn-tlogout'), _lo = b && b.onclick;
+  if (!b || !_lo) return;
+  b.onclick = function () { TW.trip = null; TW.tried = false; return _lo.apply(this, arguments); };
+})();
 
 /* ---------- เริ่มต้น ---------- */
 function boot() {
