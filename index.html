@@ -1234,7 +1234,7 @@ body.tbon .banners, body.tbon #nav, body.tbon #tnav { display:none !important; }
 .tbctl:hover, .tbctl:focus-within { opacity:1; }
 .tbctl button { border:0; border-radius:12px; padding:8px 12px; background:#251F4A; color:#fff; font:700 .9em var(--display); cursor:pointer; }
 .tbwait { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; font-size:1.3em; }
-.tbv { font-size:clamp(13px,1.35vw,28px); min-height:100vh; display:flex; flex-direction:column; font-family:var(--display); position:relative; }
+.tbv { font-size:clamp(12px,min(1.35vw,2.15vh),28px); /* 6B-39: ย่อตามความสูงจอด้วย จอกว้างแต่เตี้ยจะได้ไม่ล้น */ min-height:100vh; display:flex; flex-direction:column; font-family:var(--display); position:relative; }
 .tbhd { display:flex; justify-content:space-between; align-items:center; gap:1em; padding:.9em 1.4em .6em; flex-wrap:wrap; }
 .tblg { display:flex; align-items:baseline; gap:.5em; font-size:1.6em; }
 .tblg span { font-size:.55em; color:#ABA4D6; }
@@ -1328,7 +1328,7 @@ body.tropen { overflow:hidden; }
 @keyframes trbob { 50% { transform:translateY(-4px); } }
 .tbgd.hastrip { grid-template-rows:minmax(0,1fr) auto; }
 .tbtrip { grid-column:1/-1; flex-direction:row; align-items:stretch; gap:1.1em; padding:.8em; }
-.tbtpic { position:relative; flex:none; width:15em; aspect-ratio:16/10; border-radius:.9em; overflow:hidden; border:2px solid #352E66; align-self:center; }
+.tbtpic { position:relative; flex:none; width:21em; /* 6B-39: ภาพสถานที่ใหญ่ขึ้น (เดิม 15em) */ aspect-ratio:16/10; border-radius:.9em; overflow:hidden; border:2px solid #352E66; align-self:center; }
 .tbtpic svg { width:100%; height:100%; display:block; }
 .tbtpic span { position:absolute; left:.5em; top:.5em; background:rgba(15,12,36,.78); color:#fff; font-size:.66em; padding:.2em .6em; border-radius:99px; }
 .tbtin { flex:1; min-width:0; display:flex; flex-direction:column; gap:.3em; justify-content:center; }
@@ -1340,16 +1340,17 @@ body.tropen { overflow:hidden; }
 .tbtnow { font-size:.78em; color:#E4E0FF; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .tbtnow small { color:#ABA4D6; }
 .tbroute { display:flex; align-items:flex-start; margin:.35em 0 .1em; }
-.tbstop { flex:none; width:5.4em; display:flex; flex-direction:column; align-items:center; gap:.15em; text-align:center; }
-.tbstop b { width:2.1em; height:2.1em; border-radius:50%; display:grid; place-items:center; font-size:1.05em; background:#251F4A; border:2px solid #352E66; }
-.tbstop small { font-size:.56em; color:#ABA4D6; line-height:1.2; }
+/* 6B-39: แถวสถานที่ต่อไปเล็กลง */
+.tbstop { flex:none; width:4.4em; display:flex; flex-direction:column; align-items:center; gap:.15em; text-align:center; }
+.tbstop b { width:1.6em; height:1.6em; border-radius:50%; display:grid; place-items:center; font-size:.85em; background:#251F4A; border:2px solid #352E66; }
+.tbstop small { font-size:.5em; color:#ABA4D6; line-height:1.2; }
 .tbstop.done b { background:#2E3E1A; border-color:#C6FF4D; }
-.tbstop.now b { background:#C6FF4D; border-color:#fff; box-shadow:0 0 0 .3em rgba(198,255,77,.25); }
+.tbstop.now b { background:#C6FF4D; border-color:#fff; box-shadow:0 0 0 .22em rgba(198,255,77,.25); }
 .tbstop.now small { color:#fff; font-weight:700; }
 .tbstop.lock b { filter:grayscale(1); opacity:.7; }
-.tbseg { position:relative; flex:1; height:.42em; margin-top:.85em; border-radius:99px; background:#352E66; min-width:1.5em; }
+.tbseg { position:relative; flex:1; height:.34em; margin-top:.5em; border-radius:99px; background:#352E66; min-width:1.5em; }
 .tbseg em { position:absolute; left:0; top:0; bottom:0; border-radius:99px; background:linear-gradient(90deg,#4DD8FF,#C6FF4D); }
-.tbseg i { position:absolute; top:-1.2em; transform:translateX(-50%) scaleX(-1); font-style:normal; font-size:1.2em; animation:tbrun .5s ease-in-out infinite alternate; }
+.tbseg i { position:absolute; top:-1.15em; transform:translateX(-50%) scaleX(-1); font-style:normal; font-size:1em; animation:tbrun .5s ease-in-out infinite alternate; }
 @keyframes tbrun { to { margin-top:-.15em; } }
 .tbarr { position:absolute; inset:0; z-index:5; display:grid; place-items:center; background:rgba(15,12,36,.84); cursor:pointer; }
 .tbarrin { width:min(68vw,96vh); text-align:center; display:flex; flex-direction:column; gap:.4em; animation:trpop .8s cubic-bezier(.2,1.5,.4,1) both; }
@@ -1373,7 +1374,7 @@ body.tropen { overflow:hidden; }
   .tbv.hastrip .tbnum b { font-size:3em; }
   .tbv.hastrip .tbmini div { padding:.4em .6em; }
   .tbv.hastrip .tbmini b { font-size:1.25em; }
-  .tbv.hastrip .tbtpic { width:13em; }
+  .tbv.hastrip .tbtpic { width:21em; }
 }
 
 /* ===== 6B-27: เยี่ยมห้อง (โหมดครู ดูอย่างเดียว) ===== */
@@ -2070,7 +2071,7 @@ body.tropen { overflow:hidden; }
  * วางลิงก์เว็บแอป Apps Script (ลงท้ายด้วย /exec) ใน API_URL แล้วอัปโหลดไฟล์นี้ขึ้น GitHub Pages
  * ว่างไว้ = โหมดตัวอย่าง (ยังไม่เชื่อมระบบ) */
 var API_URL = 'https://script.google.com/macros/s/AKfycbzhykUt8ertRZqZT_gnBIvvjRWw6ygOSZsZm8aBZhm73RfhkVIDY16BuO3LZJM7wckV/exec';
-var APP_VER = '1.6';
+var APP_VER = '1.6.1';
 /* โหมดตัวอย่าง: ยังไม่ใส่ลิงก์ หรือเปิดด้วย ?demo=1 → ใช้ระบบจำลองในเครื่อง (ไฟล์ demo.js) ข้อมูลแยกจากของจริง */
 var API_OK = /^https:\/\/\S+\/exec$/.test(API_URL);
 var DEMO = !API_OK || /[?&]demo=1(&|#|$)/.test(location.search);
