@@ -54,7 +54,7 @@ var DemoSHA = (function () {
  * ข้อมูลทั้งหมดอยู่ในเครื่องนี้เท่านั้น ไม่ส่งไปไหน ใช้สาธิตและทดลองก่อนเชื่อมระบบจริง */
 (function () {
   'use strict';
-  var STORE = 'healthbook.demo.data', FSTORE = 'healthbook.demo.files', VERSION = 14;
+  var STORE = 'healthbook.demo.data', FSTORE = 'healthbook.demo.files', VERSION = 15;
   var sheets = {}, props = {}, files = {}, folders = {}, nId = 0;
 
   /* ---------- ชีต ---------- */
@@ -1929,7 +1929,7 @@ var FQ = (function () {
       { id: 'trophy', icon: '🏆', label: 'ถ้วยรางวัลยักษ์', kind: 'd', cost: [150], lv: 10, tile: 'floor' }
     ],
     sizes: [{ lv: 1, n: 3 }, { lv: 4, n: 4 }, { lv: 7, n: 5 }],
-    likesPerDay: 3
+    likesPerDay: 5
   };
   function gameItem(id) { for (var i = 0; i < GAME.items.length; i++) if (GAME.items[i].id === id) return GAME.items[i]; return null; }
   function gameSize(lv) { var n = 3; GAME.sizes.forEach(function (z) { if ((lv || 1) >= z.lv) n = z.n; }); return n; }
@@ -2040,6 +2040,29 @@ var FQ = (function () {
     g.push(o.target);
     return { ok: true, given: JSON.stringify({ d: o.today, to: g }), left: CENTER.likesPerDay - g.length };
   }
+  /* 6B-39 ใครกดถูกใจศูนย์ฝึกนี้ล่าสุด: ช่อง ถูกใจจากใคร = [[เลขประจำตัว, เวลา ms, ชื่อเล่นหรือ เลขที่ n, ห้อง], ...] เก่า → ใหม่ */
+  function gotParse(raw) {
+    var x = raw;
+    if (typeof raw === 'string') { try { x = JSON.parse(raw || '[]'); } catch (e) { x = null; } }
+    return Array.isArray(x) ? x.filter(function (e) { return Array.isArray(e) && e[0] && Number(e[1]) > 0; }).map(function (e) { return [String(e[0]), Number(e[1]), String(e[2] || ''), String(e[3] || '')]; }) : [];
+  }
+  function gotAdd(raw, who, t) {
+    var L = gotParse(raw);
+    L.push([String(who.sid), Number(t) || 0, String(who.n || ''), String(who.r || '')]);
+    return JSON.stringify(L.slice(-CENTER.gotKeep));
+  }
+  /* แจ้งเจ้าของ: ใหม่ → เก่า ไม่เกิน 10 คน ส่งแค่ชื่อเล่น/เลขที่ ห้อง และเวลา (ไม่ส่งเลขประจำตัว) */
+  function heartsOf(raw, now) {
+    var cut = (Number(now) || 0) - CENTER.gotDays * 864e5;
+    return gotParse(raw).filter(function (e) { return e[1] >= cut; }).reverse().slice(0, 10).map(function (e) { return { n: e[2] || 'เพื่อน', r: e[3], t: e[1] }; });
+  }
+  /* ป้ายต้อนรับ: รับเฉพาะข้อความในรายการ (ไม่สนช่องว่างกับตัวแปรอีโมจิ) อื่น ๆ = ป้ายปกติ */
+  function signText(v) {
+    var k = function (x) { return String(x == null ? '' : x).replace(/\uFE0F/g, '').replace(/\s+/g, ' ').trim(); }, t = k(v);
+    if (!t) return '';
+    for (var i = 0; i < CENTER.signs.length; i++) if (k(CENTER.signs[i]) === t) return CENTER.signs[i];
+    return '';
+  }
 
   /* รายชื่อศูนย์ฝึก people = [{ c: เลขประจำตัว, k, n: ชื่อเล่นหรือ เลขที่ n, r: ห้อง, g: ชั้น, s: ดาว, h: ถูกใจ, b: จำนวนของ }]
    * room = ห้องฉัน  school = 50 อันดับดาวสูงสุดทั้งโรงเรียน  rank = อันดับดาวในชั้นที่เลือก 30 อันดับแรก (+ ตัวฉันถ้าอยู่นอก 30) */
@@ -2096,7 +2119,23 @@ var FQ = (function () {
       gym: ['ขอบหลังคายิม', 'ป้ายชื่อยิม', 'ดัมเบลยักษ์', 'ธงยิม', 'มงกุฎบนยิม'],
       pool: ['ขอบสระ', 'สไลเดอร์', 'ร่มริมสระ', 'แป้นกระโดด', 'น้ำพุในสระ']
     },
-    likesPerDay: 3
+    likesPerDay: 5, /* 6B-39: ส่งใจ (กดถูกใจ) ได้วันละ 5 ครั้ง (เดิม 3) เพื่อนคนเดิมวันละครั้ง */
+    gotKeep: 20, gotDays: 14, /* จำคนที่กดถูกใจ 20 ครั้งล่าสุด แจ้งเจ้าของศูนย์ฝึกเฉพาะ 14 วันล่าสุด */
+    /* 6B-39 ป้ายต้อนรับ: เจ้าของเลือกจากข้อความสำเร็จรูปเท่านั้น (ไม่ให้พิมพ์เอง) เพื่อนเห็นตอนมาเยี่ยมชม */
+    signs: [
+      'สวัสดีเพื่อน ๆ แวะมาเล่นด้วยกันนะ 👋',
+      'มาออกกำลังกายด้วยกันนะ 💪',
+      'ขอบคุณที่แวะมาเยี่ยมนะ 😊',
+      'วันนี้ขยับครบ 60 นาทีหรือยัง? ⏱️',
+      'อย่าลืมดื่มน้ำเยอะ ๆ นะ 💧',
+      'กินผักผลไม้ทุกวันนะ 🥦🍎',
+      'นอนหลับให้พอ ตื่นมาสดใส 😴',
+      'น้องคู่หูของฉันฝากทักทาย 🐾',
+      'เป้าหมายของฉัน: ได้ถ้วยรางวัล! 🏆',
+      'สู้ ๆ นะเพื่อน เราทำได้! ✌️',
+      'แพ้ชนะไม่เป็นไร มีน้ำใจนักกีฬา 🤝',
+      'ฝุ่นเยอะ ใส่หน้ากากด้วยนะ 😷'
+    ]
   };
   var CENTER_N = CENTER.steps * CENTER.parts.length; /* ระดับต่อรอบ = 25 */
   function centerMax() { return CENTER.maxRound * CENTER_N; }
@@ -2185,6 +2224,7 @@ var FQ = (function () {
       next: c.lv < centerMax() ? centerNext(c.lv) : null, left: left, roundCost: centerRoundCost(b.r),
       parts: CENTER.parts.map(function (p, j) { return { id: p.id, icon: p.icon, label: p.label, s: b.s[j], max: CENTER.steps }; }),
       likes: Number(likes) || 0, likesPerDay: CENTER.likesPerDay,
+      likedBy: heartsOf(ex.got, ex.now), sign: signText(ex.sign), signs: CENTER.signs, /* 6B-39 ใครกดถูกใจล่าสุด + ป้ายต้อนรับ */
       pet: petView(ex.pet, plv, ex.today, true), petCat: petCatalog()
     };
   }
@@ -2484,7 +2524,7 @@ var FQ = (function () {
     GAME: GAME, gameItem: gameItem, gameSize: gameSize, gameParse: gameParse, gameSpent: gameSpent, gameStars: gameStars, gameExtent: gameExtent,
     DUST: DUST, DUST_TASKS: DUST_TASKS, dustLevel: dustLevel, dustPick: dustPick, dustMerge: dustMerge, dustView: dustView, dustTaskFor: dustTaskFor, dustBlock: dustBlock, planDust: planDust,
     PETS: PETS, petPick: petPick, petChance: petChance, petParse: petParse, petData: petData, petView: petView, petStage: petStage, planPet: planPet, checkPetName: checkPetName, petCatalog: petCatalog,
-    gameView: gameView, planGame: planGame, modelCenter: modelCenter, planLike: planLike, likesGiven: likesGiven, gameBoard: gameBoard, xpOf: xpOf,
+    gameView: gameView, planGame: planGame, modelCenter: modelCenter, planLike: planLike, likesGiven: likesGiven, gotParse: gotParse, gotAdd: gotAdd, heartsOf: heartsOf, signText: signText, gameBoard: gameBoard, xpOf: xpOf,
     CENTER: CENTER, centerParse: centerParse, centerCost: centerCost, centerRoundCost: centerRoundCost, centerSpent: centerSpent, centerSteps: centerSteps, centerAt: centerAt, centerNext: centerNext,
     centerData: centerData, centerBrief: centerBrief, centerView: centerView, planCenter: planCenter, centerModel: centerModel, centerRoundName: centerRoundName, centerTheme: centerTheme,
     SCHOOL: SCHOOL, schoolGoal: schoolGoal, schoolGoalAt: schoolGoalAt, tripCount: tripCount, tripMinutes: tripMinutes,
@@ -2529,7 +2569,7 @@ var H = {
     'ภารกิจ 3', 'นับจาก 3', 'เป้า 3', 'สติกเกอร์', 'ใช้งาน'],
   /* คำตอบคำถามสุขภาพ ภารกิจอีเวนต์ที่เด็กกดทำเอง กำลังใจ และคลิปที่ดูครบ */
   extra: ['รหัส', 'เวลาที่ส่ง', 'วันที่ทำ', 'ห้อง', SC.sid, 'ประเภท', 'เรื่อง', 'คำตอบ', 'ผล', 'ครูตรวจ', 'หมายเหตุ'],
-  game: [SC.sid, 'ห้อง', 'ข้อมูลศูนย์ฝึก', 'เหรียญที่ใช้สร้าง', 'ระดับศูนย์ฝึก', 'ถูกใจที่ได้', 'กดถูกใจวันนี้', 'เลเวล', 'น้องคู่หู', 'ชื่อน้อง', 'ข้อมูลน้อง', 'เหรียญที่ใช้กับน้อง', 'อัปเดตล่าสุด'],
+  game: [SC.sid, 'ห้อง', 'ข้อมูลศูนย์ฝึก', 'เหรียญที่ใช้สร้าง', 'ระดับศูนย์ฝึก', 'ถูกใจที่ได้', 'กดถูกใจวันนี้', 'เลเวล', 'น้องคู่หู', 'ชื่อน้อง', 'ข้อมูลน้อง', 'เหรียญที่ใช้กับน้อง', 'อัปเดตล่าสุด', 'ถูกใจจากใคร (ล่าสุด)', 'ป้ายต้อนรับ'],
   fitness: [SC.sid, 'ห้อง', 'เลขที่', 'ภาคเรียน', 'นั่งงอตัว (ซม.)', 'ดันพื้น 30 วิ (ครั้ง)', 'ลุกนั่ง 60 วิ (ครั้ง)', 'ยืนยกเข่า 3 นาที (ครั้ง)', 'บันทึกเมื่อ']
 };
 /* ผลทดสอบสมรรถภาพ 4 รายการ (ไม่เก็บน้ำหนัก-ส่วนสูง) ค่ามากกว่า = ดีขึ้น */
@@ -2801,6 +2841,7 @@ function route_(req) {
     case 'gboard': return apiGameBoard_(req);
     case 'gvisit': return apiGameVisit_(req, false);
     case 'glike': return apiGameVisit_(req, true);
+    case 'gsign': return apiGameSign_(req);
     case 'pet': return apiPet_(req);
     case 'tphotos': return teacherApi_(req, teacherPhotos_);
     case 'tphoto': return teacherApi_(req, teacherPhoto_);
@@ -3282,11 +3323,25 @@ function apiCard_(req, cheer) {
  * แท็บศูนย์ฝึก 1 แถวต่อนักเรียน 1 คน ระบบสร้างแท็บและแถวเองเมื่อเด็กสร้างของชิ้นแรก ครูไม่ต้องตั้งค่า
  * เหรียญคิดจากแต้มรวมทุกครั้ง (แต้มรวม − ราคาของบนลาน) ช่องเหรียญที่ใช้กับดาวในชีตไว้ให้ครูดูเท่านั้น
  * ลบทั้งแถว = ศูนย์ฝึกของเด็กคนนั้นกลับเป็นลานว่าง แต้มไม่หาย */
-var GC = { sid: 1, room: 2, layout: 3, spent: 4, stars: 5, likes: 6, given: 7, lv: 8, pet: 9, pname: 10, pdata: 11, pspent: 12, at: 13 };
+var GC = { sid: 1, room: 2, layout: 3, spent: 4, stars: 5, likes: 6, given: 7, lv: 8, pet: 9, pname: 10, pdata: 11, pspent: 12, at: 13, got: 14, sign: 15 };
 function gameSheet_(create) {
   var ss = SpreadsheetApp.getActive(), sh = ss.getSheetByName(TAB.game);
   if (!sh && create) { sh = ss.insertSheet(TAB.game); setupGame_(sh); }
+  if (sh) gameCols_(sh);
   return sh;
+}
+/* 6B-39: แท็บเดิมมี 13 คอลัมน์ เพิ่มคอลัมน์ ถูกใจจากใคร กับ ป้ายต้อนรับ ต่อท้าย (ทำครั้งเดียว ข้อมูลเดิมไม่เปลี่ยน) */
+function gameCols_(sh) {
+  try {
+    var n = sh.getMaxColumns();
+    if (n >= H.game.length) return;
+    sh.insertColumnsAfter(n, H.game.length - n);
+    sh.getRange(1, n + 1, 1, H.game.length - n).setValues([H.game.slice(n)]);
+    header_(sh, H.game.length);
+    sh.getRange(1, GC.got).setNote(GAME_NOTE_GOT);
+    sh.getRange(1, GC.sign).setNote(GAME_NOTE_SIGN);
+    sh.setColumnWidth(GC.got, 220); sh.setColumnWidth(GC.sign, 240);
+  } catch (e) {}
 }
 function setupGame_(sh) {
   sh.getRange(1, 1, 1, H.game.length).setValues([H.game]);
@@ -3295,7 +3350,9 @@ function setupGame_(sh) {
   sh.getRange(1, GC.layout).setNote(GAME_NOTE_DATA);
   sh.getRange(1, GC.stars).setNote(GAME_NOTE_STEPS);
   sh.getRange(1, GC.pname).setNote('ชื่อน้องที่เด็กตั้ง (เพื่อนเห็นตอนมาเยี่ยมชม)\nถ้าชื่อไม่เหมาะสม ลบช่องนี้ให้ว่าง น้องจะกลับไปใช้ชื่อตามชนิด แล้วเด็กตั้งใหม่ได้');
-  [110, 60, 320, 90, 80, 80, 200, 60, 130, 110, 260, 90, 150].forEach(function (w, i) { sh.setColumnWidth(i + 1, w); });
+  sh.getRange(1, GC.got).setNote(GAME_NOTE_GOT);
+  sh.getRange(1, GC.sign).setNote(GAME_NOTE_SIGN);
+  [110, 60, 320, 90, 80, 80, 200, 60, 130, 110, 260, 90, 150, 220, 240].forEach(function (w, i) { sh.setColumnWidth(i + 1, w); });
   try { if (sh.getMaxColumns() > H.game.length) sh.deleteColumns(H.game.length + 1, sh.getMaxColumns() - H.game.length); } catch (e) {}
 }
 /* แถวของนักเรียน 1 คน (หาด้วยเลขประจำตัวในคอลัมน์แรก ไม่ต้องอ่านทั้งแท็บ) */
@@ -3306,7 +3363,8 @@ function gameRowOf_(sh, sid) {
   var row = hit.getRow(), v = sh.getRange(row, 1, 1, H.game.length).getValues()[0];
   return {
     row: row, layout: String(v[GC.layout - 1] || ''), likes: Number(v[GC.likes - 1]) || 0, given: String(v[GC.given - 1] || ''), lv: Number(v[GC.lv - 1]) || 0,
-    pet: FQ.petParse(v[GC.pet - 1], v[GC.pname - 1], String(v[GC.pdata - 1] || '')), petSpent: Number(v[GC.pspent - 1]) || 0
+    pet: FQ.petParse(v[GC.pet - 1], v[GC.pname - 1], String(v[GC.pdata - 1] || '')), petSpent: Number(v[GC.pspent - 1]) || 0,
+    got: String(v[GC.got - 1] || ''), sign: String(v[GC.sign - 1] || '')
   };
 }
 /* เขียนทั้งแถว x = ช่องที่เปลี่ยน (ที่ไม่ส่งมาใช้ค่าเดิมในแถว r)
@@ -3315,7 +3373,8 @@ function gameWrite_(sh, r, sid, room, x) {
   r = r || {};
   var C = x.C || FQ.centerParse(r.layout || ''), pet = x.pet !== undefined ? x.pet : r.pet || null, sp = pet ? FQ.PETS.species.filter(function (q) { return q.id === pet.sp; })[0] : null;
   var vals = ["'" + sid, room, FQ.centerData(C), FQ.centerSpent(C), FQ.centerSteps(C), x.likes !== undefined ? x.likes : r.likes || 0, x.given !== undefined ? x.given : r.given || '',
-    x.lv || r.lv || '', sp ? sp.label : '', pet ? pet.name : '', pet ? FQ.petData(pet) : '', x.petSpent !== undefined ? x.petSpent : r.petSpent || 0, "'" + nowText_()];
+    x.lv || r.lv || '', sp ? sp.label : '', pet ? pet.name : '', pet ? FQ.petData(pet) : '', x.petSpent !== undefined ? x.petSpent : r.petSpent || 0, "'" + nowText_(),
+    x.got !== undefined ? x.got : r.got || '', x.sign !== undefined ? x.sign : r.sign || ''];
   if (r.row) sh.getRange(r.row, 1, 1, vals.length).setValues([vals]);
   else sh.appendRow(vals);
   gameHeader_(sh);
@@ -3324,21 +3383,25 @@ function gameWrite_(sh, r, sid, room, x) {
 /* 6B-23: แท็บที่สร้างตอนเป็นลานแบบเดิม เปลี่ยนหัวคอลัมน์และคำอธิบายให้ตรงกับศูนย์ฝึกแบบใหม่ (ทำครั้งเดียว) */
 function gameHeader_(sh) {
   var cache = null;
-  try { cache = CacheService.getScriptCache(); if (cache.get('game_hdr_v3')) return; } catch (e) {}
+  try { cache = CacheService.getScriptCache(); if (cache.get('game_hdr_v4')) return; } catch (e) {}
   try {
     var hd = sh.getRange(1, 1, 1, H.game.length).getValues()[0];
     if (String(hd[GC.layout - 1]) !== H.game[GC.layout - 1] || String(hd[GC.stars - 1]) !== H.game[GC.stars - 1]) {
       sh.getRange(1, GC.layout).setValue(H.game[GC.layout - 1]).setNote(GAME_NOTE_DATA);
       sh.getRange(1, GC.stars).setValue(H.game[GC.stars - 1]).setNote(GAME_NOTE_STEPS);
     }
-    if (cache) cache.put('game_hdr_v3', '1', 21600);
+    if (String(hd[GC.got - 1]) !== H.game[GC.got - 1]) sh.getRange(1, GC.got).setValue(H.game[GC.got - 1]).setNote(GAME_NOTE_GOT);
+    if (String(hd[GC.sign - 1]) !== H.game[GC.sign - 1]) sh.getRange(1, GC.sign).setValue(H.game[GC.sign - 1]).setNote(GAME_NOTE_SIGN);
+    if (cache) cache.put('game_hdr_v4', '1', 21600);
   } catch (e) {}
 }
 var GAME_NOTE_DATA = 'ระบบเขียนเองเมื่อเด็กกดอัปเกรดศูนย์ฝึก ไม่ต้องแก้\nlv = ระดับศูนย์ฝึก (ทุก 25 ระดับได้ถ้วย 1 ใบ)\nลบทั้งแถว = ศูนย์ฝึกของเด็กคนนั้นกลับเป็นลานโล่ง แต้มไม่หาย';
+var GAME_NOTE_GOT = 'ระบบเขียนเองเมื่อเพื่อนกดถูกใจ ไม่ต้องแก้\nใช้แจ้งเจ้าของศูนย์ฝึกว่าใครกดถูกใจ (เก็บ 20 ครั้งล่าสุด แจ้งเฉพาะ 14 วันล่าสุด)';
+var GAME_NOTE_SIGN = 'ป้ายต้อนรับที่เด็กเลือก (เพื่อนเห็นตอนมาเยี่ยมชม)\nเลือกได้จากข้อความสำเร็จรูปเท่านั้น · ลบช่องนี้ให้ว่าง = ป้ายปกติ';
 var GAME_NOTE_STEPS = 'ระดับศูนย์ฝึก (0 = ลานโล่ง · 25 = เต็ม ได้ถ้วย · 26 ขึ้นไป = ของประดับรอบพิเศษ) ใช้จัดอันดับ';
 function myGame_(sid, xp) {
   var r = gameRowOf_(gameSheet_(false), sid);
-  return withSchool_(FQ.centerView(FQ.centerParse(r ? r.layout : ''), xp, r ? r.likes : 0, { petSpent: r ? r.petSpent : 0, pet: r ? r.pet : null, today: todayKey_() }));
+  return withSchool_(FQ.centerView(FQ.centerParse(r ? r.layout : ''), xp, r ? r.likes : 0, { petSpent: r ? r.petSpent : 0, pet: r ? r.pet : null, today: todayKey_(), got: r ? r.got : '', sign: r ? r.sign : '', now: Date.now() }));
 }
 /* 6B-24 เป้าหมายรวมทั้งโรงเรียน (แคช 5 นาที) ส่งแค่ยอดรวม ไม่มีชื่อใคร */
 function schoolGoal_() {
@@ -3416,7 +3479,7 @@ function apiGame_(req) {
       return { ok: true };
     });
     if (!res.ok) return res;
-    return { ok: true, game: withSchool_(FQ.centerView(plan.center, xp, r ? r.likes : 0, { petSpent: r ? r.petSpent : 0, pet: r ? r.pet : null, today: todayKey_() })), result: plan.result };
+    return { ok: true, game: withSchool_(FQ.centerView(plan.center, xp, r ? r.likes : 0, { petSpent: r ? r.petSpent : 0, pet: r ? r.pet : null, today: todayKey_(), got: r ? r.got : '', sign: r ? r.sign : '', now: Date.now() })), result: plan.result };
   });
 }
 
@@ -3438,7 +3501,7 @@ function apiPet_(req) {
       return { ok: true };
     });
     if (!res.ok) return res;
-    return { ok: true, game: withSchool_(FQ.centerView(C, xp, r ? r.likes : 0, { petSpent: ps, pet: plan.pet, today: today })), result: plan.result };
+    return { ok: true, game: withSchool_(FQ.centerView(C, xp, r ? r.likes : 0, { petSpent: ps, pet: plan.pet, today: today, got: r ? r.got : '', sign: r ? r.sign : '', now: Date.now() })), result: plan.result };
   });
 }
 
@@ -3505,6 +3568,9 @@ function apiGameVisit_(req, like) {
       else gameWrite_(sh, null, sid, a.klass.id, { given: pl.given });
       r.likes += 1;
       sh.getRange(r.row, GC.likes).setValue(r.likes);
+      /* 6B-39 จำว่าใครกดถูกใจ ไว้แจ้งเจ้าของศูนย์ฝึก (ชื่อเล่นหรือ เลขที่ n ไม่ใช้ชื่อจริง) */
+      r.got = FQ.gotAdd(r.got, { sid: sid, n: a.student.nick || ('เลขที่ ' + (a.student.no || '?')), r: a.student.classId }, Date.now());
+      sh.getRange(r.row, GC.got).setValue(r.got);
       mineR = { given: pl.given };
       return { ok: true };
     };
@@ -3513,9 +3579,29 @@ function apiGameVisit_(req, like) {
     var C = FQ.centerParse(r.layout), B = FQ.centerBrief(C), given = FQ.likesGiven(mineR ? mineR.given : '', today);
     return {
       ok: true,
-      center: { k: hit.k, n: hit.n, r: hit.r, me: me, lv: r.lv || 1, pet: FQ.petView(r.pet, r.lv || 1, today, false), c: { r: B.r, s: B.s }, level: B.level, done: B.done, trophies: B.r, likes: r.likes, liked: given.indexOf(hit.c) >= 0 },
+      center: { k: hit.k, n: hit.n, r: hit.r, me: me, lv: r.lv || 1, pet: FQ.petView(r.pet, r.lv || 1, today, false), c: { r: B.r, s: B.s }, level: B.level, done: B.done, trophies: B.r, likes: r.likes, liked: given.indexOf(hit.c) >= 0, sign: FQ.signText(r.sign) },
       likesLeft: Math.max(0, FQ.CENTER.likesPerDay - given.length), result: like ? { kind: 'like' } : null
     };
+  });
+}
+
+/* 6B-39 ป้ายต้อนรับศูนย์ฝึก: i = ลำดับข้อความสำเร็จรูป (−1 = ป้ายปกติ) ไม่ให้พิมพ์เอง */
+function apiGameSign_(req) {
+  return safe_(function () {
+    var c = loadApi_();
+    var a = auth_(c, req);
+    if (!a.ok) return a;
+    var i = Number(req && req.i), L = FQ.CENTER.signs;
+    if (!(i === -1 || (Math.floor(i) === i && i >= 0 && i < L.length))) return FQ.fail('ไม่มีป้ายนี้ ลองเลือกใหม่', 'BAD');
+    var text = i === -1 ? '' : L[i], sid = a.student.sid;
+    var res = withLock_(function () {
+      var sh = gameSheet_(true), r = gameRowOf_(sh, sid);
+      if (r) sh.getRange(r.row, GC.sign).setValue(text);
+      else gameWrite_(sh, null, sid, a.klass.id, { sign: text });
+      return { ok: true };
+    });
+    if (!res.ok) return res;
+    return { ok: true, sign: text };
   });
 }
 
@@ -5497,8 +5583,12 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
       x[2].forEach(function (w) { post({ action: 'pet', token: tokens[x[0]], op: 'buy', item: w }); });
       post({ action: 'pet', token: tokens[x[0]], op: 'feed', item: 'apple' });
     });
-    [['1402', '9999'], ['1301', '9999'], ['1403', '1401'], ['1402', '1401'], ['1501', '1401'], ['9999', '1401'], ['1601', '1501'], ['1201', '1601']].forEach(function (x) {
+    [['1402', '9999'], ['1301', '9999'], ['1601', '9999'], ['1403', '1401'], ['1402', '1401'], ['1501', '1401'], ['9999', '1401'], ['1601', '1501'], ['1201', '1601']].forEach(function (x) {
       post({ action: 'glike', token: tokens[x[0]], k: GS.cardKey_(x[1]) });
+    });
+    /* 6B-39 ป้ายต้อนรับของเพื่อน (เด็กตัวอย่าง 9999 ใช้ป้ายปกติ จะได้ลองเลือกเอง) */
+    [['1401', 1], ['1501', 9], ['1601', 7], ['1301', 3], ['1402', 2], ['1201', 4]].forEach(function (x) {
+      post({ action: 'gsign', token: tokens[x[0]], i: x[1] });
     });
     /* 6B-38 ดาวขยับบนจอใหญ่: ให้ 3 ใน 5 อันดับสัปดาห์นี้มีรูป (ภาพวาดตัวอย่าง ไม่ใช่รูปคนจริง) ครูอนุมัติแล้ว อีก 2 คนใช้หน้าการ์ตูน */
     (function () {

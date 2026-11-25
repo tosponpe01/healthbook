@@ -1673,6 +1673,40 @@ body.tropen { overflow:hidden; }
 .podium > button.p1 .pkid { max-width:104px; }
 .podium .pkid .kd { display:block; width:100%; height:auto; overflow:visible; }
 
+/* ===== 6B-39: ประกาศเมื่อเพื่อนกดถูกใจ · ป้ายต้อนรับศูนย์ฝึก ===== */
+.lknews { display:flex; gap:12px; align-items:center; width:100%; font:inherit; color:inherit; border:2px solid var(--pink); background:linear-gradient(120deg,rgba(255,95,168,.16),rgba(255,178,63,.12)); animation:lkpop .6s cubic-bezier(.2,1.5,.4,1) both; }
+.lkbig { font-size:2em; animation:lkbeat 1.3s ease-in-out infinite; }
+.lktag { display:inline-block; font-size:.72em; font-weight:800; color:#fff; background:var(--pink); border-radius:99px; padding:1px 8px; }
+.lkmsg { margin:3px 0 2px; line-height:1.35; }
+.lkmsg small { color:var(--ink-2); font-size:.82em; }
+.lknews .muted { display:block; }
+@keyframes lkpop { from { opacity:0; transform:scale(.92); } to { opacity:1; transform:none; } }
+@keyframes lkbeat { 0%,100% { transform:scale(1); } 15% { transform:scale(1.22); } 30% { transform:scale(1); } 45% { transform:scale(1.14); } }
+.gsignb { display:flex; align-items:center; gap:10px; background:linear-gradient(#D9A066,#B07438); color:#FFF8EC; border:3px solid #7A4A1E; border-radius:14px; padding:8px 12px; box-shadow:0 3px 0 #5C3714, inset 0 2px 0 rgba(255,255,255,.25); text-shadow:0 1px 0 rgba(90,50,15,.55); min-width:0; }
+.gsgpost { font-size:1.45em; flex:none; }
+.gsgtxt { display:flex; flex-direction:column; min-width:0; }
+.gsgtxt b { font-size:1.02em; line-height:1.35; overflow-wrap:anywhere; }
+.gsgtxt small { opacity:.9; font-size:.78em; }
+.gsignb.pop { margin:2px 0 8px; transform-origin:50% 0; animation:gsgpop .8s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes gsgpop { 0% { opacity:0; transform:rotate(-6deg) translateY(-14px) scale(.9); } 60% { opacity:1; transform:rotate(2deg); } 100% { transform:none; } }
+.gsignc { padding:10px 12px; }
+.gsgrow { display:flex; gap:8px; align-items:center; }
+.gsgrow .gsignb { flex:1; }
+.gsgrow .ghost { flex:none; }
+.gsghint { margin:10px 0 0; font-size:.88em; }
+.gsglist { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+.gsglist button { text-align:left; border:2px solid var(--line); background:var(--card-2); color:var(--ink); border-radius:12px; padding:9px 11px; font:inherit; cursor:pointer; }
+.gsglist button small { color:var(--ink-2); }
+.gsglist button.on { border-color:var(--lime); box-shadow:0 0 0 3px rgba(198,255,77,.25); font-weight:700; }
+.gsglist button:disabled { opacity:.6; cursor:wait; }
+.gliked { padding:12px 14px; }
+.gliked ul { list-style:none; margin:8px 0 0; padding:0; display:flex; flex-direction:column; gap:6px; }
+.gliked li { display:flex; align-items:center; gap:8px; background:var(--card-2); border-radius:10px; padding:7px 10px; }
+.gliked .glkn { flex:1; font-weight:700; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.gliked .glkn small { font-weight:400; color:var(--ink-2); }
+.glknew { font-style:normal; font-size:.72em; font-weight:800; color:#fff; background:var(--pink); border-radius:99px; padding:1px 7px; }
+@media (prefers-reduced-motion: reduce) { .lknews, .lkbig, .gsignb.pop { animation:none; } }
+
 </style>
 </head>
 <body>
@@ -2071,7 +2105,7 @@ body.tropen { overflow:hidden; }
  * วางลิงก์เว็บแอป Apps Script (ลงท้ายด้วย /exec) ใน API_URL แล้วอัปโหลดไฟล์นี้ขึ้น GitHub Pages
  * ว่างไว้ = โหมดตัวอย่าง (ยังไม่เชื่อมระบบ) */
 var API_URL = 'https://script.google.com/macros/s/AKfycbzhykUt8ertRZqZT_gnBIvvjRWw6ygOSZsZm8aBZhm73RfhkVIDY16BuO3LZJM7wckV/exec';
-var APP_VER = '1.6.1';
+var APP_VER = '1.7';
 /* โหมดตัวอย่าง: ยังไม่ใส่ลิงก์ หรือเปิดด้วย ?demo=1 → ใช้ระบบจำลองในเครื่อง (ไฟล์ demo.js) ข้อมูลแยกจากของจริง */
 var API_OK = /^https:\/\/\S+\/exec$/.test(API_URL);
 var DEMO = !API_OK || /[?&]demo=1(&|#|$)/.test(location.search);
@@ -7785,7 +7819,7 @@ var PETREAL = (function () {
  * ระดับ 25 = เต็ม ได้ถ้วยรางวัล · 26 ขึ้นไป = ของประดับรอบพิเศษ ⭐1 ทอง ⭐2 เพชร ⭐3 สายรุ้ง ⭐4 ทับทิม ⭐5 มรกต …
  * เรียก "ระดับ" (ไม่ใช่ Lv. จะได้ไม่สับสนกับเลเวลของเด็ก) · ราคาและสิ่งที่จะได้ หลังบ้านคิดให้
  * เหรียญ = แต้มรวม − ที่ใช้ไปแล้ว ใช้เหรียญแล้วแต้ม เลเวล และอันดับไม่ลด
- * แท็บ: ของฉัน (ฉาก + ปุ่มอัปเกรด) · เยี่ยมชมเพื่อน (ห้องฉัน / ทั้งโรงเรียน กดถูกใจวันละ 3) · อันดับ (ระดับในชั้น)
+ * แท็บ: ของฉัน (ฉาก + ปุ่มอัปเกรด) · เยี่ยมชมเพื่อน (ห้องฉัน / ทั้งโรงเรียน กดถูกใจวันละ 5 ตั้งแต่ 6B-39) · อันดับ (ระดับในชั้น)
  * เพื่อนเห็นแค่ชื่อเล่นหรือ "เลขที่ n" กับห้อง ไม่เห็นชื่อจริง
  * ลานแบบเดิม (ภาพใน game_art.js) เก็บไว้ ไม่ได้ใช้แล้ว */
 
@@ -8158,6 +8192,8 @@ function openVisit(k, me) {
     renderGame();
   });
 }
+/* 6B-39: จำนวนครั้งที่กดถูกใจได้ต่อวัน มาจากหลังบ้าน (ตอนนี้ 5) */
+function likesPer() { return (ST && ST.game && ST.game.likesPerDay) || 5; }
 function visitHtml() {
   var v = GM.visit, h = [];
   h.push('<button class="ghost sm gbackl" type="button" data-ga="backlist">‹ กลับรายชื่อ</button>');
@@ -8176,9 +8212,9 @@ function visitHtml() {
   if (c.me) h.push('<button class="gbtn" type="button" data-ga="mine">นี่คือศูนย์ฝึกของฉัน · ไปอัปเกรดต่อ ›</button>');
   else {
     h.push('<button class="gbtn glike" type="button" data-ga="like"' + (c.liked || !v.left || GM.busy ? ' disabled' : '') + '>' +
-      (c.liked ? '❤️ ถูกใจแล้ววันนี้' : v.left ? '🤍 กดถูกใจ (วันนี้เหลือ ' + v.left + ' ครั้ง)' : 'วันนี้กดถูกใจครบ 3 ครั้งแล้ว') + '</button>');
+      (c.liked ? '❤️ ถูกใจแล้ววันนี้' : v.left ? '🤍 กดถูกใจ (วันนี้เหลือ ' + v.left + ' ครั้ง)' : 'วันนี้กดถูกใจครบ ' + likesPer() + ' ครั้งแล้ว') + '</button>');
   }
-  h.push('<p class="ghint">ถูกใจไม่ได้เหรียญ แต่ทำให้เพื่อนดีใจ · กดได้วันละ 3 ครั้ง เพื่อนคนเดิมวันละครั้ง</p>');
+  h.push('<p class="ghint">ถูกใจไม่ได้เหรียญ แต่ทำให้เพื่อนดีใจ · กดได้วันละ ' + likesPer() + ' ครั้ง เพื่อนคนเดิมวันละครั้ง</p>');
   return h.join('');
 }
 function doLike() {
@@ -11196,6 +11232,121 @@ renderRank = function () {
   _rr_st.apply(this, arguments);
   rankPhotos();
 };
+
+/* ===== 6B-39: ส่งใจวันละ 5 · ประกาศเมื่อเพื่อนกดถูกใจ · ป้ายต้อนรับศูนย์ฝึก =====
+ * หลังบ้านส่ง ST.game.likedBy = [{ n, r, t }] ใหม่ → เก่า (ชื่อเล่นหรือ "เลขที่ n" กับห้อง ไม่มีชื่อจริง)
+ * ประกาศบนหน้าแรกเฉพาะคนที่กดหลังจากเปิดดูศูนย์ฝึกครั้งล่าสุด (จำเวลาที่ดูแล้วไว้ในบัญชีบนเครื่อง a.lseen)
+ * ป้ายต้อนรับ: เลือกจากข้อความสำเร็จรูป ST.game.signs (ไม่ให้พิมพ์เอง) เพื่อนเห็นตอนมาเยี่ยมชม */
+
+var LK = { open: false, busy: false, seen0: 0 };
+
+function likeList() { return (ST && ST.game && ST.game.likedBy) || []; }
+function likeSeen() { var a = active(); return a ? Number(a.lseen) || 0 : 0; }
+function likeNew() { var s = likeSeen(); return likeList().filter(function (x) { return x.t > s; }); }
+function likeMarkSeen() {
+  var a = active(), L = likeList();
+  if (!a || !L.length) return;
+  var top = L[0].t || 0;
+  if (top > (Number(a.lseen) || 0)) { a.lseen = top; save(); }
+}
+function likeWhen(t) {
+  var d = new Date(t), now = new Date(), day = function (x) { return new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime(); };
+  var n = Math.round((day(now) - day(d)) / 864e5);
+  if (n <= 0) return 'วันนี้ ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+  return n === 1 ? 'เมื่อวาน' : n + ' วันก่อน';
+}
+function likeWho(L) {
+  var names = [], seen = {};
+  L.forEach(function (x) { var k = x.n + '|' + x.r; if (!seen[k]) { seen[k] = 1; names.push(x); } });
+  var head = names.slice(0, 2).map(function (x) { return '<b>' + esc(x.n) + '</b> <small>' + esc(x.r) + '</small>'; }).join(', ');
+  return head + (names.length > 2 ? ' และอีก ' + fmt(names.length - 2) + ' คน' : '');
+}
+
+/* ประกาศบนหน้าแรก (อยู่ตำแหน่งเดียวกับการ์ดกำลังใจ) */
+var _cheerCard39 = cheerCard;
+cheerCard = function () {
+  var N = likeNew(), h = '';
+  if (N.length) {
+    h = '<button type="button" class="card lknews" data-home="game"><span class="lkbig" aria-hidden="true">❤️</span>' +
+      '<div style="flex:1;text-align:left"><span class="lktag">📣 ประกาศ</span><p class="lkmsg">' + likeWho(N) + ' กดถูกใจศูนย์ฝึกของเธอ!</p>' +
+      '<span class="muted">แตะไปดูศูนย์ฝึกของฉัน ›</span></div></button>';
+  }
+  return h + _cheerCard39();
+};
+
+/* เปิดศูนย์ฝึก = เห็นประกาศแล้ว (จำเวลาก่อนหน้าไว้ทำป้าย "ใหม่" ในรายชื่อ) */
+var _openGame39 = openGame;
+openGame = function () {
+  LK.seen0 = likeSeen(); LK.open = false;
+  likeMarkSeen();
+  return _openGame39.apply(this, arguments);
+};
+
+/* ป้ายต้อนรับ */
+function signDefault(name) { return 'ยินดีต้อนรับสู่ศูนย์ฝึกของ' + (name ? ' ' + name : 'ฉัน') + '! 👋'; }
+function signBoard(text, who, cls) {
+  return '<div class="gsignb' + (cls ? ' ' + cls : '') + '" role="note" aria-label="ป้ายต้อนรับ"><span class="gsgpost" aria-hidden="true">🪧</span>' +
+    '<span class="gsgtxt"><b>' + esc(text) + '</b>' + (who ? '<small>— ' + esc(who) + '</small>' : '') + '</span></div>';
+}
+function signHtml(g) {
+  var L = g.signs || [], cur = g.sign || '', h = [];
+  h.push('<section class="card gsignc"><div class="gsgrow">' + signBoard(cur || signDefault(''), '', 'mine') +
+    '<button type="button" class="ghost sm" data-gsg="open" aria-expanded="' + LK.open + '">' + (LK.open ? 'ปิด' : '🪧 เปลี่ยนป้าย') + '</button></div>');
+  if (LK.open) {
+    h.push('<p class="muted gsghint">เลือกป้ายที่อยากให้เพื่อนเห็นตอนมาเยี่ยมชม</p><div class="gsglist" role="listbox" aria-label="เลือกป้ายต้อนรับ">');
+    h.push('<button type="button" role="option" class="' + (!cur ? 'on' : '') + '" aria-selected="' + !cur + '" data-gsg="pick" data-i="-1"' + (LK.busy ? ' disabled' : '') + '>' + esc(signDefault('')) + ' <small>(ป้ายปกติ)</small></button>');
+    L.forEach(function (t, i) {
+      h.push('<button type="button" role="option" class="' + (t === cur ? 'on' : '') + '" aria-selected="' + (t === cur) + '" data-gsg="pick" data-i="' + i + '"' + (LK.busy ? ' disabled' : '') + '>' + esc(t) + '</button>');
+    });
+    h.push('</div>');
+  }
+  h.push('</section>');
+  return h.join('');
+}
+/* ใครกดถูกใจล่าสุด (5 คน) */
+function likesCard(g) {
+  var L = (g.likedBy || []).slice(0, 5);
+  if (!L.length) return '';
+  return '<section class="card gliked"><b>❤️ เพื่อนที่กดถูกใจศูนย์ฝึกของฉันล่าสุด</b><ul>' + L.map(function (x) {
+    return '<li><span class="glkn">' + esc(x.n) + ' <small>' + esc(x.r) + '</small></span><small class="muted">' + likeWhen(x.t) + '</small>' + (x.t > LK.seen0 ? '<i class="glknew">ใหม่</i>' : '') + '</li>';
+  }).join('') + '</ul></section>';
+}
+function cutBefore(html, mark, add) {
+  var i = html.indexOf(mark);
+  return i < 0 ? html + add : html.slice(0, i) + add + html.slice(i);
+}
+var _mineHtml39 = mineHtml;
+mineHtml = function (g) {
+  var h = _mineHtml39(g);
+  h = cutBefore(h, '<div class="gstage', signHtml(g));
+  return cutBefore(h, '<section class="card cup"', likesCard(g));
+};
+var _visitHtml39 = visitHtml;
+visitHtml = function () {
+  var h = _visitHtml39(), v = GM.visit, c = v && v.center;
+  if (!c || c.model || v.loading || v.error) return h;
+  return cutBefore(h, '<div class="gstage', signBoard(c.sign || signDefault(c.n), c.me ? 'ป้ายของฉัน' : c.n, 'pop'));
+};
+
+$('gm-body').addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('[data-gsg]') : null;
+  if (!b || !ST || !ST.game) return;
+  var op = b.getAttribute('data-gsg');
+  if (op === 'open') { LK.open = !LK.open; renderGame(); return; }
+  if (op !== 'pick' || LK.busy) return;
+  var i = Number(b.getAttribute('data-i')), a = active();
+  if (!navigator.onLine) { toast('ต้องมีเน็ตตอนเปลี่ยนป้ายนะ', true); return; }
+  LK.busy = true; renderGame();
+  call('gsign', { token: a.token, i: i }).then(function (res) {
+    LK.busy = false;
+    if (!res.ok) { toast(res.error || 'เปลี่ยนป้ายไม่สำเร็จ', true); renderGame(); return; }
+    ST.game.sign = res.sign || '';
+    LK.open = false;
+    renderGame();
+    ding('ok');
+    toast('ติดป้ายแล้ว เพื่อนที่มาเยี่ยมจะเห็นป้ายนี้ 🪧');
+  });
+});
 
 /* ---------- เริ่มต้น ---------- */
 function boot() {
