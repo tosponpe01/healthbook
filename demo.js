@@ -1310,8 +1310,10 @@ var FQ = (function () {
         return y.week - x.week || y.total - x.total || (x.classId < y.classId ? -1 : x.classId > y.classId ? 1 : 0) || (x.sid < y.sid ? -1 : 1);
       });
       list.forEach(function (p, i) { ranks[p.sid] = [+a, i + 1, p.week, list.length]; });
-      out[a] = list.slice(0, s.leagueSize).map(function (p) {
-        return { c: p.sid, k: p.card || '', n: p.name, r: p.classId, x: p.week, l: p.lv, o: p.outfit || '', cl: p.color || '' };
+      out[a] = list.slice(0, s.leagueSize).map(function (p, i) {
+        var e = { c: p.sid, k: p.card || '', n: p.name, r: p.classId, x: p.week, l: p.lv, o: p.outfit || '', cl: p.color || '' };
+        if (i < 3 && p.ph) e.pk = p.ph; /* 6B-38 แท่น 3 อันดับแรก: รหัสรูปจริงที่ครูอนุมัติแล้ว */
+        return e;
       });
     });
     var roomList = Object.keys(rooms).map(function (k) {
@@ -1333,7 +1335,7 @@ var FQ = (function () {
     var ws = addDays(today, -weekdayIdx(today)), leagues = {};
     Object.keys(ARCS).forEach(function (a) {
       leagues[a] = ((b.leagues || {})[a] || []).map(function (e, i) {
-        return { rank: i + 1, name: e.n, classId: e.r, xp: e.x, lv: e.l, me: e.c === student.code, card: e.k || '', outfit: e.o || 'sport', color: e.cl || 'violet' };
+        return { rank: i + 1, name: e.n, classId: e.r, xp: e.x, lv: e.l, me: e.c === student.code, card: e.k || '', outfit: e.o || 'sport', color: e.cl || 'violet', pk: i < 3 && e.pk ? e.pk : '' };
       });
     });
     var arc = rank && rank[0] ? rank[0] : lvNow.arc;
@@ -1527,10 +1529,10 @@ var FQ = (function () {
    * อันดับห้อง = นาทีที่นับได้ของสัปดาห์นี้ ÷ จำนวนนักเรียนในห้อง (ห้องเล็กห้องใหญ่สู้กันได้) */
   function boardStats(o) {
     var s = o.settings, today = o.todayKey, ws = addDays(today, -weekdayIdx(today)), lw = addDays(ws, -7), yd = addDays(today, -1);
-    var who = {}, rooms = {}, kids = 0, by = {};
+    var who = {}, rooms = {}, kids = 0, by = {}, stOf = {}, wkOf = {}, tdOf = {};
     (o.roster || []).forEach(function (st) {
       if (!st || !st.active || !st.classId || !st.code || who[st.code]) return;
-      who[st.code] = st.classId; kids++;
+      who[st.code] = st.classId; stOf[st.code] = st; kids++;
       (rooms[st.classId] || (rooms[st.classId] = { room: st.classId, kids: 0, week: 0, last: 0, today: 0 })).kids++;
     });
     (o.logs || []).forEach(function (l) { if (who[l.code] && l.date >= lw && l.date <= today) (by[l.code] = by[l.code] || []).push(l); });
@@ -1539,9 +1541,9 @@ var FQ = (function () {
       var T = dayTotals(by[code], s), R = rooms[who[code]];
       Object.keys(T).forEach(function (d) {
         var m = T[d].counted;
-        if (d === today) { tMin += m; if (m > 0) { movers++; R.today++; } if (m >= 60) full++; }
+        if (d === today) { tMin += m; tdOf[code] = m; if (m > 0) { movers++; R.today++; } if (m >= 60) full++; }
         if (d === yd) yMin += m;
-        if (d >= ws) R.week += m; else R.last += m;
+        if (d >= ws) { R.week += m; wkOf[code] = (wkOf[code] || 0) + m; } else R.last += m;
       });
       by[code].forEach(function (l) {
         if (l.date !== today || !isCounted(l)) return;
@@ -1559,8 +1561,20 @@ var FQ = (function () {
         .map(function (a) { return { id: a.id, icon: a.icon, label: a.label, pct: Math.round(a.n * 100 / actN) }; }),
       rooms: list.map(function (R) { return { room: R.room, kids: R.kids, avg: R.avg, today: R.today, all: R.all }; }),
       allToday: list.filter(function (R) { return R.all; }).map(function (R) { return R.room; }),
-      lastWinner: win ? { room: win.room, avg: Math.round(win.last) } : null
+      lastWinner: win ? { room: win.room, avg: Math.round(win.last) } : null,
+      stars: boardStars(stOf, wkOf, tdOf)
     };
+  }
+  /* 6B-38 ดาวขยับสัปดาห์นี้ (จอใหญ่): 5 อันดับนาทีสัปดาห์นี้ · ป้าย = ชื่อเล่น หรือ เลขที่ + ห้อง (ไม่มีชื่อจริง)
+   * ph = ลิงก์รูปจริงที่ครูอนุมัติแล้ว (ฝั่ง GAS เปลี่ยนเป็นรหัสรูป ไม่ส่งลิงก์ออกไป) */
+  function boardStars(stOf, wkOf, tdOf) {
+    return Object.keys(wkOf).filter(function (k) { return wkOf[k] > 0; }).sort(function (a, b) {
+      var A = stOf[a], B = stOf[b];
+      return wkOf[b] - wkOf[a] || (tdOf[b] || 0) - (tdOf[a] || 0) || (A.classId < B.classId ? -1 : A.classId > B.classId ? 1 : 0) || (Number(A.no) || 0) - (Number(B.no) || 0);
+    }).slice(0, 5).map(function (k) {
+      var st = stOf[k], o = findIn(PROFILE.outfits, st.outfit) || PROFILE.outfits[0], c = findIn(PROFILE.colors, st.color) || PROFILE.colors[0];
+      return { code: k, n: st.nick || ('เลขที่ ' + (st.no || '?')), r: st.classId, m: wkOf[k], o: o.id, c: c.id, ph: st.photo && st.photoOk === 'อนุมัติ' ? String(st.photo) : '' };
+    });
   }
 
   /* ตรวจรายการแล้วเตรียมแถวที่จะบันทึก พร้อมผลที่บอกเด็ก (ยังไม่เขียนลงที่เก็บ) */
@@ -2062,7 +2076,8 @@ var FQ = (function () {
     ],
     order: ['track', 'field', 'stand', 'gym', 'pool'],
     steps: 5,
-    cost: [20, 35, 50, 70, 95],
+    cost: [10, 15, 25, 35, 50],     /* 6B-37: ลดครึ่ง */
+    costOld: [20, 35, 50, 70, 95],  /* ราคาก่อน 6B-37: ใช้คิดระดับที่สร้างไปก่อนลดราคา (pb) จึงไม่มีเหรียญคืน */
     mul: 1.5,
     maxRound: 99,
     themes: ['ทอง', 'เพชร', 'สายรุ้ง', 'ทับทิม', 'มรกต'],
@@ -2096,6 +2111,8 @@ var FQ = (function () {
       }
     }
     var out = { lv: Math.max(0, Math.min(centerMax(), lv)) }, clamp = function (v) { return Math.max(0, Math.min(centerMax(), Math.floor(Number(v)) || 0)); };
+    /* pb = ระดับที่สร้างด้วยราคาเดิม (ข้อมูลก่อน 6B-37 ไม่มี pb = ทุกระดับที่มีอยู่สร้างด้วยราคาเดิม) */
+    out.pb = x && typeof x === 'object' && x.pb != null ? Math.min(out.lv, clamp(x.pb)) : out.lv;
     /* จำระดับตอนต้นสัปดาห์ (wk, w0) และสัปดาห์ก่อนหน้า (pk: p0 → p1) ไว้ทำสรุปสัปดาห์ */
     if (x && typeof x === 'object' && /^\d{4}-\d{2}-\d{2}$/.test(String(x.wk || ''))) {
       out.wk = String(x.wk); out.w0 = clamp(x.w0);
@@ -2103,7 +2120,9 @@ var FQ = (function () {
     }
     return out;
   }
-  function centerCost(r, k) { return Math.round(CENTER.cost[k] * Math.pow(CENTER.mul, Math.min(r || 0, 30)) / 5) * 5; }
+  function centerCost(r, k, old) { return Math.round((old ? CENTER.costOld : CENTER.cost)[k] * Math.pow(CENTER.mul, Math.min(r || 0, 30)) / 5) * 5; }
+  /* ราคาของระดับที่ i (นับจาก 0) */
+  function centerLvCost(i, old) { var r = Math.floor(i / CENTER_N); return centerCost(r, Math.floor((i - r * CENTER_N) / CENTER.order.length), old); }
   function centerRoundCost(r) { var t = 0; for (var k = 0; k < CENTER.steps; k++) t += centerCost(r, k); return t * CENTER.parts.length; }
   /* ระดับ lv → รอบ r, ระดับในรอบ k, ขั้นของแต่ละชิ้น s (เรียงตาม CENTER.parts) */
   function centerAt(lv) {
@@ -2118,15 +2137,16 @@ var FQ = (function () {
     return { level: lv + 1, r: a.r, part: id, icon: p.icon, label: p.label, stage: stage + 1, cost: centerCost(a.r, stage), deco: a.r >= 1,
       name: a.r >= 1 ? CENTER.deco[id][stage] + 'ชุด' + centerTheme(a.r) : CENTER.names[id][stage] };
   }
+  /* เหรียญที่ใช้สร้างไปแล้ว: ระดับก่อน pb คิดราคาเดิม ระดับหลังจากนั้นคิดราคาใหม่ */
   function centerSpent(c) {
-    var lv = c.lv, r = Math.floor(lv / CENTER_N), k = lv - r * CENTER_N, t = 0, i;
-    for (i = 0; i < r; i++) t += centerRoundCost(i);
-    for (i = 0; i < k; i++) t += centerCost(r, Math.floor(i / CENTER.order.length));
+    var lv = c.lv, pb = c.pb == null ? lv : Math.min(lv, c.pb), t = 0, i;
+    for (i = 0; i < lv; i++) t += centerLvCost(i, i < pb);
     return t;
   }
   function centerSteps(c) { return c.lv; }
   function centerData(c) {
-    var o = { v: 3, lv: c.lv };
+    /* pb เขียนเสมอ (0 = ทุกระดับคิดราคาใหม่) · ข้อมูลที่ไม่มี pb คือข้อมูลก่อน 6B-37 */
+    var o = { v: 3, lv: c.lv, pb: Math.min(c.lv, c.pb == null ? c.lv : c.pb) };
     if (c.wk) { o.wk = c.wk; o.w0 = c.w0 || 0; if (c.pk) { o.pk = c.pk; o.p0 = c.p0 || 0; o.p1 = c.p1 || 0; } }
     return JSON.stringify(o);
   }
@@ -2179,7 +2199,7 @@ var FQ = (function () {
     var lv = c.lv + 1, res = { level: lv, part: nx.part, stage: nx.stage, name: nx.name, deco: nx.deco, paid: nx.cost, r: nx.r };
     if (lv % CENTER_N === 0) { res.round = lv / CENTER_N; res.roundName = centerRoundName(nx.r); res.nextRound = centerRoundName(nx.r + 1); res.nextTheme = centerTheme(nx.r + 1); }
     var cen = centerTrack(c, o.today);
-    cen.lv = lv;
+    cen.lv = lv; cen.pb = c.pb;
     return { ok: true, center: cen, result: res };
   }
   /* ฉากของครู (Script Properties ชื่อ TCENTER) ครูกด + / − ระดับได้ตามสะดวก ไม่ใช้เหรียญ
@@ -2276,7 +2296,7 @@ var FQ = (function () {
       { id: 'qilin', label: 'กิเลนไทเก๊ก', tier: 4 }, { id: 'griffin', label: 'กริฟฟินยิงธนู', tier: 4 }, { id: 'pegasus', label: 'เพกาซัสกระโดดสูง', tier: 4 }
     ],
     tiers: { 1: { label: 'ธรรมดา', total: 65 }, 2: { label: 'หายาก', total: 24 }, 3: { label: 'หายากมาก', total: 8 }, 4: { label: 'สัตว์ในตำนาน', total: 3 } },
-    rerollCost: 100, rerollPerDay: 3, snackCost: 5, snacksPerDay: 3, nameMax: 12,
+    rerollCost: 30, rerollPerDay: 3, /* 6B-37: ลดจาก 100 */ snackCost: 5, snacksPerDay: 3, nameMax: 12,
     /* อาหาร 5 หมู่ (g = หมู่ที่ 1–5, 0 = น้ำเปล่า) · tip = เกร็ดความรู้สั้น ๆ ขึ้นหลังป้อน */
     snacks: [
       { id: 'milk', icon: '🥛', label: 'นมจืด', g: 1, tip: 'มีแคลเซียม ช่วยให้กระดูกและฟันแข็งแรง' },
@@ -2297,20 +2317,21 @@ var FQ = (function () {
       { id: 'coconut', icon: '🥥', label: 'มะพร้าว', g: 5, tip: 'เนื้อมะพร้าวและกะทิเป็นไขมัน ให้พลังงานและความอบอุ่น กินแต่พอดี' },
       { id: 'water', icon: '💧', label: 'น้ำเปล่า', g: 0, tip: 'ดื่มบ่อย ๆ โดยเฉพาะตอนออกกำลังกาย ร่างกายจะสดชื่น' }
     ],
+    /* 6B-37: ราคาของแต่งตัวลดครึ่ง */
     wear: [
-      { id: 'cap', slot: 'hat', label: 'หมวกแก๊ป', cost: 40 }, { id: 'beanie', slot: 'hat', label: 'หมวกไหมพรม', cost: 40 },
-      { id: 'party', slot: 'hat', label: 'หมวกปาร์ตี้', cost: 30 }, { id: 'flower', slot: 'hat', label: 'มงกุฎดอกไม้', cost: 60 },
-      { id: 'sun', slot: 'face', label: 'แว่นกันแดด', cost: 50 }, { id: 'round', slot: 'face', label: 'แว่นกลม', cost: 40 }, { id: 'star', slot: 'face', label: 'แว่นดาว', cost: 60 },
-      { id: 'scarf', slot: 'neck', label: 'ผ้าพันคอ', cost: 40 }, { id: 'bow', slot: 'neck', label: 'หูกระต่าย', cost: 30 }, { id: 'whistle', slot: 'neck', label: 'นกหวีดครูพละ', cost: 50 },
+      { id: 'cap', slot: 'hat', label: 'หมวกแก๊ป', cost: 20 }, { id: 'beanie', slot: 'hat', label: 'หมวกไหมพรม', cost: 20 },
+      { id: 'party', slot: 'hat', label: 'หมวกปาร์ตี้', cost: 15 }, { id: 'flower', slot: 'hat', label: 'มงกุฎดอกไม้', cost: 30 },
+      { id: 'sun', slot: 'face', label: 'แว่นกันแดด', cost: 25 }, { id: 'round', slot: 'face', label: 'แว่นกลม', cost: 20 }, { id: 'star', slot: 'face', label: 'แว่นดาว', cost: 30 },
+      { id: 'scarf', slot: 'neck', label: 'ผ้าพันคอ', cost: 20 }, { id: 'bow', slot: 'neck', label: 'หูกระต่าย', cost: 15 }, { id: 'whistle', slot: 'neck', label: 'นกหวีดครูพละ', cost: 25 },
       /* 6B-36 ธีมกีฬา · ธีมไทย · ช่องใหม่ "หลัง" (th = ธีม: sport / thai) */
-      { id: 'headband', slot: 'hat', label: 'ผ้าคาดหัว', cost: 40, th: 'sport' }, { id: 'helmet', slot: 'hat', label: 'หมวกกันน็อก', cost: 60, th: 'sport' },
-      { id: 'ngob', slot: 'hat', label: 'งอบ', cost: 50, th: 'thai' }, { id: 'chada', slot: 'hat', label: 'ชฎา', cost: 70, th: 'thai' },
-      { id: 'goggles', slot: 'face', label: 'แว่นว่ายน้ำ', cost: 50, th: 'sport' },
-      { id: 'medal', slot: 'neck', label: 'เหรียญทอง', cost: 60, th: 'sport' }, { id: 'towel', slot: 'neck', label: 'ผ้าขนหนู', cost: 40, th: 'sport' },
-      { id: 'pakama', slot: 'neck', label: 'ผ้าขาวม้า', cost: 50, th: 'thai' }, { id: 'malai', slot: 'neck', label: 'พวงมาลัย', cost: 60, th: 'thai' },
-      { id: 'cape', slot: 'back', label: 'ผ้าคลุมฮีโร่', cost: 100 }, { id: 'angel', slot: 'back', label: 'ปีกนางฟ้า', cost: 120 },
-      { id: 'butterfly', slot: 'back', label: 'ปีกผีเสื้อ', cost: 120 }, { id: 'bag', slot: 'back', label: 'กระเป๋าเป้', cost: 80 },
-      { id: 'umbrella', slot: 'back', label: 'ร่มบ่อสร้าง', cost: 100, th: 'thai' }
+      { id: 'headband', slot: 'hat', label: 'ผ้าคาดหัว', cost: 20, th: 'sport' }, { id: 'helmet', slot: 'hat', label: 'หมวกกันน็อก', cost: 30, th: 'sport' },
+      { id: 'ngob', slot: 'hat', label: 'งอบ', cost: 25, th: 'thai' }, { id: 'chada', slot: 'hat', label: 'ชฎา', cost: 35, th: 'thai' },
+      { id: 'goggles', slot: 'face', label: 'แว่นว่ายน้ำ', cost: 25, th: 'sport' },
+      { id: 'medal', slot: 'neck', label: 'เหรียญทอง', cost: 30, th: 'sport' }, { id: 'towel', slot: 'neck', label: 'ผ้าขนหนู', cost: 20, th: 'sport' },
+      { id: 'pakama', slot: 'neck', label: 'ผ้าขาวม้า', cost: 25, th: 'thai' }, { id: 'malai', slot: 'neck', label: 'พวงมาลัย', cost: 30, th: 'thai' },
+      { id: 'cape', slot: 'back', label: 'ผ้าคลุมฮีโร่', cost: 50 }, { id: 'angel', slot: 'back', label: 'ปีกนางฟ้า', cost: 60 },
+      { id: 'butterfly', slot: 'back', label: 'ปีกผีเสื้อ', cost: 60 }, { id: 'bag', slot: 'back', label: 'กระเป๋าเป้', cost: 40 },
+      { id: 'umbrella', slot: 'back', label: 'ร่มบ่อสร้าง', cost: 50, th: 'thai' }
     ],
     slots: ['hat', 'face', 'neck', 'back'],
     names: ['โทโต้', 'ปุยฝ้าย', 'ข้าวปั้น', 'มะลิ', 'ส้มโอ', 'บัวลอย', 'โมจิ', 'ถั่วแดง', 'ขนมปัง', 'น้ำตาล', 'ทองคำ', 'ฟ้าใส', 'ลูกชิ้น', 'เต้าหู้', 'มะปราง',
@@ -2771,6 +2792,7 @@ function route_(req) {
     case 'photo': return apiPhoto_(req, false);
     case 'photodel': return apiPhoto_(req, true);
     case 'myphoto': return apiMyPhoto_(req);
+    case 'rankph': return apiRankPhotos_(req);
     case 'calendar': return apiCalendar_(req);
     case 'story': return apiStory_(req);
     case 'card': return apiCard_(req, false);
@@ -2798,6 +2820,7 @@ function route_(req) {
     case 'tcenter': return teacherApi_(req, teacherCenter_);
     case 'tcentersave': return teacherApi_(req, teacherCenterSave_);
     case 'tboard': return teacherApi_(req, teacherBoard_);
+    case 'tstarph': return teacherApi_(req, teacherStarPhotos_);
     case 'troom': return teacherApi_(req, teacherRoom_);
     case 'trank': return teacherApi_(req, teacherRank_);
     default: return FQ.fail('ไม่รู้จักคำสั่งนี้', 'BAD');
@@ -3604,12 +3627,47 @@ function teacherBoard_(req) {
   if (hit && hit.today === today) return hit;
   var s = readSettings_(), lw = FQ.addDays(today, -FQ.weekdayIdx(today) - 7), sc = null, dust = null;
   var st = FQ.boardStats({ settings: s, todayKey: today, roster: readRoster_(), logs: logsFromTable_(tail_(TAB.logs, H.logs, lw)) });
+  st.stars = (st.stars || []).map(function (x) { return { n: x.n, r: x.r, m: x.m, o: x.o, c: x.c, pk: x.ph ? photoKey_(x.ph) : '' }; });
   try { sc = schoolGoal_(); } catch (e) {}
   try { dust = dustForTeacher_(); } catch (e) {}
   var trip = null;
   try { var tb = tripBase_(); trip = { min: FQ.tripMinutes(tb, today, st.minutes), spm: s.stepsPerMin, at: tb.at || '' }; } catch (e) {}
   var out = { today: today, at: Utilities.formatDate(new Date(), TZ, 'HH:mm'), schoolName: s.schoolName, board: st, school: sc, dust: dust, trip: trip };
   try { if (cache) cache.put('tboard', JSON.stringify(out), 60); } catch (e) {}
+  return out;
+}
+
+/* 6B-38 รูปจริงบนแท่น 3 อันดับแรก (หน้าอันดับของนักเรียน) · ขอได้เฉพาะรหัสที่อยู่บนแท่นตอนนี้ ทีละไม่เกิน 6 รูป */
+function apiRankPhotos_(req) {
+  return safe_(function () {
+    var a = authToken_(req && req.token);
+    if (!a.ok) return a;
+    var b = readBoard_(), onTop = {};
+    Object.keys((b && b.leagues) || {}).forEach(function (k) { (b.leagues[k] || []).slice(0, 3).forEach(function (e) { if (e && e.pk) onTop[e.pk] = 1; }); });
+    var keys = (Array.isArray(req.keys) ? req.keys : []).map(String).filter(function (k) { return /^[0-9a-f]{12}$/.test(k) && onTop[k]; }).slice(0, 6);
+    return { ok: true, photos: starPhotos_(keys) };
+  });
+}
+/* 6B-38 รูปจริงของดาวขยับบนจอใหญ่ (เฉพาะรูปที่ครูอนุมัติแล้ว · ขอทีละไม่เกิน 5 รูป · จอโหลดเฉพาะตอนอันดับเปลี่ยน) */
+function photoKey_(url) { return hmac_('ph|' + (fileIdOf_(url) || url)).slice(0, 12); }
+function teacherStarPhotos_(req) {
+  var want = (Array.isArray(req.keys) ? req.keys : []).map(String).filter(function (k) { return /^[0-9a-f]{12}$/.test(k); }).slice(0, 5);
+  return { photos: starPhotos_(want) };
+}
+function starPhotos_(want) {
+  var out = {}, cache = null;
+  if (!want.length) return out;
+  try { cache = CacheService.getScriptCache(); } catch (e) {}
+  /* ตรวจกับรายชื่อทุกครั้ง: รูปที่ครูถอนการอนุมัติหรือเด็กลบแล้วจะไม่ถูกส่ง (แคชเก็บแค่ตัวรูป) */
+  readRoster_().forEach(function (st) {
+    if (!st.active || !st.photo || st.photoOk !== 'อนุมัติ') return;
+    var k = photoKey_(st.photo);
+    if (want.indexOf(k) < 0 || out[k]) return;
+    var d = null;
+    try { d = cache && cache.get('sph_' + k); } catch (e) {}
+    if (!d) { d = photoData_(st.photo); try { if (d && cache && d.length < 99000) cache.put('sph_' + k, d, 21600); } catch (e) {} }
+    if (d) out[k] = d;
+  });
   return out;
 }
 
@@ -5214,7 +5272,8 @@ function rebuildSummary_() {
     people.push({
       sid: s.sid, name: s.nick || ('เลขที่ ' + (s.no || '?')), classId: s.classId, arc: xp.level.arc, lv: xp.level.lv,
       week: start ? xp.week : 0, total: xp.total, moved: wk.moved, minutes: wk.minutes, member: !!s.pinHash && !!s.classId,
-      card: cardKey_(s.sid), outfit: of ? of.id : '', color: cf ? cf.id : ''
+      card: cardKey_(s.sid), outfit: of ? of.id : '', color: cf ? cf.id : '',
+      ph: s.photo && s.photoOk === 'อนุมัติ' ? photoKey_(s.photo) : ''
     });
     snaps.push({
       sid: s.sid,
@@ -5441,6 +5500,21 @@ function writeCache_(people, snaps, cut, s, today, teacher) {
     [['1402', '9999'], ['1301', '9999'], ['1403', '1401'], ['1402', '1401'], ['1501', '1401'], ['9999', '1401'], ['1601', '1501'], ['1201', '1601']].forEach(function (x) {
       post({ action: 'glike', token: tokens[x[0]], k: GS.cardKey_(x[1]) });
     });
+    /* 6B-38 ดาวขยับบนจอใหญ่: ให้ 3 ใน 5 อันดับสัปดาห์นี้มีรูป (ภาพวาดตัวอย่าง ไม่ใช่รูปคนจริง) ครูอนุมัติแล้ว อีก 2 คนใช้หน้าการ์ตูน */
+    (function () {
+      var Lg = sheets['บันทึก'].cells, hi = headIdx('บันทึก'), cD = hi('วันที่ทำ'), cS = hi('เลขประจำตัว'), cM = hi('นาที'), wk = {};
+      for (var r = 1; r < Lg.length; r++) {
+        var row = Lg[r]; if (!row) continue;
+        var d = String(row[cD] || '').replace(/^'/, ''), sid = String(row[cS] || '').replace(/^'/, '');
+        if (d >= monday && d <= today && tokens[sid]) wk[sid] = (wk[sid] || 0) + (Number(row[cM]) || 0);
+      }
+      var top = Object.keys(wk).sort(function (a, b) { return wk[b] - wk[a]; }).slice(0, 5);
+      var tt = post({ action: 'tlogin', password: 'demo1234' }).token;
+      [0, 1, 3].forEach(function (j, q) {
+        var sid = top[j]; if (!sid || !tt) return;
+        if (post({ action: 'photo', token: tokens[sid], mime: 'image/jpeg', data: img('face', 31 + q * 7) }).ok) post({ action: 'tphoto', token: tt, sid: sid, approve: true });
+      });
+    })();
     GS.rebuildSummary_();
     persist();
   }

@@ -1604,6 +1604,74 @@ body.tropen { overflow:hidden; }
 @keyframes pm-cheer-l { 0%,100% { transform:rotate(0); } 25% { transform:rotate(165deg); } 45% { transform:rotate(145deg); } 60% { transform:rotate(170deg); } 75% { transform:rotate(145deg); } 90% { transform:rotate(165deg); } }
 @media (prefers-reduced-motion: reduce) { .a-wai .pbody, .a-wave .pbody, .a-stretch .pbody, .a-jack .pbody, .a-wiggle .pbody, .a-squat .pbody, .a-jog .pbody, .a-roll .pbody, .a-kick .pbody, .a-champ .pbody, .pbig .parm, .pbig .pleg { animation:none !important; } }
 
+/* 6B-38 จอใหญ่: ดาวขยับสัปดาห์นี้ (การ์ตูนเด็กออกกำลังกายบนแท่นอันดับ) */
+.tbsc.kstars { background:linear-gradient(180deg,#2B2366 0%,#1E1A4A 70%,#2E2760 100%); display:flex; flex-direction:column; justify-content:flex-end; position:relative; padding:1em .3em 0; }
+.kpod { display:flex; align-items:flex-end; justify-content:center; gap:.25em; flex:1; min-height:0; }
+.kcol { flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+/* เด็กทุกคนขนาดเท่ากัน (ความสูงที่เหลือหลังแท่นที่สูงสุด + ป้าย) ยืนบนแท่นของตัวเอง */
+.kcol .kd { height:calc(100% - 4.7em); width:100%; flex:none; min-height:3em; overflow:visible; }
+.kblk { width:92%; border-radius:.5em .5em 0 0; display:flex; align-items:flex-start; justify-content:center; padding-top:.15em; font:800 1.15em var(--display); color:#fff; box-shadow:inset 0 .25em 0 rgba(255,255,255,.18); }
+.kblk { font-size:1em; line-height:1; }
+.kcol.r1 .kblk { height:2.3em; background:linear-gradient(#FFD84D,#F5A524); font-size:1.15em; }
+.kcol.r2 .kblk { height:1.75em; background:linear-gradient(#E3E8F2,#A9B3C7); }
+.kcol.r3 .kblk { height:1.4em; background:linear-gradient(#F2B27A,#C9773F); }
+.kcol.r4 .kblk, .kcol.r5 .kblk { height:1.05em; background:linear-gradient(#8B6CFF,#5B45C9); font-size:.85em; }
+.kcol.r5 .kblk { height:.85em; }
+.knm { margin:.2em 0 0; font:800 .9em/1.2 var(--display); max-width:100%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#fff; }
+.kcol.r1 .knm { color:#FFD84D; }
+.krm { margin:0 0 .3em; font-size:.68em; line-height:1.25; color:#BDB6E8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+.krm b { color:#fff; }
+.kgap { visibility:hidden; }
+.kempty { gap:.6em; padding-bottom:.4em; }
+.kempty .kd { height:calc(100% - 1em); opacity:.9; }
+.kemp { margin:0 0 .5em; text-align:center; font-weight:700; color:#C9C3EE; }
+.kparty { position:absolute; left:0; right:0; top:.3em; text-align:center; font:800 1.05em var(--display); color:#FFD84D; text-shadow:0 2px 6px rgba(0,0,0,.5); z-index:2; }
+.tbgoalk { margin:.2em 0 0; }
+/* แขน/ขาหมุนรอบไหล่/สะโพก · ตัวเด้งจากเท้า */
+.kd .karm, .kd .kleg { transform-box:view-box; transform-origin:0 0; }
+.kd .kbody { transform-box:fill-box; transform-origin:50% 100%; }
+/* อันดับ 1 กระโดดตบ */
+.kd.m-jack .kbody { animation:kj-b 1s ease-in-out infinite; }
+.kd.m-jack .karm-l { animation:kj-al 1s ease-in-out infinite; } .kd.m-jack .karm-r { animation:kj-ar 1s ease-in-out infinite; }
+.kd.m-jack .kleg-l { animation:kj-ll 1s ease-in-out infinite; } .kd.m-jack .kleg-r { animation:kj-lr 1s ease-in-out infinite; }
+@keyframes kj-b { 0%,100% { transform:none; } 50% { transform:translateY(-9px); } }
+@keyframes kj-al { 0%,100% { transform:rotate(10deg); } 50% { transform:rotate(155deg); } }
+@keyframes kj-ar { 0%,100% { transform:rotate(-10deg); } 50% { transform:rotate(-155deg); } }
+@keyframes kj-ll { 0%,100% { transform:none; } 50% { transform:translateX(-7px) rotate(8deg); } }
+@keyframes kj-lr { 0%,100% { transform:none; } 50% { transform:translateX(7px) rotate(-8deg); } }
+/* อันดับ 2 วิ่งเหยาะ */
+.kd.m-run .kbody { animation:kr-b .5s ease-in-out infinite; }
+.kd.m-run .karm-l { animation:kr-al .5s ease-in-out infinite; } .kd.m-run .karm-r { animation:kr-ar .5s ease-in-out infinite; }
+.kd.m-run .kleg-l { animation:kr-ll .5s ease-in-out infinite; } .kd.m-run .kleg-r { animation:kr-lr .5s ease-in-out infinite; }
+@keyframes kr-b { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-5px); } }
+@keyframes kr-al { 0%,100% { transform:rotate(40deg); } 50% { transform:rotate(-25deg); } }
+@keyframes kr-ar { 0%,100% { transform:rotate(25deg); } 50% { transform:rotate(-40deg); } }
+@keyframes kr-ll { 0%,100% { transform:translateY(-9px); } 50% { transform:none; } }
+@keyframes kr-lr { 0%,100% { transform:none; } 50% { transform:translateY(-9px); } }
+/* อันดับ 3 สควอท */
+.kd.m-squat .kbody { animation:ks-b 1.2s ease-in-out infinite; }
+.kd.m-squat .karm-l { animation:ks-al 1.2s ease-in-out infinite; } .kd.m-squat .karm-r { animation:ks-ar 1.2s ease-in-out infinite; }
+@keyframes ks-b { 0%,100% { transform:none; } 50% { transform:scale(1.06,.84); } }
+@keyframes ks-al { 0%,100% { transform:rotate(0); } 50% { transform:rotate(85deg); } }
+@keyframes ks-ar { 0%,100% { transform:rotate(0); } 50% { transform:rotate(-85deg); } }
+/* อันดับ 4 ยืดเหยียด */
+.kd.m-stretch .kbody { animation:kt-b 2.4s ease-in-out infinite; }
+.kd.m-stretch .karm-l { animation:kt-al 2.4s ease-in-out infinite; } .kd.m-stretch .karm-r { animation:kt-ar 2.4s ease-in-out infinite; }
+@keyframes kt-b { 0%,100% { transform:none; } 30% { transform:rotate(-9deg); } 70% { transform:rotate(9deg); } }
+@keyframes kt-al { 0%,100% { transform:rotate(150deg); } 50% { transform:rotate(165deg); } }
+@keyframes kt-ar { 0%,100% { transform:rotate(-150deg); } 50% { transform:rotate(-165deg); } }
+/* อันดับ 5 กระโดดเชือก */
+.kd.m-hop .kbody { animation:kh-b .6s ease-in-out infinite; }
+.kd.m-hop .karm-l { animation:kh-al .6s linear infinite; } .kd.m-hop .karm-r { animation:kh-ar .6s linear infinite; }
+@keyframes kh-b { 0%,100% { transform:none; } 45% { transform:translateY(-11px); } }
+@keyframes kh-al { 0%,100% { transform:rotate(20deg); } 50% { transform:rotate(45deg); } }
+@keyframes kh-ar { 0%,100% { transform:rotate(-20deg); } 50% { transform:rotate(-45deg); } }
+@media (prefers-reduced-motion: reduce) { .kd .kbody, .kd .karm, .kd .kleg { animation:none !important; } }
+/* 6B-38 แท่น 3 อันดับแรกในหน้าอันดับ: การ์ตูนเด็ก */
+.podium .pkid { display:block; width:100%; max-width:92px; margin:-2px auto 0; }
+.podium > button.p1 .pkid { max-width:104px; }
+.podium .pkid .kd { display:block; width:100%; height:auto; overflow:visible; }
+
 </style>
 </head>
 <body>
@@ -2002,7 +2070,7 @@ body.tropen { overflow:hidden; }
  * วางลิงก์เว็บแอป Apps Script (ลงท้ายด้วย /exec) ใน API_URL แล้วอัปโหลดไฟล์นี้ขึ้น GitHub Pages
  * ว่างไว้ = โหมดตัวอย่าง (ยังไม่เชื่อมระบบ) */
 var API_URL = 'https://script.google.com/macros/s/AKfycbzhykUt8ertRZqZT_gnBIvvjRWw6ygOSZsZm8aBZhm73RfhkVIDY16BuO3LZJM7wckV/exec';
-var APP_VER = '1.5';
+var APP_VER = '1.6';
 /* โหมดตัวอย่าง: ยังไม่ใส่ลิงก์ หรือเปิดด้วย ?demo=1 → ใช้ระบบจำลองในเครื่อง (ไฟล์ demo.js) ข้อมูลแยกจากของจริง */
 var API_OK = /^https:\/\/\S+\/exec$/.test(API_URL);
 var DEMO = !API_OK || /[?&]demo=1(&|#|$)/.test(location.search);
@@ -3422,7 +3490,7 @@ function leagueView(b, arc) {
   h.push('<div class="podium">' + order.map(function (e, i) {
     if (!e) return '<div class="empty"></div>';
     return '<button type="button" class="' + (i === 1 ? 'p1' : '') + (e.me ? ' me' : '') + '" data-card="' + esc(e.card) + '" data-me="' + (e.me ? 1 : '') + '">' +
-      '<span class="md" aria-hidden="true">' + medal[i] + '</span>' + miniAv(e.outfit, e.color) + '<b>' + esc(e.name) + (e.me ? ' (ฉัน)' : '') + '</b><span class="cl">' + esc(e.classId) + '</span><span class="xp">' + fmt(e.xp) + '</span></button>';
+      '<span class="md" aria-hidden="true">' + medal[i] + '</span>' + (typeof podKid === 'function' ? podKid(e) : miniAv(e.outfit, e.color)) + '<b>' + esc(e.name) + (e.me ? ' (ฉัน)' : '') + '</b><span class="cl">' + esc(e.classId) + '</span><span class="xp">' + fmt(e.xp) + '</span></button>';
   }).join('') + '</div>');
   var rest = list.slice(3), meIn = list.some(function (e) { return e.me; });
   if (rest.length || (me && !meIn)) {
@@ -11023,6 +11091,110 @@ function pcClose(silent) {
     pcShow(b.getAttribute('data-pcard'), null, 'ปิด', +b.getAttribute('data-pctier') || 0);
   });
 })();
+
+/* ---------- 6B-38 จอใหญ่: ดาวขยับสัปดาห์นี้ ----------
+ * แทนภาพสนามในการ์ดเป้าหมายทั้งโรงเรียน: การ์ตูนเด็กออกกำลังกาย 5 อันดับ (นาทีสัปดาห์นี้) บนแท่นอันดับ
+ * หัว = รูปจริงที่ครูอนุมัติแล้ว (โหลดเฉพาะตอนอันดับเปลี่ยน) · ไม่มีรูป = หน้าการ์ตูน · ป้าย = ชื่อเล่น หรือ เลขที่ + ห้อง */
+var KID = { ph: {}, asked: {}, seq: 0 };
+var KID_MOVE = ['jack', 'run', 'squat', 'stretch', 'hop'];   /* ท่าของอันดับ 1–5 */
+var KID_SKIN = '#F6CDA5', KID_HAIR = ['#3A2A20', '#1F1A17', '#5A3A22'];
+function kidPiv(cls, x, y, inner) { return '<g transform="translate(' + x + ' ' + y + ')"><g class="' + cls + '"><g transform="translate(' + (-x) + ' ' + (-y) + ')">' + inner + '</g></g></g>'; }
+function kidSvg(x, rank, i, empty) {
+  var u = 'kd' + (++KID.seq), shirt = COLORS[x && x.c] || COLORS.violet, ph = x && x.pk ? KID.ph[x.pk] : '', hair = KID_HAIR[i % 3], mv = KID_MOVE[(rank - 1) % 5];
+  var arm = function (sx) { return '<rect x="' + (sx - 5.5) + '" y="94" width="11" height="30" rx="5.5" fill="' + KID_SKIN + '"/><rect x="' + (sx - 6.5) + '" y="92" width="13" height="12" rx="5" fill="' + shirt + '"/><circle cx="' + sx + '" cy="125" r="6.5" fill="' + KID_SKIN + '"/>'; };
+  var leg = function (hx) { return '<rect x="' + (hx - 6) + '" y="128" width="12" height="28" rx="6" fill="' + KID_SKIN + '"/><rect x="' + (hx - 6.5) + '" y="148" width="13" height="7" rx="3" fill="#FFFFFF"/><ellipse cx="' + hx + '" cy="159" rx="10" ry="6" fill="#2A2450"/><path d="M' + (hx - 7) + ' 158h14" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>'; };
+  var head;
+  if (ph) {
+    head = '<defs><clipPath id="' + u + 'c"><circle cx="60" cy="44" r="36"/></clipPath></defs>' +
+      '<circle cx="60" cy="44" r="41" fill="' + shirt + '"/><circle cx="60" cy="44" r="38" fill="#FFFFFF"/>' +
+      '<image href="' + ph + '" x="24" y="8" width="72" height="72" preserveAspectRatio="xMidYMid slice" clip-path="url(#' + u + 'c)"/>';
+  } else {
+    var hs = i % 3 === 0 ? '<path d="M22 42c0-25 16-37 38-37s38 12 38 37c-8-11-18-16-38-16S30 31 22 42z" fill="' + hair + '"/>'
+      : i % 3 === 1 ? '<path d="M20 52c-3-30 15-47 40-47s43 17 40 47c-5-4-6-12-7-20-10 5-21 6-33 6s-23-1-33-6c-1 8-2 16-7 20z" fill="' + hair + '"/>'
+      : '<path d="M22 40c1-22 16-35 38-35s37 13 38 35c-12-7-24-11-38-11s-26 4-38 11z" fill="' + hair + '"/><circle cx="95" cy="22" r="11" fill="' + hair + '"/><circle cx="90" cy="28" r="3.5" fill="' + shirt + '"/>';
+    head = '<circle cx="60" cy="44" r="37" fill="' + KID_SKIN + '"/>' + hs +
+      '<circle cx="46" cy="48" r="4.3" fill="#2A1A4E"/><circle cx="74" cy="48" r="4.3" fill="#2A1A4E"/><circle cx="47.5" cy="46.5" r="1.4" fill="#fff"/><circle cx="75.5" cy="46.5" r="1.4" fill="#fff"/>' +
+      '<ellipse cx="38" cy="58" rx="6" ry="3.6" fill="#FF8FB1" opacity=".55"/><ellipse cx="82" cy="58" rx="6" ry="3.6" fill="#FF8FB1" opacity=".55"/>' +
+      '<path d="M50 61q10 8 20 0" fill="none" stroke="#2A1A4E" stroke-width="3" stroke-linecap="round"/>';
+  }
+  var torso = '<rect x="37" y="86" width="46" height="38" rx="14" fill="' + shirt + '"/>' +
+    (empty ? '' : '<text x="60" y="114" text-anchor="middle" font-size="17" font-weight="800" fill="#FFFFFF" font-family="Kanit,sans-serif">' + rank + '</text>') +
+    '<rect x="39" y="118" width="42" height="14" rx="6" fill="#2A2450"/>';
+  var body = kidPiv('kleg kleg-l', 50, 130, leg(50)) + kidPiv('kleg kleg-r', 70, 130, leg(70)) + torso +
+    kidPiv('karm karm-l', 39, 98, arm(39)) + kidPiv('karm karm-r', 81, 98, arm(81)) + head;
+  return '<svg class="kd m-' + mv + '" viewBox="0 0 120 170" aria-hidden="true"><ellipse cx="60" cy="164" rx="30" ry="5" fill="#000" opacity=".18"/><g class="kbody">' + body + '</g></svg>';
+}
+function tbStarsHtml(d) {
+  var stars = (d.board && d.board.stars) || [], sc = d.school, party = sc && sc.party, order = [3, 1, 0, 2, 4];
+  var medal = ['🥇', '🥈', '🥉', '4', '5'], h = '';
+  if (!stars.length) {
+    h = '<div class="kpod kempty">' + [0, 1, 2].map(function (i) { return '<div class="kcol">' + kidSvg(null, i + 2, i, true) + '</div>'; }).join('') + '</div>' +
+      '<p class="kemp">สัปดาห์นี้ยังไม่มีใครบันทึก มาขยับกันเลย!</p>';
+  } else {
+    h = '<div class="kpod">' + order.map(function (j) {
+      var x = stars[j];
+      if (!x) return '<div class="kcol kgap"></div>';
+      return '<div class="kcol r' + (j + 1) + '">' + kidSvg(x, j + 1, j) +
+        '<div class="kblk"><span>' + medal[j] + '</span></div>' +
+        '<p class="knm">' + esc(x.n) + '</p><p class="krm">' + esc(x.r) + ' · <b>' + fmt(x.m) + '</b></p></div>';
+    }).join('') + '</div>';
+  }
+  return (party ? '<div class="kparty">🎆 ทั้งโรงเรียนครบ ' + fmt(sc.partyGoal) + ' ระดับ! 🎆</div>' : '') + h;
+}
+function tbStarsApply() {
+  var d = TB.d, sc = document.querySelector('#tb-body .tbsc');
+  if (!d || !sc) return;
+  sc.classList.add('kstars');
+  sc.innerHTML = tbStarsHtml(d);
+  var card = sc.parentNode, k = card && card.querySelector('.tbk');
+  if (k && k.textContent.indexOf('เป้าหมายทั้งโรงเรียน') >= 0) {
+    k.innerHTML = '⭐ ดาวขยับสัปดาห์นี้ <small>(นาที)</small>';
+    if (d.school && !card.querySelector('.tbgoalk')) sc.insertAdjacentHTML('afterend', '<p class="tbk2 tbgoalk">🏫 เป้าหมายทั้งโรงเรียน</p>');
+  }
+}
+function tbStarPhotos() {
+  var d = TB.d, stars = (d && d.board && d.board.stars) || [];
+  var need = stars.map(function (x) { return x.pk; }).filter(function (k) { return k && !KID.ph[k] && !KID.asked[k]; });
+  if (!need.length) return;
+  need.forEach(function (k) { KID.asked[k] = 1; });
+  tcall('tstarph', { keys: need }).then(function (res) {
+    var got = res && res.ok && res.photos ? res.photos : {}, any = false;
+    Object.keys(got).forEach(function (k) { if (typeof got[k] === 'string' && got[k].indexOf('data:image/') === 0) { KID.ph[k] = got[k]; any = true; } });
+    if (!res || !res.ok) need.forEach(function (k) { delete KID.asked[k]; });
+    if (any && current === 's-tboard') tbStarsApply();
+  });
+}
+var _tbr_st = tbRender;
+tbRender = function () {
+  _tbr_st.apply(this, arguments);
+  if (!TB.d) return;
+  tbStarsApply();
+  tbStarPhotos();
+};
+
+/* ---------- แท่น 3 อันดับแรกในหน้าอันดับของนักเรียน: การ์ตูนเด็กออกกำลังกาย + รูปจริงที่ครูอนุมัติแล้ว ---------- */
+function podKid(e) {
+  return '<span class="pkid">' + kidSvg({ c: e.color, pk: e.pk }, e.rank, e.rank - 1) + '</span>';
+}
+function rankPhotos() {
+  var b = ST && ST.board, a = typeof active === 'function' ? active() : null;
+  if (!b || !b.ready || !a || !a.token) return;
+  var list = (b.leagues && b.leagues[RK.tab]) || [];
+  var need = list.slice(0, 3).map(function (e) { return e.pk; }).filter(function (k) { return k && !KID.ph[k] && !KID.asked[k]; });
+  if (!need.length) return;
+  need.forEach(function (k) { KID.asked[k] = 1; });
+  call('rankph', { token: a.token, keys: need }).then(function (res) {
+    var got = res && res.ok && res.photos ? res.photos : {}, any = false;
+    Object.keys(got).forEach(function (k) { if (typeof got[k] === 'string' && got[k].indexOf('data:image/') === 0) { KID.ph[k] = got[k]; any = true; } });
+    if (!res || !res.ok) need.forEach(function (k) { delete KID.asked[k]; });
+    if (any && current === 's-rank') renderRank();
+  });
+}
+var _rr_st = renderRank;
+renderRank = function () {
+  _rr_st.apply(this, arguments);
+  rankPhotos();
+};
 
 /* ---------- เริ่มต้น ---------- */
 function boot() {
