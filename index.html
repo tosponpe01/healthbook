@@ -1707,6 +1707,28 @@ body.tropen { overflow:hidden; }
 .glknew { font-style:normal; font-size:.72em; font-weight:800; color:#fff; background:var(--pink); border-radius:99px; padding:1px 7px; }
 @media (prefers-reduced-motion: reduce) { .lknews, .lkbig, .gsignb.pop { animation:none; } }
 
+/* ===== 6B-39: ป๊อปอัป สิ่งที่อยากได้ ===== */
+.wishsheet h2 { margin:0; font-family:var(--display); font-size:1.3em; text-align:center; }
+.wishsub { text-align:center; margin:6px 0 4px; }
+.wishbonus { text-align:center; margin:4px auto 10px; background:rgba(255,210,92,.16); border:1px dashed #FFD25C; border-radius:99px; padding:4px 12px; width:max-content; max-width:100%; }
+.wishbonus b { color:#FFD25C; }
+.wishchips { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:8px 0 12px; }
+.wishchip { display:flex; align-items:center; gap:8px; text-align:left; min-height:52px; border:2px solid var(--line); background:var(--card-2); color:var(--ink); border-radius:14px; padding:8px 10px; font:inherit; font-size:.95em; cursor:pointer; line-height:1.25; }
+.wishchip span { font-size:1.35em; flex:none; }
+.wishchip.on { border-color:var(--lime); background:rgba(198,255,77,.14); font-weight:700; box-shadow:0 0 0 3px rgba(198,255,77,.2); }
+.wishfield { display:flex; flex-direction:column; gap:4px; }
+.wishfield span { font-weight:600; font-size:.92em; }
+.wishfield textarea { width:100%; box-sizing:border-box; border:2px solid var(--line); background:var(--card-2); color:var(--ink); border-radius:12px; padding:8px 10px; resize:none; }
+.wishfield small { text-align:right; }
+.wishlock { font-size:.8em; text-align:center; margin:6px 0 10px; }
+.wishsheet .pair { display:flex; gap:10px; }
+.wishsheet .pair > * { flex:1; }
+.wishsheet .cta:disabled { opacity:.5; }
+.wishcard { display:flex; gap:12px; align-items:center; width:100%; font:inherit; color:inherit; border:2px dashed #FFD25C; background:rgba(255,210,92,.08); }
+.wishcard .muted { display:block; font-size:.88em; }
+.wishbig { font-size:1.8em; }
+@media (max-width:360px) { .wishchips { grid-template-columns:1fr; } }
+
 </style>
 </head>
 <body>
@@ -2105,7 +2127,7 @@ body.tropen { overflow:hidden; }
  * วางลิงก์เว็บแอป Apps Script (ลงท้ายด้วย /exec) ใน API_URL แล้วอัปโหลดไฟล์นี้ขึ้น GitHub Pages
  * ว่างไว้ = โหมดตัวอย่าง (ยังไม่เชื่อมระบบ) */
 var API_URL = 'https://script.google.com/macros/s/AKfycbzhykUt8ertRZqZT_gnBIvvjRWw6ygOSZsZm8aBZhm73RfhkVIDY16BuO3LZJM7wckV/exec';
-var APP_VER = '1.7';
+var APP_VER = '1.7.1';
 /* โหมดตัวอย่าง: ยังไม่ใส่ลิงก์ หรือเปิดด้วย ?demo=1 → ใช้ระบบจำลองในเครื่อง (ไฟล์ demo.js) ข้อมูลแยกจากของจริง */
 var API_OK = /^https:\/\/\S+\/exec$/.test(API_URL);
 var DEMO = !API_OK || /[?&]demo=1(&|#|$)/.test(location.search);
@@ -11347,6 +11369,146 @@ $('gm-body').addEventListener('click', function (e) {
     toast('ติดป้ายแล้ว เพื่อนที่มาเยี่ยมจะเห็นป้ายนี้ 🪧');
   });
 });
+
+/* ===== 6B-39: ป๊อปอัป "สิ่งที่อยากได้" (ช่วงทดลองแอป) =====
+ * หลังบ้านส่ง ST.wish = { on, ask, answered, today, bonus, max, opts: [{ id, icon, label }] }
+ * เด้งเองบนหน้าแรก วันละครั้ง จนกว่าจะตอบ (กด "ไว้ทีหลัง" ได้) · ตอบครั้งแรกได้แต้มโบนัสครั้งเดียว
+ * คำตอบไปที่แท็บ สิ่งที่อยากได้ ครูอ่านคนเดียว เพื่อนไม่เห็น · มีการ์ดเล็กบนหน้าแรกไว้เปิดเองได้ทุกเมื่อ */
+
+var WSH = { pick: [], busy: false, timer: 0, shownFor: '' };
+
+function wishSheetEl() {
+  var el = $('wish-sheet');
+  if (el) return el;
+  el = document.createElement('div');
+  el.className = 'sheet-wrap';
+  el.id = 'wish-sheet';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'true');
+  el.setAttribute('aria-labelledby', 'wish-title');
+  el.innerHTML = '<div class="sheet wishsheet"><div class="grab"></div><div id="wish-body"></div></div>';
+  document.body.appendChild(el);
+  el.addEventListener('click', function (e) {
+    if (e.target === el) { wishClose(true); return; }
+    var c = e.target.closest ? e.target.closest('[data-wish]') : null;
+    if (c && !WSH.busy) {
+      var id = c.getAttribute('data-wish'), i = WSH.pick.indexOf(id);
+      if (i >= 0) WSH.pick.splice(i, 1); else WSH.pick.push(id);
+      c.classList.toggle('on', i < 0);
+      c.setAttribute('aria-pressed', String(i < 0));
+      wishReady();
+      return;
+    }
+    if (e.target.closest && e.target.closest('#wish-later')) { wishClose(true); return; }
+    if (e.target.closest && e.target.closest('#wish-send')) wishSend();
+  });
+  el.addEventListener('input', function (e) {
+    if (e.target && e.target.id === 'wish-text') {
+      var w = ST && ST.wish, n = e.target.value.length;
+      $('wish-count').textContent = n + '/' + ((w && w.max) || 150);
+      wishReady();
+    }
+  });
+  el.addEventListener('keydown', function (e) { if (e.key === 'Escape') wishClose(true); });
+  return el;
+}
+function wishReady() {
+  var t = $('wish-text'), b = $('wish-send');
+  if (b) b.disabled = WSH.busy || !(WSH.pick.length || (t && t.value.trim()));
+}
+function wishHtml(w) {
+  return '<h2 id="wish-title">💡 อยากให้แอปมีอะไรเพิ่ม?</h2>' +
+    '<p class="muted wishsub">ช่วงนี้แอปกำลังทดลอง บอกครูหน่อยนะ เลือกได้หลายอย่าง</p>' +
+    (w.bonus ? '<p class="wishbonus">ตอบครั้งแรกได้ <b>+' + fmt(w.bonus) + ' แต้ม</b> ⭐</p>' : '') +
+    '<div class="wishchips" role="group" aria-label="สิ่งที่อยากได้">' + (w.opts || []).map(function (o) {
+      var on = WSH.pick.indexOf(o.id) >= 0;
+      return '<button type="button" class="wishchip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-wish="' + esc(o.id) + '"><span aria-hidden="true">' + esc(o.icon) + '</span>' + esc(o.label) + '</button>';
+    }).join('') + '</div>' +
+    '<label class="wishfield"><span>เล่าเพิ่มให้ครูฟัง (ไม่บังคับ)</span>' +
+    '<textarea id="wish-text" rows="2" maxlength="' + (w.max || 150) + '" placeholder="เช่น อยากสร้างบ้าน มีสวนผักให้น้องเล่น"></textarea>' +
+    '<small id="wish-count" class="muted">0/' + (w.max || 150) + '</small></label>' +
+    '<p class="muted wishlock">🔒 ครูอ่านคนเดียว เพื่อนไม่เห็น</p>' +
+    '<div class="pair"><button type="button" class="ghost" id="wish-later">ไว้ทีหลัง</button>' +
+    '<button type="button" class="cta" id="wish-send" disabled>ส่งให้ครู 💌</button></div>';
+}
+function wishOpen() {
+  var w = ST && ST.wish;
+  if (!w || !w.on) return;
+  var el = wishSheetEl();
+  WSH.pick = []; WSH.busy = false;
+  $('wish-body').innerHTML = wishHtml(w);
+  el.classList.add('on');
+  setTimeout(function () { try { el.querySelector('.wishchip').focus(); } catch (e) {} }, 60);
+}
+function wishClose(later) {
+  var el = $('wish-sheet');
+  if (el) el.classList.remove('on');
+  if (later) wishMarkShown();
+}
+function wishMarkShown() {
+  var a = active();
+  if (a && ST && ST.today && a.wishDay !== ST.today) { a.wishDay = ST.today; save(); }
+}
+function wishSend() {
+  var a = active(), t = $('wish-text'), text = t ? t.value.trim() : '';
+  if (!a || WSH.busy || !(WSH.pick.length || text)) return;
+  if (!navigator.onLine) { toast('ต้องมีเน็ตตอนส่งให้ครูนะ', true); return; }
+  WSH.busy = true; wishReady();
+  $('wish-send').textContent = 'กำลังส่ง…';
+  call('wish', { token: a.token, wants: WSH.pick.slice(), text: text, cid: newCid() }, { queue: false }).then(function (res) {
+    WSH.busy = false;
+    if (!res.ok) {
+      if ($('wish-send')) { $('wish-send').textContent = 'ส่งให้ครู 💌'; wishReady(); }
+      toast(res.error || 'ส่งไม่สำเร็จ ลองใหม่อีกครั้ง', true);
+      if (res.code === 'DONE' || res.code === 'OFF') { wishClose(true); refresh(); }
+      return;
+    }
+    var r = res.result || {};
+    setStatus(res);
+    wishMarkShown();
+    wishClose(false);
+    ding('up');
+    toast(r.xpGained ? 'ขอบคุณที่บอกครูนะ! +' + fmt(r.xpGained) + ' แต้ม ⭐' : 'ขอบคุณที่บอกครูนะ 💡 ครูได้รับแล้ว');
+    if (current === 's-home') renderHome();
+    var big = typeof bigOf === 'function' ? bigOf(r) : null;
+    if (big) celebrate(big, { kind: 'extra', back: current });
+  });
+}
+/* เด้งเองบนหน้าแรก: ยังไม่เคยตอบ + วันนี้ยังไม่เด้ง + ไม่มีหน้าต่างอื่นเปิดอยู่ */
+function wishMaybe() {
+  clearTimeout(WSH.timer);
+  var w = ST && ST.wish, a = active();
+  /* เบราว์เซอร์ที่โปรแกรมทดสอบคุม (navigator.webdriver) ไม่เด้งเอง ยกเว้นตั้ง HB_WISH_AUTOPOP · เด็กจริงไม่กระทบ */
+  if (navigator.webdriver && !window.HB_WISH_AUTOPOP) return;
+  if (!w || !w.ask || !a || !ST.today || a.wishDay === ST.today || WSH.shownFor === ST.today) return;
+  WSH.timer = setTimeout(function () {
+    var w2 = ST && ST.wish, a2 = active();
+    if (current !== 's-home' || !w2 || !w2.ask || !a2 || a2.wishDay === ST.today) return;
+    if (document.querySelector('.sheet-wrap.on, .celebrate.on, #s-onboard.on, .ovl.on')) { wishMaybe(); return; }
+    WSH.shownFor = ST.today;
+    wishMarkShown();
+    wishOpen();
+  }, 1500);
+}
+/* การ์ดเล็กบนหน้าแรก: เปิดป๊อปอัปเองได้ทุกเมื่อ (ครูปิดในแท็บตั้งค่า = ไม่มีการ์ด) */
+var _cheerCard39w = cheerCard;
+cheerCard = function () {
+  var w = ST && ST.wish, h = _cheerCard39w();
+  if (!w || !w.on || w.today) return h;
+  return h + '<button type="button" class="card wishcard" data-wishopen="1"><span class="wishbig" aria-hidden="true">💡</span>' +
+    '<div style="flex:1;text-align:left"><b>อยากให้แอปมีอะไรเพิ่ม? บอกครูได้</b>' +
+    '<span class="muted">' + (w.bonus ? 'ตอบครั้งแรกได้ +' + fmt(w.bonus) + ' แต้ม ⭐' : 'บอกความคิดใหม่ได้วันละครั้ง') + '</span></div></button>';
+};
+$('home-body').addEventListener('click', function (e) {
+  var b = e.target.closest ? e.target.closest('[data-wishopen]') : null;
+  if (b) { e.stopPropagation(); wishOpen(); }
+}, true);
+var _renderHome39w = renderHome;
+renderHome = function () {
+  var r = _renderHome39w.apply(this, arguments);
+  wishMaybe();
+  return r;
+};
 
 /* ---------- เริ่มต้น ---------- */
 function boot() {

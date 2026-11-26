@@ -276,6 +276,9 @@ var FQ = (function () {
     clipSeconds: 180,
     /* โหมดฝุ่น PM2.5: ดึงค่าจาก Air4Thai สถานีใกล้โรงเรียนทุกชั่วโมง ถึงระดับ dustFrom (4 = ส้ม) = วันฝุ่น */
     dustOn: true,
+    /* 6B-39 ช่วงทดลอง: ป๊อปอัป สิ่งที่อยากได้ (ตอบครั้งแรกได้แต้มครั้งเดียว) */
+    wishOn: true,
+    xpWish: 20,
     dustFrom: 4,
     dustLat: 13.746,
     dustLng: 100.518,
@@ -540,6 +543,8 @@ var FQ = (function () {
       dustLng: placeOf(raw.dustPlace)[1],
       dustStation: String(raw.dustStation || '').trim().replace(/[^A-Za-z0-9_-]/g, '').slice(0, 20),
       xpDust: intOr(raw.xpDust, DEFAULTS.xpDust, 0, 1000),
+      wishOn: (raw.wishOn === undefined || raw.wishOn === null || String(raw.wishOn).trim() === '') ? DEFAULTS.wishOn : (yes(raw.wishOn) || /^เปิด/.test(String(raw.wishOn).trim())),
+      xpWish: intOr(raw.xpWish, DEFAULTS.xpWish, 0, 1000),
       xpStreak3: intOr(raw.xpStreak3, DEFAULTS.xpStreak3, 0, 1000),
       xpStreak7: intOr(raw.xpStreak7, DEFAULTS.xpStreak7, 0, 1000),
       streakRest: intOr(raw.streakRest, DEFAULTS.streakRest, 0, 3),
@@ -705,7 +710,7 @@ var FQ = (function () {
    * o = { logs, done (ของเด็กคนนี้), start, weeks, settings, today } */
   function xpLedger(o) {
     var s = o.settings, start = o.start, today = o.today, weeks = o.weeks || 8;
-    var by = {}, parts = { minutes: 0, stars: 0, missions: 0, streak: 0, badges: 0, goal: 0, quiz: 0, event: 0, clip: 0, dust: 0 };
+    var by = {}, parts = { minutes: 0, stars: 0, missions: 0, streak: 0, badges: 0, goal: 0, quiz: 0, event: 0, clip: 0, dust: 0, wish: 0 };
     var streak = { current: 0, best: 0, today: false }, badges = [], active = 0;
     function give(d, k, v) { if (!v) return; by[d] = (by[d] || 0) + v; parts[k] += v; }
     if (!start || today < start) return { total: 0, parts: parts, byDate: by, streak: streak, activeDays: 0, badges: badges, goals: [], totals: {}, eventsDone: [], clipCount: 0, dustCount: 0 };
@@ -759,6 +764,13 @@ var FQ = (function () {
       dustCount++;
       give(x.date, 'dust', s.xpDust);
     });
+    /* 6B-39 บอกสิ่งที่อยากได้: ได้แต้มครั้งเดียว (ครั้งแรกที่ตอบ) ครูใส่ ไม่นับ = ข้ามแถวนั้น */
+    var wishAt = '';
+    (o.extra || []).forEach(function (x) {
+      if (x.kind !== 'wish' || x.check === 'ไม่นับ' || !x.date || x.date < start || x.date > today) return;
+      if (!wishAt || x.date < wishAt) wishAt = x.date;
+    });
+    if (wishAt) give(wishAt, 'wish', s.xpWish);
     /* อีเวนต์: ทำครบทุกภารกิจ ได้แต้มในวันที่ครบ + สติกเกอร์รุ่นพิเศษ */
     var eventsDone = [];
     (o.events || []).forEach(function (ev) {
@@ -788,7 +800,7 @@ var FQ = (function () {
     }
     streak = { current: cur, best: best, today: !!(totals[today] && totals[today].counted > 0) };
     return {
-      total: parts.minutes + parts.stars + parts.missions + parts.streak + parts.badges + parts.goal + parts.quiz + parts.event + parts.clip + parts.dust,
+      total: parts.minutes + parts.stars + parts.missions + parts.streak + parts.badges + parts.goal + parts.quiz + parts.event + parts.clip + parts.dust + parts.wish,
       parts: parts, byDate: by, streak: streak, activeDays: active, badges: badges, goals: goals, totals: totals, eventsDone: eventsDone,
       clipCount: clipCount, dustCount: dustCount
     };
@@ -1718,6 +1730,48 @@ var FQ = (function () {
 
   function moreOf(o) { return { extra: extrasOf(o.extra, o.student), events: o.events || [] }; }
 
+  /* 6B-39 ป๊อปอัป สิ่งที่อยากได้ (ช่วงทดลองแอป) เลือกได้หลายอย่าง + พิมพ์เล่าเพิ่มได้ ครูเห็นคนเดียวในแท็บ สิ่งที่อยากได้ */
+  var WISHES = [
+    { id: 'house', icon: '🏠', label: 'บ้านของฉัน' }, { id: 'pet', icon: '🐾', label: 'สัตว์เลี้ยงตัวใหม่' },
+    { id: 'wear', icon: '👕', label: 'ของแต่งตัวเพิ่ม' }, { id: 'center', icon: '🏟️', label: 'ของในศูนย์ฝึกเพิ่ม' },
+    { id: 'mission', icon: '🎯', label: 'ภารกิจใหม่ ๆ' }, { id: 'game', icon: '🎮', label: 'มินิเกม' },
+    { id: 'friend', icon: '🤝', label: 'เล่นกับเพื่อนได้มากขึ้น' }, { id: 'other', icon: '✨', label: 'อย่างอื่น (พิมพ์บอกครู)' }
+  ];
+  var WISH_TEXT_MAX = 150;
+  function wishIds(v) {
+    var L = Array.isArray(v) ? v : String(v || '').split(','), out = [];
+    L.forEach(function (x) { x = String(x).trim(); if (find(WISHES, x) && out.indexOf(x) < 0) out.push(x); });
+    return out;
+  }
+  function wishLabels(ids) { return wishIds(ids).map(function (x) { var w = find(WISHES, x); return w.icon + ' ' + w.label; }); }
+  function wishText(v) { return String(v == null ? '' : v).replace(/[\u0000-\u001f\u007f]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, WISH_TEXT_MAX); }
+  function wishOn(exMine, today) { for (var i = 0; i < (exMine || []).length; i++) if (exMine[i].kind === 'wish' && (!today || exMine[i].date === today)) return exMine[i]; return null; }
+  /* ข้อมูลป๊อปอัปในหน้าหลักของเด็ก: ask = ควรเด้ง (ยังไม่เคยตอบ) · bonus = แต้มที่จะได้ถ้าตอบตอนนี้ */
+  function wishView(exMine, s, today) {
+    var ever = !!wishOn(exMine, ''), td = !!wishOn(exMine, today);
+    return { on: !!s.wishOn, ask: !!s.wishOn && !ever, answered: ever, today: td, bonus: ever ? 0 : s.xpWish, max: WISH_TEXT_MAX,
+      opts: WISHES.map(function (w) { return { id: w.id, icon: w.icon, label: w.label }; }) };
+  }
+  /* ส่งสิ่งที่อยากได้ o.entry = { wants: [id], text } วันละ 1 ครั้ง */
+  function planWish(o) {
+    var s = o.settings, today = o.todayKey, e = o.entry || {};
+    if (!s.wishOn) return fail('ตอนนี้ครูปิดการบอกสิ่งที่อยากได้ไว้นะ', 'OFF');
+    var ids = wishIds(e.wants), text = wishText(e.text);
+    if (!ids.length && !text) return fail('เลือกสิ่งที่อยากได้อย่างน้อย 1 อย่าง หรือพิมพ์บอกครูก่อนนะ', 'EMPTY');
+    var mine = mineOf(o.logs, o.klass, o.student), doneMine = missionsOf(o.done, o.student), more = moreOf(o);
+    if (wishOn(more.extra, today)) return fail('วันนี้บอกครูแล้ว พรุ่งนี้บอกเพิ่มได้นะ', 'DONE');
+    var rec = { id: o.id, date: today, classId: o.klass.id, code: o.student.code, kind: 'wish', ref: ids.join(','), text: text, answer: -1, ok: true, check: '', row: 0 };
+    var xb = xpStatus(mine, doneMine, o.klass, s, today, more);
+    var xa = xpStatus(mine, doneMine, o.klass, s, today, { extra: more.extra.concat([rec]), events: more.events });
+    return {
+      ok: true, rec: rec, labels: wishLabels(ids),
+      result: {
+        kind: 'wish', wants: ids, xpGained: xa.total - xb.total, levelUp: levelUp(xb.level, xa.level, s), badge: badgeGained(xb, xa),
+        stickers: stickersGained(xb, xa), events: eventGained(xb, xa)
+      }
+    };
+  }
+
   /* ตอบคำถามวันนี้ o = { ...เหมือน planMission, extra, events, questions, entry: { choice } } */
   function planQuiz(o) {
     var s = o.settings, today = o.todayKey;
@@ -2523,6 +2577,7 @@ var FQ = (function () {
     findDeletable: findDeletable, canDelete: canDelete,
     GAME: GAME, gameItem: gameItem, gameSize: gameSize, gameParse: gameParse, gameSpent: gameSpent, gameStars: gameStars, gameExtent: gameExtent,
     DUST: DUST, DUST_TASKS: DUST_TASKS, dustLevel: dustLevel, dustPick: dustPick, dustMerge: dustMerge, dustView: dustView, dustTaskFor: dustTaskFor, dustBlock: dustBlock, planDust: planDust,
+    WISHES: WISHES, wishIds: wishIds, wishLabels: wishLabels, wishText: wishText, wishView: wishView, planWish: planWish,
     PETS: PETS, petPick: petPick, petChance: petChance, petParse: petParse, petData: petData, petView: petView, petStage: petStage, planPet: planPet, checkPetName: checkPetName, petCatalog: petCatalog,
     gameView: gameView, planGame: planGame, modelCenter: modelCenter, planLike: planLike, likesGiven: likesGiven, gotParse: gotParse, gotAdd: gotAdd, heartsOf: heartsOf, signText: signText, gameBoard: gameBoard, xpOf: xpOf,
     CENTER: CENTER, centerParse: centerParse, centerCost: centerCost, centerRoundCost: centerRoundCost, centerSpent: centerSpent, centerSteps: centerSteps, centerAt: centerAt, centerNext: centerNext,
@@ -2543,7 +2598,7 @@ var TZ = 'Asia/Bangkok';
 var TAB = {
   settings: 'ตั้งค่า', roster: 'นักเรียน', quests: 'เควสบ้าน',
   logs: 'บันทึก', summary: 'สรุปดาว', missions: 'ภารกิจประจำวัน', done: 'ภารกิจที่ทำ', spot: 'สุ่มตรวจ',
-  cache: 'แคชระบบ', questions: 'คำถามสุขภาพ', events: 'อีเวนต์', extra: 'กิจกรรมเสริม', fitness: 'สมรรถภาพ', game: 'ศูนย์ฝึก'
+  cache: 'แคชระบบ', questions: 'คำถามสุขภาพ', events: 'อีเวนต์', extra: 'กิจกรรมเสริม', fitness: 'สมรรถภาพ', game: 'ศูนย์ฝึก', wish: 'สิ่งที่อยากได้'
 };
 /* หัวคอลัมน์แท็บนักเรียน (นักเรียนสมัครเองจากหน้าเว็บ แบบโปรแกรมกระโดดเชือก) */
 var SC = {
@@ -2569,6 +2624,7 @@ var H = {
     'ภารกิจ 3', 'นับจาก 3', 'เป้า 3', 'สติกเกอร์', 'ใช้งาน'],
   /* คำตอบคำถามสุขภาพ ภารกิจอีเวนต์ที่เด็กกดทำเอง กำลังใจ และคลิปที่ดูครบ */
   extra: ['รหัส', 'เวลาที่ส่ง', 'วันที่ทำ', 'ห้อง', SC.sid, 'ประเภท', 'เรื่อง', 'คำตอบ', 'ผล', 'ครูตรวจ', 'หมายเหตุ'],
+  wish: ['เวลาที่ส่ง', 'ห้อง', 'เลขที่', SC.sid, 'อยากได้', 'เล่าเพิ่ม', 'ได้แต้ม'],
   game: [SC.sid, 'ห้อง', 'ข้อมูลศูนย์ฝึก', 'เหรียญที่ใช้สร้าง', 'ระดับศูนย์ฝึก', 'ถูกใจที่ได้', 'กดถูกใจวันนี้', 'เลเวล', 'น้องคู่หู', 'ชื่อน้อง', 'ข้อมูลน้อง', 'เหรียญที่ใช้กับน้อง', 'อัปเดตล่าสุด', 'ถูกใจจากใคร (ล่าสุด)', 'ป้ายต้อนรับ'],
   fitness: [SC.sid, 'ห้อง', 'เลขที่', 'ภาคเรียน', 'นั่งงอตัว (ซม.)', 'ดันพื้น 30 วิ (ครั้ง)', 'ลุกนั่ง 60 วิ (ครั้ง)', 'ยืนยกเข่า 3 นาที (ครั้ง)', 'บันทึกเมื่อ']
 };
@@ -2605,6 +2661,8 @@ var SETTING_ROWS = [
   ['โหมดฝุ่นเริ่มที่สี', 'dustFrom', 'ส้ม', 'เหลือง / ส้ม / แดง  ถึงสีนี้ = วันฝุ่น: แอปเตือนให้ขยับในบ้าน ภารกิจกลางแจ้งสลับเป็นในบ้าน น้องใส่หน้ากาก มีภารกิจนักสู้ฝุ่น · ครูเปลี่ยนสีของวันนี้เองได้ในโหมดครู'],
   ['พิกัดโรงเรียน (ละติจูด,ลองจิจูด)', 'dustPlace', '13.746,100.518', 'ใช้หาสถานีวัดฝุ่นที่ใกล้ที่สุด ค่าเริ่มต้นคือแถวหัวลำโพง คัดลอกพิกัดจาก Google Maps มาวางได้ เช่น 13.7465,100.5182'],
   ['รหัสสถานี Air4Thai (ไม่บังคับ)', 'dustStation', '', 'ว่างไว้ = ใช้สถานีที่ใกล้โรงเรียนที่สุด ใส่รหัส เช่น bkp97t = ใช้สถานีนี้เสมอ'],
+  ['ป๊อปอัป สิ่งที่อยากได้ (ช่วงทดลอง)', 'wishOn', 'เปิด', 'เปิด = เด็กที่ยังไม่เคยตอบเห็นป๊อปอัปถามสิ่งที่อยากได้ วันละครั้ง (กดไว้ทีหลังได้) คำตอบอยู่ในแท็บ สิ่งที่อยากได้ · ปิด = ไม่เด้ง'],
+  ['สิ่งที่อยากได้: ตอบครั้งแรกได้แต้ม', 'xpWish', 20, 'ได้ครั้งเดียว ตอบครั้งต่อไปไม่ได้แต้มเพิ่ม (บอกได้วันละครั้ง) ครูใส่ ไม่นับ ในแท็บกิจกรรมเสริม = ไม่ให้แต้มแถวนั้น'],
   ['ภารกิจนักสู้ฝุ่น: ได้แต้ม', 'xpDust', 10, 'วันฝุ่นเยอะ เด็กได้ภารกิจพิเศษ 1 ข้อ ทำครบ 3 วันได้สติกเกอร์นักสู้ฝุ่น'],
   ['โบนัสไฟต่อเนื่อง 3 วัน', 'xpStreak3', 15, 'บันทึกการขยับติดกันครบ 3 วัน ได้ 1 ครั้งต่อรอบ'],
   ['โบนัสไฟต่อเนื่องทุก 7 วัน', 'xpStreak7', 50, 'ครบ 7, 14, 21 … วัน'],
@@ -2626,7 +2684,7 @@ var SETTING_ROWS = [
   ['ภาคเรียนปัจจุบัน (ผลสมรรถภาพ)', 'termNow', '2/2569', 'รูปแบบ ภาคเรียน/ปี พ.ศ. เช่น 2/2569 ใช้ตอนครูกรอกผลสมรรถภาพในแอป'],
   ['การเดินทางของโรงเรียน: ก้าวต่อ 1 นาที', 'stepsPerMin', 100, 'จอใหญ่และแอปเด็กแปลงนาทีที่ทั้งโรงเรียนขยับรวมกันเป็นก้าว (ก้าวละประมาณ 0.5 เมตร) แล้วพาเที่ยวไทย อาเซียน รอบโลก ใส่ 50–200']
 ];
-var TEXT_SETTINGS = ['programStart', 'levelXp', 'xpMissionDiff', 'diffUnlock', 'dayBadges', 'termNow', 'dustOn', 'dustFrom', 'dustPlace', 'dustStation'];
+var TEXT_SETTINGS = ['programStart', 'levelXp', 'xpMissionDiff', 'diffUnlock', 'dayBadges', 'termNow', 'dustOn', 'dustFrom', 'dustPlace', 'dustStation', 'wishOn'];
 /* ป้ายเก่าในแท็บตั้งค่าของชีตที่ติดตั้งก่อนเปลี่ยนเป็นคลิป: ยังอ่านค่าได้ ไม่ต้องแก้ชีต */
 var SETTING_ALIASES = {
   'แต้มภารกิจวิดีโอประจำสัปดาห์': 'xpMissionVideo', 'โบนัสแนบรูป': 'xpPhotoBonus', 'รับรูปและวิดีโอ': 'proofOn',
@@ -2828,6 +2886,7 @@ function route_(req) {
     case 'quiz': return apiExtra_(req, 'quiz');
     case 'event': return apiExtra_(req, 'event');
     case 'dust': return apiExtra_(req, 'dust');
+    case 'wish': return apiExtra_(req, 'wish');
     case 'profile': return apiProfile_(req);
     case 'photo': return apiPhoto_(req, false);
     case 'photodel': return apiPhoto_(req, true);
@@ -3036,12 +3095,14 @@ function apiExtra_(req, kind) {
         var o = {
           settings: c.settings, klass: a.klass, student: a.student, logs: mine.logs, done: mine.done, extra: mine.extra,
           events: c.events, questions: c.questions, pool: c.pool, quests: c.quests, todayKey: todayKey_(), id: cid || newId_(),
-          entry: kind === 'quiz' ? { choice: req && req.choice } : kind === 'clip' ? ((req && req.entry) || {}) : { event: req && req.event, task: req && req.task },
+          entry: kind === 'quiz' ? { choice: req && req.choice } : kind === 'clip' ? ((req && req.entry) || {}) :
+            kind === 'wish' ? { wants: req && req.wants, text: req && req.text } : { event: req && req.event, task: req && req.task },
           dust: c.dust
         };
-        plan = kind === 'quiz' ? FQ.planQuiz(o) : kind === 'clip' ? FQ.planClip(o) : kind === 'dust' ? FQ.planDust(o) : FQ.planEvent(o);
+        plan = kind === 'quiz' ? FQ.planQuiz(o) : kind === 'clip' ? FQ.planClip(o) : kind === 'dust' ? FQ.planDust(o) : kind === 'wish' ? FQ.planWish(o) : FQ.planEvent(o);
         if (!plan.ok) return plan;
         writeExtra_(mine.xt, plan.rec, nowText_());
+        if (kind === 'wish') writeWish_(a, plan);
         plan.rec.row = mine.xt.sheet.getLastRow();
         mine.extra.push(plan.rec);
       }
@@ -3052,6 +3113,23 @@ function apiExtra_(req, kind) {
     st.result = plan.result;
     return st;
   });
+}
+
+/* 6B-39 แท็บ สิ่งที่อยากได้: ครูอ่านคนเดียว (สร้างเองครั้งแรกที่มีคนตอบ) */
+var WISH_NOTE = 'คำตอบจากป๊อปอัป สิ่งที่อยากได้ (ช่วงทดลองแอป) เด็กเห็นแค่ของตัวเอง เพื่อนไม่เห็น\nปิดป๊อปอัปได้ที่แท็บตั้งค่า แถว ป๊อปอัป สิ่งที่อยากได้';
+function wishSheet_() {
+  var ss = SpreadsheetApp.getActive(), sh = ss.getSheetByName(TAB.wish);
+  if (sh) return sh;
+  sh = ss.insertSheet(TAB.wish);
+  sh.getRange(1, 1, 1, H.wish.length).setValues([H.wish]);
+  header_(sh, H.wish.length);
+  sh.getRange(1, 5).setNote(WISH_NOTE);
+  [150, 60, 60, 110, 320, 360, 70].forEach(function (w, i) { try { sh.setColumnWidth(i + 1, w); } catch (e) {} });
+  return sh;
+}
+function writeWish_(a, plan) {
+  var sh = wishSheet_(), r = plan.rec;
+  sh.appendRow(["'" + nowText_(), r.classId, a.student.no || '', "'" + a.student.sid, cleanText_(plan.labels.join(', '), 300), cleanText_(r.text || '', 200), plan.result.xpGained || 0]);
 }
 
 /* ---------- ไฟล์รูป ----------
@@ -4670,8 +4748,8 @@ function readEvents_() {
   return out;
 }
 
-var KIND_BY_SHEET = { 'คำถาม': 'quiz', 'อีเวนต์': 'event', 'กำลังใจ': 'cheer', 'คลิป': 'clip', 'นักสู้ฝุ่น': 'dust' };
-var SHEET_BY_KIND = { quiz: 'คำถาม', event: 'อีเวนต์', cheer: 'กำลังใจ', clip: 'คลิป', dust: 'นักสู้ฝุ่น' };
+var KIND_BY_SHEET = { 'คำถาม': 'quiz', 'อีเวนต์': 'event', 'กำลังใจ': 'cheer', 'คลิป': 'clip', 'นักสู้ฝุ่น': 'dust', 'สิ่งที่อยากได้': 'wish' };
+var SHEET_BY_KIND = { quiz: 'คำถาม', event: 'อีเวนต์', cheer: 'กำลังใจ', clip: 'คลิป', dust: 'นักสู้ฝุ่น', wish: 'สิ่งที่อยากได้' };
 function extrasFromTable_(t) {
   var I = t.idx, tz = sheetTz_(), base = t.base || 2, out = [];
   t.data.forEach(function (r, i) {
@@ -4681,6 +4759,7 @@ function extrasFromTable_(t) {
     if (kind === 'event') { var m = /^[\w\-]+#\d+/.exec(ref); ref = m ? m[0] : ref; }
     if (kind === 'cheer') { var c = /\d{1,10}/.exec(ref); ref = c ? c[0] : ''; }
     if (kind === 'clip') ref = TYPE_BY_SHEET[ref.split(/[\s:]/)[0]] || '';
+    if (kind === 'wish') ref = '';
     out.push({
       row: i + base, id: String(r[I['รหัส']] || '').trim(), date: date, classId: String(r[I['ห้อง']]).trim(), code: code,
       kind: kind, ref: ref, answer: LETTERS.indexOf(String(r[I['คำตอบ']] || '').trim().charAt(0)),
@@ -4703,7 +4782,8 @@ function writeExtra_(t, rec, now) {
   row[I[SC.sid]] = "'" + rec.code;
   row[I['ประเภท']] = SHEET_BY_KIND[rec.kind];
   row[I['เรื่อง']] = cleanText_(rec.kind === 'event' ? rec.ref + ' ' + (rec.text || '') : rec.kind === 'cheer' ? 'ให้กำลังใจ ' + rec.ref :
-    rec.kind === 'clip' ? SHEET_BY_TYPE[rec.ref] + ' ' + (rec.text || '') : rec.kind === 'dust' ? rec.ref + ' ' + (rec.text || '') : rec.ref, 160);
+    rec.kind === 'clip' ? SHEET_BY_TYPE[rec.ref] + ' ' + (rec.text || '') : rec.kind === 'dust' ? rec.ref + ' ' + (rec.text || '') :
+    rec.kind === 'wish' ? 'ตอบป๊อปอัป (ดูคำตอบในแท็บ ' + TAB.wish + ')' : rec.ref, 160);
   row[I['คำตอบ']] = rec.kind === 'quiz' ? LETTERS[rec.answer] || '' : rec.kind === 'cheer' ? '👏' : rec.kind === 'clip' ? '▶ ดูครบ' : 'ทำแล้ว';
   row[I['ผล']] = rec.kind === 'quiz' ? (rec.ok ? 'ถูก' : 'ผิด') : rec.kind === 'clip' ? 'ดูครบ' : 'ทำแล้ว';
   t.sheet.appendRow(row);
@@ -4795,6 +4875,7 @@ function status_(c, a, mine) {
   st.me = FQ.profileView(a.student, st.xp, c.settings, todayKey_(), c.events);
   st.cheers = { week: cheersWeek_(mine) };
   st.game = myGame_(a.student.sid, st.xp);
+  st.wish = FQ.wishView(FQ.extrasOf(mine.extra || [], a.student), c.settings, todayKey_());
   return st;
 }
 
